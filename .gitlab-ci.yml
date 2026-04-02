@@ -19,7 +19,6 @@ test:
 build:
   stage: build
   image: docker:27-cli
-  tags: [gitlab-runner]
   services:
     - name: docker:27-dind
       command: ["--tls=false"]
