@@ -19,6 +19,7 @@ test:
 build:
   stage: build
   image: docker:27-cli
+  tags: [vps-runner]
   services:
     - name: docker:27-dind
       command: ["--tls=false"]
@@ -30,14 +31,14 @@ build:
     - echo "Logging in to docker hub"
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     # install make file and setup for run make file
+  script:
+    - echo "Docker information...."
+    - docker info
+    - apt-get update
     - apt-get install -y make
     - touch .env.local
     - touch .env.production
     - touch .env
-
-  script:
-    - echo "Docker information...."
-    - docker info
     - echo "Building image"
     - make build
     - echo "Pushing image to docker hub"
