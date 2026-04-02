@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
@@ -237,16 +238,12 @@ const SubscriptionContent = () => {
               key={plan.id}
               className="relative group/card bg-[#12143A]/50 border border-white/5 rounded-[40px] p-8 flex flex-col hover:bg-[#12143A] hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
             >
-              {plan.id === 1 && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-[10px] font-black uppercase tracking-widest px-6 py-2 rounded-full shadow-lg">
-                  Most Popular
-                </div>
-              )}
+              <div className="absolute xl:lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest xl:lg:px-9 px-4 xl:lg:py-1 py-3 rounded-full shadow-lg text-center">
+                {plan.plan_name || plan.planName || plan.plan_type}
+              </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {plan.plan_name || plan.planName || plan.plan_type}
-                </h3>
+                <h3 className="text-xl font-bold text-white mb-2"></h3>
                 <div className="flex items-baseline gap-1">
                   <span className="text-4xl font-black text-white">
                     €{plan.price}
@@ -301,7 +298,8 @@ const SubscriptionContent = () => {
   }
 
   // View 2: Active Subscription Management
-  return (    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500">
+  return (
+    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500">
       {/* Page Title */}
       <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-6">
         Subscription Management
@@ -316,7 +314,10 @@ const SubscriptionContent = () => {
                 {displaySub.plan_name}
               </h2>
               <p className="text-[#8A9ABF] text-sm font-medium">
-                {(displaySub as any).billing_cycle_name || displaySub.billing_cycle || "Annual"} Subscription
+                {(displaySub as any).billing_cycle_name ||
+                  displaySub.billing_cycle ||
+                  "Annual"}{" "}
+                Subscription
               </p>
             </div>
             <div className="text-right">
@@ -324,33 +325,29 @@ const SubscriptionContent = () => {
                 €{displaySub.amount}
               </p>
               <p className="text-[#8A9ABF] text-[10px] sm:text-xs">
-                /{displaySub.billing_cycle === 'MONTHLY' ? 'month' : 'year'}
+                /{displaySub.billing_cycle === "MONTHLY" ? "month" : "year"}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8">
-            {(displaySub.features || []).map(
-              (feature: any, index: number) => {
-                const featureText =
-                  typeof feature === "string"
-                    ? feature
-                    : feature?.name ||
-                      feature?.title ||
-                      feature?.description ||
-                      feature?.more ||
-                      Object.values(feature)[0] ||
-                      JSON.stringify(feature);
-                return (
-                  <div key={index} className="flex items-center gap-2.5">
-                    <CheckIcon />
-                    <span className="text-sm text-[#8A9ABF]">
-                      {featureText}
-                    </span>
-                  </div>
-                );
-              },
-            )}
+            {(displaySub.features || []).map((feature: any, index: number) => {
+              const featureText =
+                typeof feature === "string"
+                  ? feature
+                  : feature?.name ||
+                    feature?.title ||
+                    feature?.description ||
+                    feature?.more ||
+                    Object.values(feature)[0] ||
+                    JSON.stringify(feature);
+              return (
+                <div key={index} className="flex items-center gap-2.5">
+                  <CheckIcon />
+                  <span className="text-sm text-[#8A9ABF]">{featureText}</span>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-2">
@@ -372,9 +369,7 @@ const SubscriptionContent = () => {
 
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 border-b border-white/[0.02] gap-1">
-            <p className="text-[#8A9ABF] text-sm">
-              Next billing date:
-            </p>
+            <p className="text-[#8A9ABF] text-sm">Next billing date:</p>
             <p className="text-sm text-[#8A9ABF]">
               {displaySub.next_billing_date
                 ? formatRegistrationDate(displaySub.next_billing_date)
@@ -383,19 +378,17 @@ const SubscriptionContent = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 border-b border-white/[0.02] gap-1">
-            <p className="text-[#8A9ABF] text-sm">
-              Payment method:
-            </p>
+            <p className="text-[#8A9ABF] text-sm">Payment method:</p>
             <p className="text-sm text-[#8A9ABF]">
               •••• •••• •••• {displaySub.card_last_four}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 border-b border-white/[0.02] gap-1">
-            <p className="text-[#8A9ABF] text-sm">
-              Auto-renewal:
-            </p>
-            <span className={`text-sm ${displaySub.auto_renewal ? "text-[#00D4AA]" : "text-red-500"}`}>
+            <p className="text-[#8A9ABF] text-sm">Auto-renewal:</p>
+            <span
+              className={`text-sm ${displaySub.auto_renewal ? "text-[#00D4AA]" : "text-red-500"}`}
+            >
               {displaySub.auto_renewal ? "Active" : "Disabled"}
             </span>
           </div>
@@ -411,9 +404,7 @@ const SubscriptionContent = () => {
 
       {/* Payment History Section */}
       <div className="bg-[#12143A] border border-[#1d204a] rounded-2xl p-6 sm:p-8">
-        <h3 className="text-lg font-bold text-white mb-6">
-          Payment History
-        </h3>
+        <h3 className="text-lg font-bold text-white mb-6">Payment History</h3>
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[500px]">
@@ -453,7 +444,12 @@ const SubscriptionContent = () => {
                     {item.description}
                   </td>
                   <td className="py-4 text-xs text-[#8A9ABF]">
-                    {item.currency === 'usd' ? '$' : item.currency === 'eur' ? '€' : ''}{item.amount}
+                    {item.currency === "usd"
+                      ? "$"
+                      : item.currency === "eur"
+                        ? "€"
+                        : ""}
+                    {item.amount}
                   </td>
                   <td className="py-4">
                     <span className="px-3 py-1 bg-[#00D4AA]/10 text-[#00D4AA] text-[10px] rounded-full">
@@ -461,7 +457,16 @@ const SubscriptionContent = () => {
                     </span>
                   </td>
                   <td className="py-4 text-left">
-                    <a href={(item as any).invoice_pdf || (item as any).invoice_url || "#"} target="_blank" rel="noopener noreferrer" className="text-[#00E5FF] text-xs hover:underline">
+                    <a
+                      href={
+                        (item as any).invoice_pdf ||
+                        (item as any).invoice_url ||
+                        "#"
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#00E5FF] text-xs hover:underline"
+                    >
                       Download
                     </a>
                   </td>
@@ -609,13 +614,14 @@ const SubscriptionContent = () => {
             <div className="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mx-auto mb-6">
               <AlertCircle size={24} />
             </div>
-            
+
             <h3 className="text-xl font-bold text-white mb-4">
               Cancel Subscription?
             </h3>
-            
+
             <p className="text-[#8A9ABF] text-sm mb-6 leading-relaxed">
-              No refund. Subscription stays active until <br className="hidden sm:block" />
+              No refund. Subscription stays active until{" "}
+              <br className="hidden sm:block" />
               expiry, then does not renew.
             </p>
 
@@ -624,9 +630,12 @@ const SubscriptionContent = () => {
                 "Unlimited events",
                 "Featured listings",
                 "Advanced analytics",
-                "Priority support"
+                "Priority support",
               ].map((perk, i) => (
-                <div key={i} className="flex items-center gap-3 text-xs text-[#8A9ABF]">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 text-xs text-[#8A9ABF]"
+                >
                   <div className="w-4 h-4 rounded-full border border-red-500/30 flex items-center justify-center">
                     <X size={10} className="text-red-500" />
                   </div>
@@ -697,10 +706,12 @@ const SubscriptionContent = () => {
                 <label className="text-sm font-bold text-white">
                   Add New Payment Method
                 </label>
-                
+
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <span className="text-xs text-[#8A9ABF] font-medium">Card Number</span>
+                    <span className="text-xs text-[#8A9ABF] font-medium">
+                      Card Number
+                    </span>
                     <input
                       className="w-full bg-[#0B0D2C] border border-[#1d204a] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E5FF] transition-all text-sm placeholder:text-gray-600"
                       placeholder="1234 5678 9012 3456"
@@ -709,14 +720,18 @@ const SubscriptionContent = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <span className="text-xs text-[#8A9ABF] font-medium">Expiry Date</span>
+                      <span className="text-xs text-[#8A9ABF] font-medium">
+                        Expiry Date
+                      </span>
                       <input
                         className="w-full bg-[#0B0D2C] border border-[#1d204a] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E5FF] transition-all text-sm placeholder:text-gray-600"
                         placeholder="MM/YY"
                       />
                     </div>
                     <div className="space-y-2">
-                      <span className="text-xs text-[#8A9ABF] font-medium">CVV</span>
+                      <span className="text-xs text-[#8A9ABF] font-medium">
+                        CVV
+                      </span>
                       <input
                         className="w-full bg-[#0B0D2C] border border-[#1d204a] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E5FF] transition-all text-sm placeholder:text-gray-600"
                         placeholder="123"
@@ -725,7 +740,9 @@ const SubscriptionContent = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-xs text-[#8A9ABF] font-medium">Cardholder Name</span>
+                    <span className="text-xs text-[#8A9ABF] font-medium">
+                      Cardholder Name
+                    </span>
                     <input
                       className="w-full bg-[#0B0D2C] border border-[#1d204a] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E5FF] transition-all text-sm placeholder:text-gray-600"
                       placeholder="John Doe"
@@ -733,7 +750,9 @@ const SubscriptionContent = () => {
                   </div>
 
                   <div className="space-y-4 pt-2">
-                    <span className="text-xs text-[#8A9ABF] font-medium">Billing Address</span>
+                    <span className="text-xs text-[#8A9ABF] font-medium">
+                      Billing Address
+                    </span>
                     <input
                       className="w-full bg-[#0B0D2C] border border-[#1d204a] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00E5FF] transition-all text-sm placeholder:text-gray-600"
                       placeholder="Street Address"
@@ -755,7 +774,9 @@ const SubscriptionContent = () => {
                   <div className="w-4 h-4 rounded border border-[#1d204a] flex items-center justify-center group-hover:border-[#00E5FF]">
                     <div className="w-2.5 h-2.5 bg-[#00E5FF] rounded-sm opacity-0 transition-opacity" />
                   </div>
-                  <span className="text-xs text-[#8A9ABF]">Set as default payment method</span>
+                  <span className="text-xs text-[#8A9ABF]">
+                    Set as default payment method
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 bg-[#0B0D2C] rounded-xl border border-[#1d204a]">
@@ -763,8 +784,13 @@ const SubscriptionContent = () => {
                     <Lock size={18} />
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-xs text-white font-medium">Your payment is secure</p>
-                    <p className="text-[10px] text-[#8A9ABF]">We use industry-standard encryption to protect your information.</p>
+                    <p className="text-xs text-white font-medium">
+                      Your payment is secure
+                    </p>
+                    <p className="text-[10px] text-[#8A9ABF]">
+                      We use industry-standard encryption to protect your
+                      information.
+                    </p>
                   </div>
                 </div>
               </div>
