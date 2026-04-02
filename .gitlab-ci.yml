@@ -19,7 +19,7 @@ test:
 build:
   stage: build
   image: docker:27-cli
-  tags: [vps-runner]
+  tags: [gitlab-runner]
   services:
     - name: docker:27-dind
       command: ["--tls=false"]
