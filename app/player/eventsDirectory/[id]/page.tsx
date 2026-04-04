@@ -23,26 +23,12 @@ import {
   useGetRegistrationStatusQuery,
   useValidatePromoMutation,
   useGetMyRegistrationsQuery,
+  type EventDataApi,
+  type MyRegistration,
 } from "../../../../redux/features/player/eventsDirectoryApi";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import DarkPhoneInput from "@/components/reuseable/DarkPhoneInput";
-
-interface EventData {
-  id: number;
-  event_name: string;
-  venue_name: string;
-  venue_address?: string;
-  registration_fee: string;
-  description?: string;
-  event_date: string;
-  event_time?: string;
-  minimum_age: number;
-  maximum_age: number;
-  maximum_capacity: number;
-  registered_count: number;
-  is_full: boolean;
-}
 
 interface RegistrationStatusData {
   registration_status?: string;
@@ -64,27 +50,27 @@ const EventDetailsPage = () => {
 
   const { data: registrationsData } = useGetMyRegistrationsQuery();
   console.log('register data ',registrationsData);
-  const registrationsArray = React.useMemo(() => {
+  const registrationsArray: MyRegistration[] = React.useMemo(() => {
     if (!registrationsData) return [];
     if (Array.isArray(registrationsData)) return registrationsData;
-    if ((registrationsData as any)?.results) return (registrationsData as any).results;
-    if ((registrationsData as any)?.data) return (registrationsData as any).data;
+    if ('results' in registrationsData && Array.isArray(registrationsData.results)) return registrationsData.results;
+    if ('data' in registrationsData && Array.isArray(registrationsData.data)) return registrationsData.data;
     return [];
   }, [registrationsData]);
   
-  const reg = registrationsArray.find((r: any) => {
-    const regEventId = r.event_id || (typeof r.event === 'object' ? r.event?.id : r.event);
+  const reg = registrationsArray.find((r) => {
+    const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event);
     return Number(regEventId) === Number(id);
   });
   
-  const status = (reg?.status || (reg as any)?.registration_status || "").toUpperCase();
+  const status = (reg?.status || reg?.registration_status || "").toUpperCase();
   const isRegistered = !!reg && ["PENDING", "CONFIRMED", "PAID", "CONFIRM", "SUCCESS"].includes(status);
-  const localRegistrationId = reg?.registration_id || reg?.id;
+  const localRegistrationId = String(reg?.registration_id || reg?.id || "");
 
   const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
     skip: !id,
   });
-  const event = eventResponse?.data || eventResponse; // Handle different potential response structures
+  const event = (eventResponse && 'data' in eventResponse && eventResponse.data) ? eventResponse.data : (eventResponse as EventDataApi);
 
   // Fetch real-time registration status ONLY if we have a stored registration_id
   const { data: registrationStatus } = useGetRegistrationStatusQuery(localRegistrationId!, {
@@ -147,17 +133,18 @@ const EventDetailsView = ({
   registrationStatus,
   isRegistered = false,
 }: { 
-  event: EventData, 
+  event: EventDataApi, 
   onRegister: () => void,
-  registrationStatus?: RegistrationStatusData,
+  registrationStatus?: RegistrationStatusData | MyRegistration,
   isRegistered?: boolean,
 }) => {
-  const status = registrationStatus?.registration_status || 
-    registrationStatus?.payment_status || 
-    registrationStatus?.status ||
+  const regData = registrationStatus as Record<string, string | undefined> | undefined;
+  const status = regData?.registration_status || 
+    regData?.payment_status || 
+    regData?.status ||
     null;
 
-  const isFull = event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity);
+  const isFull = event.is_full || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -270,12 +257,14 @@ const EventDetailsView = ({
             <div className="space-y-2">
                <div className="flex justify-between text-xs font-bold">
                  <span className="text-gray-500">Spots Available</span>
-                 <span className="text-white">45 / {event.maximum_capacity}</span>
+                 <span className="text-white">{(event.maximum_capacity ?? 0) - (event.registered_count ?? 0)} / {event.maximum_capacity ?? 0}</span>
                </div>
                <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden">
-                 <div className="h-full bg-cyan-400" style={{ width: "45%" }}></div>
+                 <div className="h-full bg-cyan-400" style={{ width: `${Math.min((((event.registered_count ?? 0) / (event.maximum_capacity || 1)) * 100), 100)}%` }}></div>
                </div>
-               <p className="text-[10px] text-[#04B5A3] font-bold">Hurry! Limited spots remaining</p>
+               <p className="text-[10px] text-[#04B5A3] font-bold">
+                 {((event.maximum_capacity ?? 0) - (event.registered_count ?? 0)) <= 5 ? "Hurry! Limited spots remaining" : "Spots available"}
+               </p>
             </div>
           </div>
 
@@ -324,7 +313,7 @@ const EventDetailsView = ({
   );
 };
 
-const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventData, onBack: () => void, onComplete: () => void }) => {
+const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, onBack: () => void, onComplete: () => void }) => {
   const [step, setStep] = useState(1);
   const [registrationId, setRegistrationId] = useState<string | null>(null);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
@@ -351,14 +340,15 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventData, onB
         setIsPromoApplied(true);
         toast.success("Promo code applied successfully!");
       }
-    } catch (err: any) {
-      setPromoError(err?.data?.message || err?.data?.error || "Invalid promo code");
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string, error?: string } };
+      setPromoError(error?.data?.message || error?.data?.error || "Invalid promo code");
       setPromoAmount(0);
       setIsPromoApplied(false);
     }
   };
 
-  const handleNext = async (data: any) => {
+  const handleNext = async (data: Record<string, string>) => {
     if (step === 1) {
       setStep(2);
     } else if (step === 2) {
@@ -381,19 +371,21 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventData, onB
           ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {})
         };
         const res = await createRegistration(payload).unwrap();
-        const regId = res?.data?.registration_id || res?.registration_id;
-        setRegistrationId(regId);
+        const regId = res?.data?.registration_id || res?.registration_id || res?.data?.id || res?.id;
+        const finalRegId = regId ? String(regId) : null;
+        setRegistrationId(finalRegId);
         // Store registration_id in localStorage keyed by event id
-        if (regId && event.id) {
+        if (finalRegId && event.id) {
           try {
             const existing = JSON.parse(localStorage.getItem("playerRegistrations") || "{}");
-            existing[String(event.id)] = regId;
+            existing[String(event.id)] = finalRegId;
             localStorage.setItem("playerRegistrations", JSON.stringify(existing));
           } catch {}
         }
         setStep(4);
-      } catch (err: any) {
-        const errMsg = err?.data?.message || err?.data?.error || "Registration failed. Please try again.";
+      } catch (err: unknown) {
+        const error = err as { data?: { message?: string, error?: string } };
+        const errMsg = error?.data?.message || error?.data?.error || "Registration failed. Please try again.";
         // Handle "Already registered" specifically
         if (errMsg.toLowerCase().includes("already registered")) {
           setRegistrationError("You are already registered for this event. Please check your registrations.");
@@ -421,8 +413,9 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventData, onB
         } else {
           toast.error("Could not get checkout URL.");
         }
-      } catch (err: any) {
-        toast.error(err?.data?.message || err?.data?.error || "Checkout failed.");
+      } catch (err: unknown) {
+        const error = err as { data?: { message?: string, error?: string } };
+        toast.error(error?.data?.message || error?.data?.error || "Checkout failed.");
       }
     }
   };

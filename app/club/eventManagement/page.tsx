@@ -36,6 +36,7 @@ import {
   useDeleteEventMutation,
   useToggleFeaturedEventMutation,
 } from "@/redux/features/club/clubEventManagementApi";
+import { countryCodes } from "@/constants/countryCodes";
 
 type Event = {
   id: string;
@@ -1453,6 +1454,7 @@ function Step1({
                 value={data.date}
                 onChange={(e) => updateData({ ...data, date: e.target.value })}
                 className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                style={{ colorScheme: "dark" }}
               />
             </div>
             <div>
@@ -1466,6 +1468,7 @@ function Step1({
                   updateData({ ...data, startTime: e.target.value })
                 }
                 className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all text-center"
+                style={{ colorScheme: "dark" }}
               />
             </div>
             <div>
@@ -1479,6 +1482,7 @@ function Step1({
                   updateData({ ...data, endTime: e.target.value })
                 }
                 className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all text-center"
+                style={{ colorScheme: "dark" }}
               />
             </div>
           </div>
@@ -1640,16 +1644,32 @@ function Step2({
                 <label className="block text-gray-400 text-sm mb-2.5">
                   Country
                 </label>
-                <input
-                  value={data.location.country}
-                  onChange={(e) =>
-                    updateData({
-                      ...data,
-                      location: { ...data.location, country: e.target.value },
-                    })
-                  }
-                  className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white appearance-none focus:outline-none focus:border-cyan-400/50 transition-all"
-                />
+                <div className="relative">
+                  <select
+                    value={data.location.country}
+                    onChange={(e) =>
+                      updateData({
+                        ...data,
+                        location: { ...data.location, country: e.target.value },
+                      })
+                    }
+                    className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white appearance-none focus:outline-none focus:border-cyan-400/50 transition-all"
+                  >
+                    <option value="">Select Country</option>
+                    {countryCodes.map((c) => {
+                      const countryName = c.label.split(" (")[0];
+                      return (
+                        <option key={c.code} value={countryName}>
+                          {countryName}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <ChevronRight
+                    size={18}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rotate-90 text-gray-500 pointer-events-none"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1845,14 +1865,42 @@ function Step3({
               <label className="block text-gray-400 text-sm mb-2.5 flex items-center gap-2">
                 <Phone size={14} className="text-gray-600" /> Contact Phone
               </label>
-              <input
-                value={data.contactPhone}
-                onChange={(e) =>
-                  updateData({ ...data, contactPhone: e.target.value })
-                }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
-                placeholder="+34 XXX XXX XXX"
-              />
+              <div className="flex bg-[#0B0E1E] border border-[#1E2550] rounded-xl overflow-hidden focus-within:border-cyan-400/50 transition-all text-white">
+                <div className="relative border-r border-[#1E2550]">
+                  <select
+                    className="w-[90px] h-full bg-transparent pl-4 pr-6 py-4 outline-none appearance-none cursor-pointer text-sm"
+                    onChange={(e) => {
+                      const currentVal = data.contactPhone || "";
+                      const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["", currentVal];
+                      const num = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+                      updateData({ ...data, contactPhone: `${e.target.value} ${num}` });
+                    }}
+                    value={(data.contactPhone || "+34 ").split(" ")[0]}
+                  >
+                    {countryCodes.map((c) => (
+                      <option key={c.code} value={c.code} className="bg-[#0B0E1E]">
+                        {c.code}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronRight size={14} className="absolute right-2 top-1/2 -translate-y-1/2 rotate-90 text-gray-500 pointer-events-none" />
+                </div>
+                <input
+                  value={(() => {
+                    const currentVal = data.contactPhone || "+34 ";
+                    const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["", currentVal];
+                    return parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+                  })()}
+                  onChange={(e) => {
+                    const currentVal = data.contactPhone || "+34 ";
+                    const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["+34", ""];
+                    const code = parts[0];
+                    updateData({ ...data, contactPhone: `${code} ${e.target.value}` });
+                  }}
+                  className="w-full bg-transparent px-4 py-4 focus:outline-none"
+                  placeholder="XXX XXX XXX"
+                />
+              </div>
             </div>
           </div>
 

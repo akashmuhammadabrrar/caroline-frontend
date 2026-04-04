@@ -15,16 +15,9 @@ import {
 import { 
   useGetEventsQuery,
   useGetMyRegistrationsQuery,
+  type EventDataApi,
+  type MyRegistration,
 } from "../../../redux/features/player/eventsDirectoryApi";
-
-interface EventData {
-  id: number;
-  event_name: string;
-  venue_name: string;
-  event_date: string;
-  registration_fee: string;
-  event_type?: string;
-}
 
 // ── Single event card. Fetches its own status if a registrationId exists ──────
 const EventCard = ({ 
@@ -34,7 +27,7 @@ const EventCard = ({
   isFull,
   status 
 }: { 
-  event: EventData; 
+  event: EventDataApi; 
   onViewDetails: (id: number) => void;
   isRegistered: boolean;
   isFull: boolean;
@@ -113,20 +106,22 @@ const EventsDirectoryPage = () => {
 
   const { data: eventsData, isLoading } = useGetEventsQuery();
   console.log('player events ', eventsData);
-  const events = eventsData?.results || eventsData?.data || (Array.isArray(eventsData) ? eventsData : []);
-
+  const eventsDataArr = Array.isArray(eventsData) ? eventsData : [];
+  const events = (eventsData && 'results' in eventsData ? eventsData.results : undefined) || 
+                 (eventsData && 'data' in eventsData ? eventsData.data : undefined) || 
+                 eventsDataArr;
 
   const { data: registrationsData } = useGetMyRegistrationsQuery();
-  const registrationsArray = useMemo(() => {
+  const registrationsArray: MyRegistration[] = useMemo(() => {
     if (!registrationsData) return [];
     if (Array.isArray(registrationsData)) return registrationsData;
-    if ((registrationsData as any)?.results) return (registrationsData as any).results;
-    if ((registrationsData as any)?.data) return (registrationsData as any).data;
+    if ('results' in registrationsData && Array.isArray(registrationsData.results)) return registrationsData.results;
+    if ('data' in registrationsData && Array.isArray(registrationsData.data)) return registrationsData.data;
     return [];
   }, [registrationsData]);
 
   const filteredEvents = useMemo(() => {
-    let result = events.filter((event: EventData) => {
+    let result = [...events].filter((event: EventDataApi) => {
       const matchesSearch = event.event_name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = typeFilter === "All Types" || event.event_type === typeFilter;
       const matchesLocation = locationFilter === "All Locations" || event.venue_name?.includes(locationFilter);
@@ -134,8 +129,8 @@ const EventsDirectoryPage = () => {
     });
 
     try {
-      const map = JSON.parse(localStorage.getItem("playerRegistrations") || "{}");
-      result.sort((a: any, b: any) => {
+      const map = JSON.parse(localStorage.getItem("playerRegistrations") || "{}") as Record<string, string>;
+      result.sort((a: EventDataApi, b: EventDataApi) => {
         const aReg = !!map[String(a.id)];
         const bReg = !!map[String(b.id)];
         if (aReg !== bReg) return aReg ? 1 : -1; // Unregistered first
@@ -210,14 +205,14 @@ const EventsDirectoryPage = () => {
       ) : (
         <div className="space-y-8">
           <div className="grid lg:grid-cols-2 gap-6">
-            {paginatedEvents.map((event: any) => {
-              const reg = registrationsArray.find((r: any) => {
-                const regEventId = r.event_id || (typeof r.event === 'object' ? (r.event as any).id : r.event);
+            {paginatedEvents.map((event: EventDataApi) => {
+              const reg = registrationsArray.find((r) => {
+                const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event);
                 return Number(regEventId) === Number(event.id);
               });
               const status = (reg?.status || "").toUpperCase();
               const isRegistered = !!reg && ["PENDING", "CONFIRMED", "PAID", "CONFIRM", "SUCCESS"].includes(status);
-              const isFull = event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity);
+              const isFull = event.is_full || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
               
               return (
                 <EventCard 
