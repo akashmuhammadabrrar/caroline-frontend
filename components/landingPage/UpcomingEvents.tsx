@@ -16,9 +16,13 @@ export default function UpcomingEvent() {
   const theme = useAppSelector((state) => state.theme);
   const user = useAppSelector((state) => state.auth.user);
   const { data: eventsData, isLoading } = useGetUpcomingEventsQuery();
-  const { data: registrations = [] } = useGetMyRegistrationsQuery(undefined, {
+  const { data: registrationsData } = useGetMyRegistrationsQuery(undefined, {
     skip: !user || user.role !== "PLAYER",
   });
+
+  const registrations = Array.isArray(registrationsData) 
+    ? registrationsData 
+    : (registrationsData as any)?.results || (registrationsData as any)?.data || [];
 
   // Get active/upcoming events and limit to 4
   const upcomingEvents = (eventsData?.data || [])
@@ -132,14 +136,14 @@ export default function UpcomingEvent() {
                 </div>
 
                 {(() => {
-                  const reg = registrations.find((r: any) => (r.event === event.id || r.event_id === event.id));
+                  const reg = registrations.find((r: any) => (r.event === event.id || r.event_id === event.id || r.event?.id === event.id));
                   const isRegistered = !!reg && reg.status !== "CANCELLED";
                   const isFull = event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity);
 
                   return (
                     <Button
                       variant="common"
-                      disabled={isFull && !isRegistered && user?.role === "PLAYER"}
+                      disabled={(isRegistered || isFull) && user?.role === "PLAYER"}
                       onClick={() => {
                         if (!user) {
                           router.push("/login");
@@ -148,13 +152,7 @@ export default function UpcomingEvent() {
                         
                         const role = user.role?.toUpperCase();
                         if (role === "PLAYER") {
-                          if (isRegistered) {
-                            router.push("/player/eventsDirectory");
-                          } else if (isFull) {
-                            return;
-                          } else {
-                            router.push(`/latest-events/${event.id}`);
-                          }
+                          router.push(`/latest-events/${event.id}`);
                         } else if (role === "CLUB") {
                           router.push("/club/eventManagement");
                         } else if (role === "SCOUT") {
@@ -166,14 +164,14 @@ export default function UpcomingEvent() {
                         }
                       }}
                       className={`w-full font-semibold py-3 rounded-md transition-all duration-200 flex items-center justify-center gap-2 ${
-                        isRegistered 
-                          ? "bg-[#0B0E1E] text-cyan-400 border border-cyan-400/30" 
+                        isRegistered && user?.role === "PLAYER"
+                          ? "bg-gray-800/80 text-cyan-400 border border-cyan-400/30 cursor-not-allowed" 
                           : isFull && user?.role === "PLAYER"
                           ? "bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed"
                           : "text-white"
                       }`}
                     >
-                      {isRegistered ? (
+                      {isRegistered && user?.role === "PLAYER" ? (
                          <>Already Registered</>
                       ) : isFull && user?.role === "PLAYER" ? (
                         "Event Full"
