@@ -4,8 +4,8 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Loader2, Settings, Image as ImageIcon, Type, Sparkles, X, Check, Save, Palette, Plus, Edit2, Trash2, ArrowLeft, LayoutTemplate, Users, UserPlus, Flag } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { 
-  useGetGeneralSettingsQuery, 
+import {
+  useGetGeneralSettingsQuery,
   useUpdateGeneralSettingsMutation,
   GeneralSettings,
   useGetFooterContentQuery,
@@ -104,7 +104,7 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
             <p className="text-gray-500 text-sm">Fill out the details for your platform's footer layout</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={isSaving}
           className="px-8 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-[#080D2C] font-bold transition-all shadow-lg shadow-[#00E5FF]/20 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -120,22 +120,22 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
           <div className="space-y-6">
             <div>
               <label className={labelClass}>About Text</label>
-              <textarea 
-                name="about_text" 
-                value={formData.about_text || ''} 
-                onChange={handleChange} 
-                className={inputClass + " min-h-[120px]"} 
-                placeholder="Brief description about the platform..." 
+              <textarea
+                name="about_text"
+                value={formData.about_text || ''}
+                onChange={handleChange}
+                className={inputClass + " min-h-[120px]"}
+                placeholder="Brief description about the platform..."
               />
             </div>
             <div>
               <label className={labelClass}>Copyright Text</label>
-              <input 
-                name="copyright_text" 
-                value={formData.copyright_text || ''} 
-                onChange={handleChange} 
-                className={inputClass} 
-                placeholder="e.g. © 2026 NextGen Pros..." 
+              <input
+                name="copyright_text"
+                value={formData.copyright_text || ''}
+                onChange={handleChange}
+                className={inputClass}
+                placeholder="e.g. © 2026 NextGen Pros..."
               />
             </div>
           </div>
@@ -147,34 +147,34 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
             <div>
               <label className={labelClass}>Background Color</label>
               <div className="flex items-center gap-3 bg-[#0a0c16] border border-gray-800 rounded-xl p-2 pr-4 transition-all focus-within:border-cyan-500/50">
-                <input 
-                  type="color" 
-                  value={formData.background_color || '#080D2C'} 
+                <input
+                  type="color"
+                  value={formData.background_color || '#080D2C'}
                   onChange={(e) => setFormData(p => ({ ...p, background_color: e.target.value }))}
-                  className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer" 
+                  className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer"
                 />
-                <input 
-                  type="text" 
-                  value={formData.background_color || '#080D2C'} 
+                <input
+                  type="text"
+                  value={formData.background_color || '#080D2C'}
                   onChange={(e) => setFormData(p => ({ ...p, background_color: e.target.value }))}
-                  className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full" 
+                  className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full"
                 />
               </div>
             </div>
             <div>
               <label className={labelClass}>Text Color</label>
               <div className="flex items-center gap-3 bg-[#0a0c16] border border-gray-800 rounded-xl p-2 pr-4 transition-all focus-within:border-cyan-500/50">
-                <input 
-                  type="color" 
-                  value={formData.text_color || '#FFFFFF'} 
+                <input
+                  type="color"
+                  value={formData.text_color || '#FFFFFF'}
                   onChange={(e) => setFormData(p => ({ ...p, text_color: e.target.value }))}
-                  className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer" 
+                  className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer"
                 />
-                <input 
-                  type="text" 
-                  value={formData.text_color || '#FFFFFF'} 
+                <input
+                  type="text"
+                  value={formData.text_color || '#FFFFFF'}
                   onChange={(e) => setFormData(p => ({ ...p, text_color: e.target.value }))}
-                  className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full" 
+                  className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full"
                 />
               </div>
             </div>
@@ -188,12 +188,12 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
           {['facebook_url', 'twitter_url', 'instagram_url', 'linkedin_url', 'youtube_url'].map(social => (
             <div key={social}>
               <label className={labelClass}>{social.replace('_url', '').charAt(0).toUpperCase() + social.replace('_url', '').slice(1)} URL</label>
-              <input 
-                name={social} 
-                value={(formData as any)[social] || ''} 
-                onChange={handleChange} 
-                className={inputClass} 
-                placeholder={`https://${social.replace('_url', '')}.com/...`} 
+              <input
+                name={social}
+                value={(formData as any)[social] || ''}
+                onChange={handleChange}
+                className={inputClass}
+                placeholder={`https://${social.replace('_url', '')}.com/...`}
               />
             </div>
           ))}
@@ -205,15 +205,15 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
           <h2 className={sectionTitleClass} style={{ marginBottom: 0 }}>Navigation Links</h2>
           <button onClick={handleAddLink} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 font-bold text-sm transition-all flex items-center gap-1"><Plus size={16} /> Add Link</button>
         </div>
-        
+
         <div className="space-y-4">
           {formData.links && formData.links.length > 0 ? (
             formData.links.map((link, index) => (
               <div key={index} className="flex flex-col md:flex-row gap-4 p-4 bg-[#0a0c16] rounded-xl border border-gray-800 items-start md:items-center relative group">
                 <div className="flex-1 w-full">
                   <label className="text-[10px] text-gray-500 uppercase tracking-wider mb-1 block">Category</label>
-                  <select 
-                    value={link.category} 
+                  <select
+                    value={link.category}
                     onChange={e => handleLinkChange(index, 'category', e.target.value)}
                     className="w-full bg-transparent border-none text-white focus:outline-none focus:ring-0 text-sm appearance-none cursor-pointer"
                   >
@@ -224,9 +224,9 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
                 </div>
                 <div className="flex-1 w-full">
                   <label className="text-[10px] text-gray-500 uppercase tracking-wider mb-1 block">Label</label>
-                  <input 
-                    type="text" 
-                    value={link.link_text} 
+                  <input
+                    type="text"
+                    value={link.link_text}
                     onChange={e => handleLinkChange(index, 'link_text', e.target.value)}
                     className="w-full bg-transparent border-none text-white focus:outline-none placeholder:text-gray-600 text-sm"
                     placeholder="e.g. Home"
@@ -234,9 +234,9 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
                 </div>
                 <div className="flex-1 w-full md:w-auto md:max-w-[200px]">
                   <label className="text-[10px] text-gray-500 uppercase tracking-wider mb-1 block">URL Route</label>
-                  <input 
-                    type="text" 
-                    value={link.link_url} 
+                  <input
+                    type="text"
+                    value={link.link_url}
                     onChange={e => handleLinkChange(index, 'link_url', e.target.value)}
                     className="w-full bg-transparent border-none text-cyan-400 focus:outline-none placeholder:text-gray-600 text-sm font-mono"
                     placeholder="e.g. /"
@@ -244,14 +244,14 @@ const FooterContentForm = ({ initialData, onBack }: { initialData?: Partial<Foot
                 </div>
                 <div className="w-16">
                   <label className="text-[10px] text-gray-500 uppercase tracking-wider mb-1 block">Order</label>
-                  <input 
-                    type="number" 
-                    value={link.order} 
+                  <input
+                    type="number"
+                    value={link.order}
                     onChange={e => handleLinkChange(index, 'order', parseInt(e.target.value))}
                     className="w-full bg-transparent border-none text-white focus:outline-none placeholder:text-gray-600 text-sm"
                   />
                 </div>
-                <button 
+                <button
                   onClick={() => handleRemoveLink(index)}
                   className="md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all opacity-100 md:opacity-0 group-hover:opacity-100"
                 >
@@ -276,10 +276,10 @@ const FooterCardsTab = () => {
   const [viewState, setViewState] = useState<'list' | 'create' | 'edit'>('list');
   const [selectedFooter, setSelectedFooter] = useState<Partial<FooterContent> | undefined>(undefined);
 
-  const footers = Array.isArray(footerResponse?.data) 
-    ? footerResponse.data 
-    : footerResponse?.data 
-      ? [footerResponse.data] 
+  const footers = Array.isArray(footerResponse?.data)
+    ? footerResponse.data
+    : footerResponse?.data
+      ? [footerResponse.data]
       : [];
 
   const handleEdit = (footer: FooterContent) => {
@@ -325,7 +325,7 @@ const FooterCardsTab = () => {
           </h1>
           <p className="text-gray-500 text-lg">Manage all footer layout variants across your platform</p>
         </div>
-        <button 
+        <button
           onClick={handleCreate}
           className="px-6 py-3 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 hover:bg-[#00E5FF]/20 text-[#00E5FF] font-bold transition-all flex items-center justify-center gap-2"
         >
@@ -341,7 +341,7 @@ const FooterCardsTab = () => {
           </div>
           <h3 className="text-xl font-bold mb-2 text-white">No Footer Cards Found</h3>
           <p className="text-gray-500 mb-6 text-center max-w-sm">Create different footer templates and styles to use across your platform.</p>
-          <button 
+          <button
             onClick={handleCreate}
             className="px-6 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-[#080D2C] font-bold transition-all"
           >
@@ -352,27 +352,27 @@ const FooterCardsTab = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {footers.map((footer) => (
             <div key={footer.id} className="bg-[#171b2f] border border-gray-800 rounded-2xl p-6 hover:border-cyan-500/30 transition-all flex flex-col group relative overflow-hidden">
-              <div 
-                className="absolute top-0 left-0 w-full h-2 opacity-80 shadow-[0_0_10px_rgba(0,229,255,0.3)]" 
-                style={{ backgroundColor: footer.background_color || '#00E5FF' }} 
+              <div
+                className="absolute top-0 left-0 w-full h-2 opacity-80 shadow-[0_0_10px_rgba(0,229,255,0.3)]"
+                style={{ backgroundColor: footer.background_color || '#00E5FF' }}
               />
               <div className="flex justify-between items-start mb-4 mt-2">
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">Footer Variant #{footer.id}</h3>
                   <div className="flex items-center gap-2">
-                     <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)] ${footer.is_active ? 'bg-[#00E5FF] shadow-[#00E5FF]/80' : 'bg-gray-500'}`} />
-                     <span className="text-xs text-gray-400">{footer.is_active ? 'Active' : 'Draft'}</span>
+                    <span className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)] ${footer.is_active ? 'bg-[#00E5FF] shadow-[#00E5FF]/80' : 'bg-gray-500'}`} />
+                    <span className="text-xs text-gray-400">{footer.is_active ? 'Active' : 'Draft'}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={() => handleEdit(footer)}
                     className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-cyan-400 transition-colors"
                     title="Edit Footer"
                   >
                     <Edit2 size={16} />
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDelete(footer.id)}
                     disabled={isDeleting}
                     className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-colors"
@@ -426,9 +426,9 @@ const FeaturedPlayerForm = ({ initialData, onBack }: { initialData?: Partial<Fea
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ 
-      ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -448,14 +448,16 @@ const FeaturedPlayerForm = ({ initialData, onBack }: { initialData?: Partial<Fea
   const handleSave = async () => {
     try {
       const payload = new FormData();
-      
-      const jsonData = {
-        player_name: formData.player_name,
-        country_name: formData.country_name,
-        position: formData.position,
+
+      const data = {
+        player_name: formData.player_name || '',
+        country_name: formData.country_name || '',
+        position: formData.position || '',
         order: Number(formData.order) || 1,
-        is_active: formData.is_active
+        is_active: !!formData.is_active
       };
+
+      payload.append('data', JSON.stringify(data));
 
       if (formData.flag_image instanceof File) {
         payload.append('flag_image', formData.flag_image);
@@ -463,8 +465,6 @@ const FeaturedPlayerForm = ({ initialData, onBack }: { initialData?: Partial<Fea
       if (formData.player_image instanceof File) {
         payload.append('player_image', formData.player_image);
       }
-      
-      payload.append('data', JSON.stringify(jsonData));
 
       if (formData.id) {
         await updatePlayer({ id: formData.id, data: payload }).unwrap();
@@ -495,7 +495,7 @@ const FeaturedPlayerForm = ({ initialData, onBack }: { initialData?: Partial<Fea
             <p className="text-gray-500 text-sm">Add or modify featured player details</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={isSaving}
           className="px-8 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-[#080D2C] font-bold transition-all shadow-lg shadow-[#00E5FF]/20 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -557,7 +557,7 @@ const FeaturedPlayerForm = ({ initialData, onBack }: { initialData?: Partial<Fea
                   </div>
                 )}
               </div>
-              
+
               <div className="flex-1">
                 <label className={labelClass}>Player Avatar</label>
                 <div className="relative group mt-2">
@@ -634,7 +634,7 @@ const FeaturedPlayersTab = () => {
           </h1>
           <p className="text-gray-500 text-lg">Manage all featured players displayed on the home page</p>
         </div>
-        <button 
+        <button
           onClick={handleCreate}
           className="px-6 py-3 rounded-xl bg-[#00E5FF]/10 border border-[#00E5FF]/30 hover:bg-[#00E5FF]/20 text-[#00E5FF] font-bold transition-all flex items-center justify-center gap-2"
         >
@@ -708,7 +708,7 @@ const FeaturedPlayersTab = () => {
 
 export default function ContentManagement() {
   const [activeTab, setActiveTab] = useState("General");
-  
+
   const { data: settings, isLoading: isLoadingGet } = useGetGeneralSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateGeneralSettingsMutation();
 
@@ -753,7 +753,7 @@ export default function ContentManagement() {
   const handleSave = async () => {
     try {
       const data = new FormData();
-      
+
       const settingsData = {
         platformName: formData.platformName || "",
         tagline: formData.tagline || "",
@@ -796,9 +796,8 @@ export default function ContentManagement() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2.5 px-6 py-3.5 rounded-t-2xl font-bold text-sm transition-all relative ${
-              activeTab === tab.id ? 'bg-[#171b2f] text-white border-t border-x border-gray-800' : 'text-gray-500 hover:text-gray-300'
-            }`}
+            className={`flex items-center gap-2.5 px-6 py-3.5 rounded-t-2xl font-bold text-sm transition-all relative ${activeTab === tab.id ? 'bg-[#171b2f] text-white border-t border-x border-gray-800' : 'text-gray-500 hover:text-gray-300'
+              }`}
           >
             <span className={activeTab === tab.id ? 'text-cyan-400' : ''}>{tab.icon}</span>
             {tab.label}
@@ -816,7 +815,7 @@ export default function ContentManagement() {
               </h1>
               <p className="text-gray-500 text-lg">Manage platform identity and assets</p>
             </div>
-            <button 
+            <button
               onClick={handleSave}
               disabled={isUpdating}
               className="px-8 py-3 rounded-xl bg-[#00E5FF] hover:bg-[#00cce6] text-[#080D2C] font-bold transition-all shadow-lg shadow-[#00E5FF]/20 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -854,17 +853,17 @@ export default function ContentManagement() {
                     <div key={color.key}>
                       <label className={labelClass}>{color.label}</label>
                       <div className="flex items-center gap-3 bg-[#0a0c16] border border-gray-800 rounded-xl p-2 pr-4 transition-all focus-within:border-cyan-500/50">
-                        <input 
-                          type="color" 
-                          value={formData.brandColors?.[color.key as keyof typeof formData.brandColors] || "#000000"} 
+                        <input
+                          type="color"
+                          value={formData.brandColors?.[color.key as keyof typeof formData.brandColors] || "#000000"}
                           onChange={(e) => handleColorChange(color.key, e.target.value)}
-                          className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer overflow-hidden" 
+                          className="w-12 h-12 rounded-lg bg-transparent border-none cursor-pointer overflow-hidden"
                         />
-                        <input 
-                          type="text" 
-                          value={formData.brandColors?.[color.key as keyof typeof formData.brandColors] || ""} 
+                        <input
+                          type="text"
+                          value={formData.brandColors?.[color.key as keyof typeof formData.brandColors] || ""}
                           onChange={(e) => handleColorChange(color.key, e.target.value)}
-                          className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full" 
+                          className="bg-transparent border-none focus:outline-none text-white font-mono uppercase text-sm w-full"
                         />
                       </div>
                     </div>
@@ -876,21 +875,21 @@ export default function ContentManagement() {
             <div className="space-y-8">
               <div className={cardClass}>
                 <h2 className={sectionTitleClass}><ImageIcon size={20} className="text-amber-400" /> Brand Assets</h2>
-                
+
                 <div className="space-y-8">
                   <div>
                     <label className={labelClass}>Platform Logo</label>
                     <div className="flex flex-col gap-4">
                       <div className="relative group">
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={(e) => handleFileChange(e, "platformLogo")} 
-                          className="hidden" 
-                          id="logo-upload" 
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, "platformLogo")}
+                          className="hidden"
+                          id="logo-upload"
                         />
-                        <label 
-                          htmlFor="logo-upload" 
+                        <label
+                          htmlFor="logo-upload"
                           className="flex items-center justify-center gap-3 w-full h-32 border-2 border-dashed border-gray-800 rounded-2xl cursor-pointer hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all group-hover:bg-[#0a0c16]"
                         >
                           <div className="flex flex-col items-center gap-2">
@@ -903,9 +902,9 @@ export default function ContentManagement() {
                       </div>
                       {(logoPreview || (typeof formData.platformLogo === 'string' && formData.platformLogo)) && (
                         <div className="rounded-xl overflow-hidden border border-gray-800 w-full bg-[#0a0c16] relative aspect-video">
-                          <Image 
-                            src={logoPreview || (typeof formData.platformLogo === 'string' ? formData.platformLogo : '')} 
-                            alt="Logo Preview" 
+                          <Image
+                            src={logoPreview || (typeof formData.platformLogo === 'string' ? formData.platformLogo : '')}
+                            alt="Logo Preview"
                             fill
                             className="object-contain p-4"
                             unoptimized
@@ -919,15 +918,15 @@ export default function ContentManagement() {
                     <label className={labelClass}>Favicon</label>
                     <div className="flex flex-col gap-4">
                       <div className="relative group">
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={(e) => handleFileChange(e, "favicon")} 
-                          className="hidden" 
-                          id="favicon-upload" 
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, "favicon")}
+                          className="hidden"
+                          id="favicon-upload"
                         />
-                        <label 
-                          htmlFor="favicon-upload" 
+                        <label
+                          htmlFor="favicon-upload"
                           className="flex items-center justify-center gap-3 w-full h-24 border-2 border-dashed border-gray-800 rounded-2xl cursor-pointer hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all group-hover:bg-[#0a0c16]"
                         >
                           <div className="flex flex-col items-center gap-2">
@@ -940,9 +939,9 @@ export default function ContentManagement() {
                       </div>
                       {(faviconPreview || (typeof formData.favicon === 'string' && formData.favicon)) && (
                         <div className="rounded-xl overflow-hidden border border-gray-800 w-24 h-24 bg-[#0a0c16] relative p-4 self-start">
-                          <Image 
-                            src={faviconPreview || (typeof formData.favicon === 'string' ? formData.favicon : '')} 
-                            alt="Favicon Preview" 
+                          <Image
+                            src={faviconPreview || (typeof formData.favicon === 'string' ? formData.favicon : '')}
+                            alt="Favicon Preview"
                             fill
                             className="object-contain"
                             unoptimized

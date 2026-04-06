@@ -40,6 +40,7 @@ export interface CategoryPayload {
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const adminCategoriesApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getNewsCategories: builder.query<NewsCategoriesResponse, void>({
       query: () => "/admin-dashboard/news/categories/",
