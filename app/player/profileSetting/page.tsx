@@ -51,16 +51,19 @@ const Tab = ({
   <button
     onClick={onClick}
     className={`
-flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-300
+flex items-center justify-center gap-2.5 px-6 sm:px-8 py-4 sm:py-5 text-sm sm:text-[15px] font-medium transition-all duration-300 whitespace-nowrap relative
 ${
   active
-    ? "text-white border-b-2 border-cyan-400 bg-gradient-to-r from-[#00E5FF33] to-[#9C27B033]"
-    : "text-[#8A9ABF] hover:text-white"
+    ? "text-white bg-[#1A1B41]"
+    : "text-[#8A9ABF] hover:text-white hover:bg-white/5"
 }
 `}
   >
     <span>{icon}</span>
     <span>{children}</span>
+    {active && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#04B5A3] shadow-[0_-2px_10px_rgba(4,181,163,0.5)]" />
+    )}
   </button>
 );
 
@@ -84,22 +87,21 @@ const Row = ({
   onClick?: () => void;
 }) => (
   <div
-    className={`flex items-center justify-between bg-[#0F122B] p-5 mb-3 border border-white/5
-       transition-colors rounded-xl ${onClick ? "cursor-pointer hover:border-white/10" : ""}`}
+    className={`flex items-center justify-between bg-[#0B0D2C] p-4 sm:p-5 mb-3 transition-colors rounded-lg gap-2 sm:gap-4 ${onClick ? "cursor-pointer hover:bg-[#12153b]" : ""}`}
     onClick={onClick}
   >
-    <div className="flex items-center gap-4 flex-1">
-      {icon && <div className="text-xl flex-shrink-0">{icon}</div>}
-      <div>
-        <p className="text-white text-sm font-semibold">{title}</p>
+    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+      {icon && <div className="text-xl sm:text-2xl flex-shrink-0">{icon}</div>}
+      <div className="min-w-0 flex-1">
+        <p className="text-white text-sm font-semibold break-words">{title}</p>
         {description && (
-          <p className="text-xs text-[#8A9ABF] mt-1 leading-relaxed">
+          <p className="text-xs text-[#8A9ABF] mt-1 leading-relaxed break-words">
             {description}
           </p>
         )}
       </div>
     </div>
-    <div className="flex-shrink-0 pl-3">{control}</div>
+    <div className="flex-shrink-0 pl-2 sm:pl-3">{control}</div>
   </div>
 );
 
@@ -169,7 +171,7 @@ const SaveBtn = ({
   <button
     onClick={onClick}
     disabled={loading}
-    className="w-full mt-4 py-4 bg-[#04B5A3] hover:bg-[#039b8b] text-white font-bold rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+    className="w-full mt-4 py-3.5 bg-[#04B5A3] hover:bg-[#039b8b] text-white font-bold text-sm rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
   >
     {loading ? "Saving..." : label}
   </button>
@@ -198,13 +200,12 @@ export default function SettingsPage() {
   // ── Your original form states ───────────────────────────────────────────────
 
   const [notif, setNotif] = useState({
-    email_notifications: true,
-    push_notifications: true,
-    realtime_notifications: true,
-    notification_types: {
-      NEW_MESSAGE: { email: true, push: true, realtime: true },
-      EVENT_REGISTRATION: { email: true, push: true, realtime: true },
-    },
+    email_new_messages: true,
+    email_event_reminders: true,
+    email_profile_views: true,
+    email_news_updates: true,
+    push_enabled: true,
+    push_sound: true,
   });
 
   const [privacy, setPrivacy] = useState<Omit<PrivacySettings, "id">>({
@@ -243,13 +244,12 @@ export default function SettingsPage() {
     const n = data.notification_settings;
     if (n) {
       setNotif({
-        email_notifications: n.email_notifications ?? true,
-        push_notifications: n.push_notifications ?? true,
-        realtime_notifications: n.realtime_notifications ?? true,
-        notification_types: n.notification_types || {
-          NEW_MESSAGE: { email: true, push: true, realtime: true },
-          EVENT_REGISTRATION: { email: true, push: true, realtime: true },
-        },
+        email_new_messages: n.email_new_messages ?? true,
+        email_event_reminders: n.email_event_reminders ?? true,
+        email_profile_views: n.email_profile_views ?? true,
+        email_news_updates: n.email_news_updates ?? true,
+        push_enabled: n.push_enabled ?? true,
+        push_sound: n.push_sound ?? true,
       });
     }
     const p = data.privacy_settings;
@@ -348,18 +348,23 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen text-white font-sans p-6 md:p-8">
-      {/* Page Title */}
-      <h1 className="text-4xl">
-        <SectionTitel title="Settings" />
-      </h1>
+    <div className="min-h-screen text-white font-sans p-4 sm:p-6 md:p-8">
+  {/* Page Title */}
+  <div className="mb-4 sm:mb-6 md:mb-8">
+    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+      <SectionTitel title="Settings" />
+    </h1>
+  </div>
 
+  {/* Main Container - Figma Desktop Layout */}
+  <div className="max-w-7xl mx-auto bg-[#12143A] rounded-2xl border border-[#2A2B5A] overflow-hidden flex flex-col">
+    {/* Tabs Header - Horizontal scroll */}
+    <div className="w-full border-b border-[#2A2B5A]">
       <div
-        className="flex gap-2 border-b border-[#1A2160] mb-6 overflow-x-auto whitespace-nowrap pb-1 
+        className="flex overflow-x-auto overflow-y-hidden whitespace-nowrap 
           [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        {/* Tabs Header */}
-        <div className="flex bg-[#12143A] border-b border-[#04B5A3]/20 ">
+        <div className="flex flex-row w-full min-w-max sm:min-w-0 bg-[#12143A]">
           {[
             { key: "Account", icon: <CiUser size={18} />, label: "Account" },
             {
@@ -388,13 +393,16 @@ export default function SettingsPage() {
             </Tab>
           ))}
         </div>
+      </div>
+    </div>
 
-        {/* Content Area within borders */}
-        <div className="p-6">
-          {activeTab === "Account" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div>
-                <SectionHeader>Account Actions</SectionHeader>
+    {/* Content Area */}
+    <div className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10">
+        {activeTab === "Account" && (
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+            <div>
+              <SectionHeader>Account Actions</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   icon={<IoSettingsOutline className="text-[#00E5FF]" />}
                   title="Change Password"
@@ -409,14 +417,16 @@ export default function SettingsPage() {
                   control={<ChevronRight />}
                 />
               </div>
+            </div>
 
-              <div>
-                <SectionHeader>Active Sessions</SectionHeader>
+            <div>
+              <SectionHeader>Active Sessions</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   title="Chrome on Windows"
                   description="Madrid, Spain • Current session"
                   control={
-                    <span className="text-[#00E5FF] text-xs">
+                    <span className="text-[#00E5FF] text-xs sm:text-sm">
                       Current session
                     </span>
                   }
@@ -425,36 +435,39 @@ export default function SettingsPage() {
                   title="Safari on iPhone"
                   description="Barcelona, Spain"
                   control={
-                    <button className="text-red-400 hover:text-red-300 text-[11px] font-bold tracking-wider uppercase">
+                    <button className="text-red-400 hover:text-red-300 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase">
                       Revoke
                     </button>
                   }
                 />
               </div>
+            </div>
 
-              <div>
-                <Row
-                  icon={<Trash />}
-                  title="Delete Account"
-                  description="Permanently delete your account and data"
-                  control={<span className="text-gray-500">→</span>}
-                  onClick={() => setDeleteModal(true)}
-                />
-              </div>
+            <div>
+              <Row
+                icon={<Trash />}
+                title="Delete Account"
+                description="Permanently delete your account and data"
+                control={<span className="text-gray-500">→</span>}
+                onClick={() => setDeleteModal(true)}
+              />
+            </div>
 
+            <div className="pt-4">
               <SaveBtn
                 onClick={handleSaveAccount}
                 loading={savingAccount}
                 label="Save Account Settings"
               />
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === "Privacy" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div>
-                <SectionHeader>Profile Visibility</SectionHeader>
-
+        {activeTab === "Privacy" && (
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+            <div>
+              <SectionHeader>Profile Visibility</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   title="Make my profile visible to clubs"
                   description="Allow clubs to view your complete profile"
@@ -470,7 +483,6 @@ export default function SettingsPage() {
                     />
                   }
                 />
-
                 <Row
                   title="Make my profile visible to scouts"
                   description="Allow scouts to discover your profile"
@@ -486,7 +498,6 @@ export default function SettingsPage() {
                     />
                   }
                 />
-
                 <Row
                   title="Show my age publicly"
                   description="Display your age on your profile"
@@ -503,10 +514,11 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+            </div>
 
-              <div>
-                <SectionHeader>Contact Privacy</SectionHeader>
-
+            <div>
+              <SectionHeader>Contact Privacy</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   title="Show contact details publicly"
                   description="Display email and phone on your profile"
@@ -522,7 +534,6 @@ export default function SettingsPage() {
                     />
                   }
                 />
-
                 <Row
                   title="Allow direct messages"
                   description="Receive messages from clubs and scouts"
@@ -539,9 +550,11 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+            </div>
 
-              <div>
-                <SectionHeader>Data & Privacy</SectionHeader>
+            <div>
+              <SectionHeader>Data & Privacy</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   icon={<GoShieldLock className="text-[#00E5FF]" />}
                   title="Download My Data"
@@ -556,269 +569,172 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+            </div>
 
+            <div className="pt-4">
               <SaveBtn
                 onClick={handleSavePrivacy}
                 loading={savingPrivacy}
                 label="Save Privacy Settings"
               />
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === "Notifications" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div>
-                <SectionHeader>Global Channels</SectionHeader>
+        {activeTab === "Notifications" && (
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+            <div>
+              <SectionHeader>Email Notifications</SectionHeader>
+              <div className="space-y-1">
                 <Row
-                  title="Email Notifications"
-                  description="Enable or disable all email alerts"
+                  title="New message notifications"
+                  description="Get notified when you receive new messages"
                   control={
                     <Toggle
-                      checked={notif.email_notifications}
+                      checked={notif.email_new_messages}
                       onChange={() =>
                         setNotif((n) => ({
                           ...n,
-                          email_notifications: !n.email_notifications,
+                          email_new_messages: !n.email_new_messages,
                         }))
                       }
                     />
                   }
                 />
                 <Row
-                  title="Push Notifications"
-                  description="Receive notifications on your device"
+                  title="Event reminders"
+                  description="Receive reminders for upcoming events"
                   control={
                     <Toggle
-                      checked={notif.push_notifications}
+                      checked={notif.email_event_reminders}
                       onChange={() =>
                         setNotif((n) => ({
                           ...n,
-                          push_notifications: !n.push_notifications,
+                          email_event_reminders: !n.email_event_reminders,
                         }))
                       }
                     />
                   }
                 />
                 <Row
-                  title="Real-time Notifications"
-                  description="In-app alerts and instant updates"
+                  title="Profile views"
+                  description="Know when clubs or scouts view your profile"
                   control={
                     <Toggle
-                      checked={notif.realtime_notifications}
+                      checked={notif.email_profile_views}
                       onChange={() =>
                         setNotif((n) => ({
                           ...n,
-                          realtime_notifications: !n.realtime_notifications,
+                          email_profile_views: !n.email_profile_views,
+                        }))
+                      }
+                    />
+                  }
+                />
+                <Row
+                  title="News & updates"
+                  description="Receive platform news and training content"
+                  control={
+                    <Toggle
+                      checked={notif.email_news_updates}
+                      onChange={() =>
+                        setNotif((n) => ({
+                          ...n,
+                          email_news_updates: !n.email_news_updates,
                         }))
                       }
                     />
                   }
                 />
               </div>
+            </div>
 
-              <div>
-                <SectionHeader>Notification Types</SectionHeader>
-
-                {/* New Messages */}
-                <div className="bg-[#0F122B] rounded-xl border border-white/5 p-5 mb-4">
-                  <p className="text-white text-sm font-semibold mb-3">
-                    New Messages
-                  </p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Email
-                      </span>
-                      <SquareCheckbox
-                        checked={notif.notification_types.NEW_MESSAGE.email}
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              NEW_MESSAGE: {
-                                ...n.notification_types.NEW_MESSAGE,
-                                email: !n.notification_types.NEW_MESSAGE.email,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Push
-                      </span>
-                      <SquareCheckbox
-                        checked={notif.notification_types.NEW_MESSAGE.push}
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              NEW_MESSAGE: {
-                                ...n.notification_types.NEW_MESSAGE,
-                                push: !n.notification_types.NEW_MESSAGE.push,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Realtime
-                      </span>
-                      <SquareCheckbox
-                        checked={notif.notification_types.NEW_MESSAGE.realtime}
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              NEW_MESSAGE: {
-                                ...n.notification_types.NEW_MESSAGE,
-                                realtime:
-                                  !n.notification_types.NEW_MESSAGE.realtime,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Event Registration */}
-                <div className="bg-[#0F122B] rounded-xl border border-white/5 p-5">
-                  <p className="text-white text-sm font-semibold mb-3">
-                    Event Management
-                  </p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Email
-                      </span>
-                      <SquareCheckbox
-                        checked={
-                          notif.notification_types.EVENT_REGISTRATION.email
-                        }
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              EVENT_REGISTRATION: {
-                                ...n.notification_types.EVENT_REGISTRATION,
-                                email:
-                                  !n.notification_types.EVENT_REGISTRATION
-                                    .email,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Push
-                      </span>
-                      <SquareCheckbox
-                        checked={
-                          notif.notification_types.EVENT_REGISTRATION.push
-                        }
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              EVENT_REGISTRATION: {
-                                ...n.notification_types.EVENT_REGISTRATION,
-                                push: !n.notification_types.EVENT_REGISTRATION
-                                  .push,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] text-[#8A9ABF] uppercase tracking-wider">
-                        Realtime
-                      </span>
-                      <SquareCheckbox
-                        checked={
-                          notif.notification_types.EVENT_REGISTRATION.realtime
-                        }
-                        onChange={() =>
-                          setNotif((n) => ({
-                            ...n,
-                            notification_types: {
-                              ...n.notification_types,
-                              EVENT_REGISTRATION: {
-                                ...n.notification_types.EVENT_REGISTRATION,
-                                realtime:
-                                  !n.notification_types.EVENT_REGISTRATION
-                                    .realtime,
-                              },
-                            },
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
+            <div>
+              <SectionHeader>Push Notifications</SectionHeader>
+              <div className="space-y-1">
+                <Row
+                  title="Enable push notifications"
+                  description="Receive real-time notifications"
+                  control={
+                    <Toggle
+                      checked={notif.push_enabled}
+                      onChange={() =>
+                        setNotif((n) => ({
+                          ...n,
+                          push_enabled: !n.push_enabled,
+                        }))
+                      }
+                    />
+                  }
+                />
+                <Row
+                  title="Sound for notifications"
+                  description="Play sound when notifications arrive"
+                  control={
+                    <Toggle
+                      checked={notif.push_sound}
+                      onChange={() =>
+                        setNotif((n) => ({
+                          ...n,
+                          push_sound: !n.push_sound,
+                        }))
+                      }
+                    />
+                  }
+                />
               </div>
+            </div>
 
+            <div className="pt-4">
               <SaveBtn
                 onClick={handleSaveNotifications}
                 loading={savingNotif}
                 label="Save Notification Settings"
               />
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === "Preferences" && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div>
-                <SectionHeader>Language & Region</SectionHeader>
+        {activeTab === "Preferences" && (
+          <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+            <div>
+              <SectionHeader>Language & Region</SectionHeader>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4">
+                <div className="space-y-2">
+                  <label className="text-xs sm:text-sm text-[#8A9ABF]">Language</label>
+                  <select
+                    value={account.language}
+                    onChange={(e) =>
+                      setAccount((a) => ({ ...a, language: e.target.value }))
+                    }
+                    className="w-full bg-[#0F122B] border border-white/5 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-sm outline-none appearance-none hover:border-white/10"
+                  >
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                  </select>
+                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
-                  <div className="space-y-2">
-                    <label className="text-xs text-[#8A9ABF]">Language</label>
-                    <select
-                      value={account.language}
-                      onChange={(e) =>
-                        setAccount((a) => ({ ...a, language: e.target.value }))
-                      }
-                      className="w-full bg-[#0F122B] border border-white/5 rounded-lg px-4 py-3 text-white text-sm outline-none appearance-none hover:border-white/10"
-                    >
-                      <option>English</option>
-                      <option>Spanish</option>
-                      <option>French</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs text-[#8A9ABF]">Timezone</label>
-                    <select
-                      value={account.timezone}
-                      onChange={(e) =>
-                        setAccount((a) => ({ ...a, timezone: e.target.value }))
-                      }
-                      className="w-full bg-[#0F122B] border border-white/5 rounded-lg px-4 py-3 text-white text-sm outline-none appearance-none hover:border-white/10"
-                    >
-                      <option>GMT+1 (Madrid)</option>
-                      <option>UTC</option>
-                      <option>GMT+6 (Dhaka)</option>
-                    </select>
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-xs sm:text-sm text-[#8A9ABF]">Timezone</label>
+                  <select
+                    value={account.timezone}
+                    onChange={(e) =>
+                      setAccount((a) => ({ ...a, timezone: e.target.value }))
+                    }
+                    className="w-full bg-[#0F122B] border border-white/5 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white text-sm outline-none appearance-none hover:border-white/10"
+                  >
+                    <option>GMT+1 (Madrid)</option>
+                    <option>UTC</option>
+                    <option>GMT+6 (Dhaka)</option>
+                  </select>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <SectionHeader>Search Preferences</SectionHeader>
-
+            <div>
+              <SectionHeader>Search Preferences</SectionHeader>
+              <div className="space-y-1">
                 <Row
                   title="Save search history"
                   description="Remember your recent searches"
@@ -834,7 +750,6 @@ export default function SettingsPage() {
                     />
                   }
                 />
-
                 <Row
                   title="Show event recommendations"
                   description="Get personalized event suggestions"
@@ -852,21 +767,27 @@ export default function SettingsPage() {
                   }
                 />
               </div>
+            </div>
 
+            <div className="pt-4">
               <SaveBtn
                 onClick={handleSaveAccount}
                 loading={savingAccount}
                 label="Save Preferences"
               />
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+    </div>
+  </div>
 
-      {/* ── Change Password Modal ────────────────────── */}
+  {/* Modals remain the same but with responsive classes already applied */}
+  {/* ... (password and delete modals) ... */}
+
+    {/* ── Change Password Modal ────────────────────── */}
       {pwdModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0F122B] border border-white/5 rounded-2xl p-7 w-full max-w-md shadow-2xl">
+          <div className="bg-[#0F122B] border border-white/5 rounded-2xl p-5 sm:p-7 w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[17px] font-bold text-white">
                 Change Password
@@ -950,7 +871,7 @@ export default function SettingsPage() {
       {/* Delete modal */}
       {deleteModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0F122B] border border-white/5 rounded-2xl p-7 w-full max-w-md">
+          <div className="bg-[#0F122B] border border-white/5 rounded-2xl p-5 sm:p-7 w-full max-w-md">
             <h2 className="text-[17px] font-bold text-white mb-2">
               Delete Account
             </h2>
@@ -975,6 +896,6 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-    </div>
+</div>
   );
 }

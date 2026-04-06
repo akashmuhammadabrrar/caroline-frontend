@@ -20,6 +20,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.pinimg.com",
       },
+      {
+        protocol: "https",
+        hostname: "www.pinterest.com",
+      },
+      {
+        protocol: "http",
+        hostname: "13.239.20.165",
+        port: "9000",
+      },
     ],
   },
 };

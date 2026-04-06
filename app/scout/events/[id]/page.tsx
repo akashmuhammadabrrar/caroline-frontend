@@ -119,8 +119,8 @@ const EventDetailsPage = () => {
       {/* Hero Banner Section */}
       <div className="relative rounded-2xl md:rounded-3xl overflow-hidden mb-10 h-[350px] md:h-[500px]">
         <Image
-          src="/images/event-banner.jpg"
-          alt="Event Banner"
+          src={event.event_media || "/images/event-banner.jpg"}
+          alt={event.event_name}
           fill
           className="object-cover"
         />
@@ -149,8 +149,8 @@ const EventDetailsPage = () => {
           <div className="flex items-center gap-4 md:gap-6">
             <div className="w-12 h-12 md:w-16 md:h-16 relative flex-shrink-0">
               <Image
-                src="/images/club-logo.png"
-                alt="Club Logo"
+                src={event.club_logo || "/images/club-logo.png"}
+                alt={event.club_name || "Club Logo"}
                 fill
                 className="object-contain"
               />

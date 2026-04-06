@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
@@ -29,9 +28,10 @@ export default function EventRegistrationSuccessPage() {
       try {
         await verifyPayment({ session_id, registration_id }).unwrap();
         setStatus("SUCCESS");
-      } catch (err: any) {
+      } catch (err: unknown) {
         setStatus("FAILED");
-        const errMsg = err?.data?.detail || err?.data?.messages?.[0]?.message || "Payment verification failed. Please contact support.";
+        const error = err as { data?: { detail?: string, messages?: Array<{ message?: string }> } };
+        const errMsg = error?.data?.detail || error?.data?.messages?.[0]?.message || "Payment verification failed. Please contact support.";
         setErrorMsg(errMsg);
       }
     };

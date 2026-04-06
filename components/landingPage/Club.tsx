@@ -90,7 +90,7 @@ export default function Club() {
             >
               Clubs
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab("academies")}
               className={`px-6 py-2 text-sm font-medium transition-colors ${
                 activeTab === "academies"
@@ -99,7 +99,7 @@ export default function Club() {
               }`}
             >
               Academies
-            </button>
+            </button> */}
           </div>
         </div>
 

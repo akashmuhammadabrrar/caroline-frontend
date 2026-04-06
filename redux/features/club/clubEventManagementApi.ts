@@ -15,10 +15,10 @@ export const clubEventManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ["Events"],
     }),
     updateEvent: builder.mutation({
-      query: ({ id, ...data }) => ({
+      query: ({ id, body }) => ({
         url: `/club-academy/events/${id}/update/`,
         method: "PUT",
-        body: data,
+        body: body,
       }),
       invalidatesTags: ["Events"],
     }),

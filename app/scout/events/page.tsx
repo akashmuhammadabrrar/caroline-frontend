@@ -136,8 +136,8 @@ const Page = () => {
             <div className="relative h-44 w-full p-2">
               <div className="relative w-full h-full rounded-xl overflow-hidden">
                 <Image
-                  src="/images/event-card.jpg"
-                  alt="event card image"
+                  src={event.event_media || "/images/event-card.jpg"}
+                  alt={event.event_name}
                   fill
                   className="object-cover"
                 />
@@ -170,8 +170,8 @@ const Page = () => {
               {/* Club & location */}
               <div className="flex items-start gap-3 mb-4">
                 <Image
-                  src={"/images/club-logo.png"}
-                  alt="club logo"
+                  src={event.club_logo || "/images/club-logo.png"}
+                  alt={event.club_name || "club logo"}
                   width={50}
                   height={50}
                 />

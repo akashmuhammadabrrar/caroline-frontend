@@ -2,7 +2,7 @@
 
 import { useAppSelector } from "@/redux/hooks";
 import { Lock, Loader2, ArrowRight } from "lucide-react";
-import { useGetFeaturedPlayersQuery } from "@/redux/features/home/homeApi";
+import { useGetFeaturedPlayersQuery } from "@/redux/features/admin/adminSettingsApi";
 import { getFlagEmoji } from "@/lib/utils/flagUtils";
 import Link from "next/link";
 
@@ -10,7 +10,9 @@ const Feature = () => {
   const theme = useAppSelector((state) => state.theme);
   const { data: playersData, isLoading } = useGetFeaturedPlayersQuery();
 
-  const players = playersData?.data || playersData || [];
+  const players = Array.isArray(playersData?.data) 
+    ? playersData.data 
+    : [];
 
   return (
     <section id="players" className="py-20 px-4 bg-[var(--bg-dark,#07142b)] text-white">
@@ -61,27 +63,31 @@ const Feature = () => {
                       color: "transparent",
                     }}
                   >
-                    <span>{player.first_name || player.firstName}</span>
-                    {(player.last_name || player.lastName) && <span> {player.last_name || player.lastName}</span>}
+                    <span>{player.player_name || player.first_name || player.firstName}</span>
+                    {!player.player_name && (player.last_name || player.lastName) && <span> {player.last_name || player.lastName}</span>}
                   </h3>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">
-                      {getFlagEmoji(player.nationality || player.country || "")}
-                    </span>
+                    {player.flag_image ? (
+                      <img src={player.flag_image} alt={player.country_name || "flag"} className="w-5 h-3.5 object-cover rounded-sm shadow-sm" />
+                    ) : (
+                      <span className="text-lg">
+                        {getFlagEmoji(player.country_name || player.nationality || player.country || "")}
+                      </span>
+                    )}
                     <span className="text-muted-foreground text-sm">
-                      {player.nationality || player.country || "Unknown"}
+                      {player.country_name || player.nationality || player.country || "Unknown"}
                     </span>
                   </div>
                   <p className="text-purple-400 text-sm">
-                    Position: {player.designation || player.position || "N/A"}
+                    Position: {player.position || player.designation || "N/A"}
                   </p>
                 </div>
 
                 {/* Player Image */}
-                <div className="w-32 h-24 rounded-lg overflow-hidden bg-navy-700 border border-gray-800">
+                <div className="w-32 h-24 rounded-lg overflow-hidden bg-navy-700 border border-gray-800 shrink-0">
                   <img
-                    src={player.profile_image || player.image || "/images/player-placeholder.jpg"}
-                    alt={`${player.first_name} ${player.last_name}`}
+                    src={player?.player_image || player?.image || player?.profile_picture || "/images/player-placeholder.jpg"}
+                    alt={player.player_name || "Player"}
                     className="w-full h-full object-cover"
                   />
                 </div>

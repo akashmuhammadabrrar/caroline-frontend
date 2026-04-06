@@ -34,6 +34,9 @@ export interface Event {
   title?: string;
   fee?: string;
   city: string;
+  event_media?: string | null;
+  club_logo?: string | null;
+  club_name?: string | null;
 }
 
 export interface EventListResponse {
