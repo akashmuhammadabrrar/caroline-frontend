@@ -22,7 +22,7 @@ const Page = () => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
   const filters = useMemo(() => {
-    const params: any = { page, page_size: 6, ordering: "created_at" };
+    const params: any = { page, page_size: 6, ordering: "-created_at" };
     if (eventType) params.event_type = eventType;
     if (date) params.event_date = date;
     if (debouncedSearch) params.search = debouncedSearch;

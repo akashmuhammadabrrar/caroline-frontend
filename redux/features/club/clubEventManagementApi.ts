@@ -1,8 +1,9 @@
 import { baseApi } from "@/redux/api/baseApi";
+import { EventListResponse, Event } from "@/types/scout/eventsType";
 
 export const clubEventManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getClubEvents: builder.query<unknown, void>({
+    getClubEvents: builder.query<EventListResponse | Event[], void>({
       query: () => "/club-academy/events/",
       providesTags: ["Events"],
     }),

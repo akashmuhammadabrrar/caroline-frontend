@@ -41,15 +41,19 @@ interface Plan {
 }
 
 interface ActiveSubscription {
+  id: number;
   plan_name: string;
   plan_type: string;
   amount: string | number;
   billing_cycle: string;
+  billing_cycle_name?: string;
   next_billing_date: string;
-  card_brand: string;
-  card_last_four: string;
+  card_brand: string | null;
+  card_last_four: string | null;
   auto_renewal: boolean;
   features: string[];
+  is_active: boolean;
+  is_expired: boolean;
 }
 
 interface PaymentHistoryItem {
@@ -59,6 +63,10 @@ interface PaymentHistoryItem {
   currency: string;
   amount: string | number;
   status: string;
+  invoice_pdf?: string;
+  invoice_url?: string;
+  receipt_url?: string;
+  download_url?: string;
 }
 
 const CheckIcon = () => (
@@ -101,7 +109,11 @@ const SubscriptionContent = () => {
   const plans: Plan[] = plansData?.data || [];
   const paymentHistory: PaymentHistoryItem[] = historyRes?.data || [];
 
-  const displaySub = activeSub;
+  // If the user is on a FREE plan or has no active sub, show the plans list to upgrade
+  const displaySub =
+    activeSub && activeSub.plan_type !== "FREE" && activeSub.is_active
+      ? activeSub
+      : null;
 
   const handleSubscribeClick = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -155,9 +167,12 @@ const SubscriptionContent = () => {
       else pType = "BASIC";
 
       const rawCycle = String(
-        selectedPlan.billing_cycle || selectedPlan.billingInterval || "ANNUAL",
+        selectedPlan.billing_cycle || selectedPlan.billingInterval || "MONTHLY",
       ).toUpperCase();
       const bCycle = rawCycle.includes("MONTH") ? "MONTHLY" : "ANNUAL";
+
+      // Final plan type from selected plan OR derived
+      const finalPType = selectedPlan.plan_type?.toUpperCase() || pType;
 
       const payload: {
         plan_type: string;
@@ -166,7 +181,7 @@ const SubscriptionContent = () => {
         cancel_url?: string;
         promo_code?: string;
       } = {
-        plan_type: pType,
+        plan_type: finalPType,
         billing_cycle: bCycle,
         success_url: `${baseUrl}/player/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/player/subscription/cancel`,
@@ -424,9 +439,9 @@ const SubscriptionContent = () => {
                 <th className="text-left pb-4 text-xs font-bold text-white">
                   Status
                 </th>
-                <th className="text-left pb-4 text-xs font-bold text-white">
+                {/* <th className="text-left pb-4 text-xs font-bold text-white">
                   Invoice
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody>
@@ -458,20 +473,41 @@ const SubscriptionContent = () => {
                       {item.status === "PAID" ? "Paid" : item.status}
                     </span>
                   </td>
-                  <td className="py-4 text-left">
-                    <a
-                      href={
-                        (item as any).invoice_pdf ||
-                        (item as any).invoice_url ||
-                        "#"
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#00E5FF] text-xs hover:underline"
-                    >
-                      Download
-                    </a>
-                  </td>
+                  {/* <td className="py-4 text-left">
+                    {(() => {
+                      const downloadUrl =
+                        item.invoice_pdf ||
+                        item.invoice_url ||
+                        item.receipt_url ||
+                        item.download_url;
+                      if (!downloadUrl)
+                        return (
+                          <span className="text-gray-600 text-xs italic">
+                            N/A
+                          </span>
+                        );
+
+                      const baseUrl = (
+                        process.env.NEXT_PUBLIC_BASE_URL || ""
+                      ).replace("/api", "");
+                      const fullUrl =
+                        downloadUrl.startsWith("http") ||
+                        downloadUrl.startsWith("blob")
+                          ? downloadUrl
+                          : `${baseUrl}${downloadUrl.startsWith("/") ? "" : "/"}${downloadUrl}`;
+
+                      return (
+                        <a
+                          href={fullUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#00E5FF] text-xs hover:underline font-bold"
+                        >
+                          Download
+                        </a>
+                      );
+                    })()}
+                  </td> */}
                 </tr>
               ))}
               {paymentHistory.length === 0 && (

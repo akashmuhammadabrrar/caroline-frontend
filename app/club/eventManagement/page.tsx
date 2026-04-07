@@ -38,6 +38,7 @@ import {
   useClubToggleFeaturedEventMutation,
 } from "@/redux/features/club/clubEventManagementApi";
 import { countryCodes } from "@/constants/countryCodes";
+import { EventListResponse } from "@/types/scout/eventsType";
 
 type Event = {
   id: string;
@@ -89,9 +90,9 @@ export default function EventManagementPage() {
     // API might return a direct array or a paginated object with 'results'
     const sourceData = Array.isArray(apiEvents)
       ? apiEvents
-      : (apiEvents as Record<string, unknown>).results ||
-        (apiEvents as Record<string, unknown>).data ||
-        (apiEvents as Record<string, unknown>).events ||
+      : (apiEvents as EventListResponse).results ||
+        (apiEvents as EventListResponse).data ||
+        (apiEvents as EventListResponse).events ||
         [];
 
     if (!Array.isArray(sourceData) || sourceData.length === 0) {
