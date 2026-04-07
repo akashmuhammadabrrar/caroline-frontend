@@ -15,6 +15,7 @@ export interface PublicSettings {
 }
 
 export const homeApi = baseApi.injectEndpoints({
+   overrideExisting: true,
    endpoints: (builder) => ({
     getHeroData: builder.query<HeroResponse, void>({
       query: () => "/admin-dashboard/home/hero/",
@@ -27,10 +28,6 @@ export const homeApi = baseApi.injectEndpoints({
     getLatestNewsArticles: builder.query<any, void>({
       query: () => "/admin-dashboard/home/latest-news/",
       providesTags: ["Dashboard"],
-    }),
-    getFeaturedPlayers: builder.query<any, void>({
-      query: () => "/admin-dashboard/home/featured-players/",
-      providesTags: ["Discovery"],
     }),
     getPublicSettings: builder.query<PublicSettings, void>({
       query: () => "/admin-dashboard/settings/public/",
@@ -45,5 +42,4 @@ export const {
   useGetPublicSettingsQuery, 
   useGetUpcomingEventsQuery, 
   useGetLatestNewsArticlesQuery, 
-  useGetFeaturedPlayersQuery 
 } = homeApi;

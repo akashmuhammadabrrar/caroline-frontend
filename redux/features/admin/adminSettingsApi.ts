@@ -139,6 +139,7 @@ export interface UpdateSettingsResponse {
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const adminSettingsApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getGeneralSettings: builder.query<GeneralSettings, void>({
       query: () => "/admin-dashboard/settings/general/",

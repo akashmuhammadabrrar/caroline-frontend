@@ -111,6 +111,7 @@ export interface CreatePlanResponse {
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const adminDashboardApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getAdminDashboardData: builder.query<AdminDashboardResponse, void>({
       query: () => "/admin-dashboard/dashboard/",

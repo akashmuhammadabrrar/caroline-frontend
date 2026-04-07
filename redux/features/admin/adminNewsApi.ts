@@ -85,6 +85,7 @@ export interface NewsArticlesResponse {
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const adminNewsApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getNewsDashboardMetrics: builder.query<NewsMetricsResponse, void>({
       query: () => "/admin-dashboard/news/dashboard/",
