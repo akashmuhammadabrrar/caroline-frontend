@@ -109,9 +109,11 @@ const SubscriptionContent = () => {
   const plans: Plan[] = plansData?.data || [];
   const paymentHistory: PaymentHistoryItem[] = historyRes?.data || [];
 
-  // If the user is on a FREE plan or has no active sub, show the plans list to upgrade
   const displaySub =
-    activeSub && activeSub.plan_type !== "FREE" && activeSub.is_active
+    activeSub &&
+    activeSub.plan_type !== "FREE" &&
+    activeSub.is_active &&
+    activeSub.auto_renewal
       ? activeSub
       : null;
 
@@ -123,6 +125,81 @@ const SubscriptionContent = () => {
     setPromoError("");
     setIsSubscribeModalOpen(true);
   };
+
+  const PlansGrid = ({ title, subtitle }: { title: string; subtitle: string }) => (
+    <div className="space-y-12">
+      <div className="text-center space-y-4 py-8">
+        <h2 className="text-4xl sm:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight">
+          {title}
+        </h2>
+        <p className="text-gray-400 text-lg max-w-2xl mx-auto font-medium">
+          {subtitle}
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {plans.map((plan: Plan) => (
+          <div
+            key={plan.id}
+            className="relative group/card bg-[#12143A]/50 border border-white/5 rounded-[40px] p-8 flex flex-col hover:bg-[#12143A] hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+          >
+            <div className="absolute lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest lg:px-9 px-4 lg:py-1 py-3 rounded-full shadow-lg text-center w-max min-w-[120px]">
+              {plan.plan_name || plan.planName || plan.plan_type}
+            </div>
+
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-white mb-2"></h3>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-black text-white">
+                  €{plan.price}
+                </span>
+                <span className="text-gray-500 font-bold text-xs">
+                  /
+                  {(
+                    plan.billing_cycle ||
+                    plan.billingInterval ||
+                    ""
+                  ).toLowerCase()}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-4 flex-1 mb-10">
+              {(plan.features || []).map((feature: any, i: number) => {
+                const featureText =
+                  typeof feature === "string"
+                    ? feature
+                    : feature?.name ||
+                      feature?.title ||
+                      feature?.description ||
+                      feature?.more ||
+                      Object.values(feature)[0] ||
+                      JSON.stringify(feature);
+                return (
+                  <div key={i} className="flex gap-3 text-sm">
+                    <div className="mt-1 flex-shrink-0">
+                      <CheckIcon />
+                    </div>
+                    <span className="text-gray-400 font-medium leading-tight">
+                      {featureText}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => handleSubscribeClick(plan)}
+              disabled={isCreatingCheckout}
+              className="w-full py-4 rounded-2xl bg-[#0B0D2C] border border-white/10 text-white font-black uppercase tracking-widest text-xs group-hover/card:bg-gradient-to-r group-hover/card:from-cyan-400 group-hover/card:to-purple-500 group-hover/card:border-transparent transition-all active:scale-95"
+            >
+              Get Started
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) return;
@@ -235,81 +312,13 @@ const SubscriptionContent = () => {
     );
   }
 
-  // View 1: Plan Selection (No Active Subscription and No recent Success)
   if (!displaySub) {
     return (
-      <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-12 animate-in fade-in duration-500">
-        <div className="text-center space-y-4 py-8">
-          <h1 className="text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight">
-            Choose Your Power Up
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-medium">
-            Join the NextGen network and get exclusive access to scouts, premium
-            content, and more.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {plans.map((plan: Plan) => (
-            <div
-              key={plan.id}
-              className="relative group/card bg-[#12143A]/50 border border-white/5 rounded-[40px] p-8 flex flex-col hover:bg-[#12143A] hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-            >
-              <div className="absolute lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest lg:px-9 px-4 lg:py-1 py-3 rounded-full shadow-lg text-center w-max min-w-[120px]">
-                {plan.plan_name || plan.planName || plan.plan_type}
-              </div>
-
-              <div className="mb-8">
-                <h3 className="text-xl font-bold text-white mb-2"></h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-white">
-                    €{plan.price}
-                  </span>
-                  <span className="text-gray-500 font-bold text-xs">
-                    /
-                    {(
-                      plan.billing_cycle ||
-                      plan.billingInterval ||
-                      ""
-                    ).toLowerCase()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-4 flex-1 mb-10">
-                {(plan.features || []).map((feature: any, i: number) => {
-                  const featureText =
-                    typeof feature === "string"
-                      ? feature
-                      : feature?.name ||
-                        feature?.title ||
-                        feature?.description ||
-                        feature?.more ||
-                        Object.values(feature)[0] ||
-                        JSON.stringify(feature);
-                  return (
-                    <div key={i} className="flex gap-3 text-sm">
-                      <div className="mt-1 flex-shrink-0">
-                        <CheckIcon />
-                      </div>
-                      <span className="text-gray-400 font-medium leading-tight">
-                        {featureText}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={() => handleSubscribeClick(plan)}
-                disabled={isCreatingCheckout}
-                className="w-full py-4 rounded-2xl bg-[#0B0D2C] border border-white/10 text-white font-black uppercase tracking-widest text-xs group-hover/card:bg-gradient-to-r group-hover/card:from-cyan-400 group-hover/card:to-purple-500 group-hover/card:border-transparent transition-all active:scale-95"
-              >
-                Get Started
-              </button>
-            </div>
-          ))}
-        </div>
+      <div className="p-4 sm:p-8 max-w-6xl mx-auto animate-in fade-in duration-500">
+        <PlansGrid 
+          title="Choose Your Power Up" 
+          subtitle="Join the NextGen network and get exclusive access to scouts, premium content, and more." 
+        />
       </div>
     );
   }
@@ -367,14 +376,16 @@ const SubscriptionContent = () => {
             })}
           </div>
 
-          <div className="mt-2">
-            <button
-              onClick={() => setIsCancelModalOpen(true)}
-              className="px-5 py-2.5 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-all font-medium"
-            >
-              Cancel Subscription
-            </button>
-          </div>
+          {displaySub.auto_renewal && (
+            <div className="mt-2">
+              <button
+                onClick={() => setIsCancelModalOpen(true)}
+                className="px-5 py-2.5 rounded-lg border border-red-500/30 text-red-400 text-sm hover:bg-red-500/10 transition-all font-medium"
+              >
+                Cancel Subscription
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
