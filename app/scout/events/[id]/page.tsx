@@ -47,62 +47,7 @@ const EventDetailsPage = () => {
   };
 
   // Mock registered players
-  const registeredPlayers = [
-    {
-      id: 1,
-      name: "Lucas Martinez",
-      role: "Midfielder",
-      age: 17,
-      country: "Spain",
-      club: "FC Barcelona Youth",
-      image: "/images/player-1.png",
-    },
-    {
-      id: 2,
-      name: "João Silva",
-      role: "Forward",
-      age: 18,
-      country: "Portugal",
-      club: "Benfica Academy",
-      image: "/images/player-2.png",
-    },
-    {
-      id: 3,
-      name: "Marco Rossi",
-      role: "Defender",
-      age: 18,
-      country: "Italy",
-      club: "AC Milan Primavera",
-      image: "/images/player-3.png",
-    },
-    {
-      id: 4,
-      name: "Thomas Müller Jr.",
-      role: "Goalkeeper",
-      age: 17,
-      country: "Germany",
-      club: "Bayern Munich Youth",
-      image: "/images/player-4.png",
-    },
-    {
-      id: 5,
-      name: "Pierre Dubois",
-      role: "Midfielder",
-      age: 16,
-      country: "France",
-      club: "PSG Academy",
-      image: "/images/player-1.png",
-    },
-    {
-      id: 6,
-      name: "James Wilson",
-      role: "Forward",
-      age: 17,
-      country: "England",
-      club: "Chelsea FC Academy",
-      image: "/images/player-2.png",
-    },
-  ];
+  const registeredPlayers = (event as any)?.participants || (event as any)?.registrations || [];
 
   return (
     <div className=" pb-20 px-4">
@@ -257,24 +202,23 @@ const EventDetailsPage = () => {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="bg-[#00E5FF]/10 p-2.5 md:p-3 rounded-xl flex-shrink-0">
-                  <BsCheckCircleFill className="text-[#00E5FF] text-lg md:text-xl" />
-                </div>
                 <div>
-                  <p className="text-white/40 text-[10px] uppercase tracking-wider mb-0.5 md:mb-1">
+                  <p className="text-white/40 text-[10px] uppercase tracking-wider mb-2">
                     Scouts Registered
                   </p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-black text-lg md:text-xl">
-                      {event.registered_count}
+                  <div className="flex items-end gap-2">
+                    <span className="text-[#00E5FF] font-black text-2xl leading-none">
+                      {event.registered_count || 0}
                     </span>
-                    <span className="text-white/40 text-xs md:text-sm">
-                      / {event.maximum_capacity} Registered
+                    <span className="text-gray-500 font-bold">/</span>
+                    <span className="text-white font-bold text-lg leading-none">
+                      {event.maximum_capacity || 0}
+                    </span>
+                    <span className="text-white/30 text-[10px] uppercase tracking-widest font-black ml-2 mb-0.5">
+                      Confirmed
                     </span>
                   </div>
                 </div>
-              </div>
             </div>
 
             {/* About This Event */}
@@ -301,48 +245,57 @@ const EventDetailsPage = () => {
             </div>
 
             <div className="space-y-4">
-              {registeredPlayers.map((player) => (
-                <div
-                  key={player.id}
-                  className="bg-[#12143A] border border-white/5 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:border-[#00E5FF]/30 transition-all duration-300"
-                >
-                  <div className="flex items-center gap-4 md:gap-5">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden relative border-2 border-white/10 group-hover:border-[#00E5FF]/50 transition-colors flex-shrink-0">
-                      <Image
-                        src={player.image}
-                        alt={player.name}
-                        fill
-                        className="object-cover"
-                      />
+              {registeredPlayers.map((player: any, idx: number) => {
+                const name = player.name || `${player.first_name || ""} ${player.last_name || ""}`.trim() || "Unknown Player";
+                const role = player.role || player.position || "Player";
+                const age = player.age || (player.date_of_birth ? new Date().getFullYear() - new Date(player.date_of_birth).getFullYear() : "N/A");
+                const country = player.country || player.region_country || "N/A";
+                const club = player.club || player.club_name || player.organization_name || "Free Agent";
+                const image = player.image || player.profile_image || player.avatar || "/images/player-placeholder.png";
+
+                return (
+                  <div
+                    key={player.id || idx}
+                    className="bg-[#12143A] border border-white/5 rounded-2xl p-4 md:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:border-[#00E5FF]/30 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-4 md:gap-5">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden relative border-2 border-white/10 group-hover:border-[#00E5FF]/50 transition-colors flex-shrink-0">
+                        <Image
+                          src={image}
+                          alt={name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-white font-bold text-base md:text-lg truncate">
+                          {name}
+                        </h4>
+                        <p className="text-xs md:text-sm flex flex-wrap items-center gap-x-2 gap-y-1 text-white/50">
+                          <span className="text-[#00E5FF] font-medium whitespace-nowrap">
+                            {role}
+                          </span>
+                          <span className="hidden xs:inline">•</span>
+                          <span className="whitespace-nowrap">
+                            {age} years
+                          </span>
+                          <span className="hidden xs:inline">•</span>
+                          <span className="whitespace-nowrap">
+                            {country}
+                          </span>
+                        </p>
+                        <p className="text-[10px] md:text-xs text-white/30 mt-1 truncate">
+                          {club}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <h4 className="text-white font-bold text-base md:text-lg truncate">
-                        {player.name}
-                      </h4>
-                      <p className="text-xs md:text-sm flex flex-wrap items-center gap-x-2 gap-y-1 text-white/50">
-                        <span className="text-[#00E5FF] font-medium whitespace-nowrap">
-                          {player.role}
-                        </span>
-                        <span className="hidden xs:inline">•</span>
-                        <span className="whitespace-nowrap">
-                          {player.age} years
-                        </span>
-                        <span className="hidden xs:inline">•</span>
-                        <span className="whitespace-nowrap">
-                          {player.country}
-                        </span>
-                      </p>
-                      <p className="text-[10px] md:text-xs text-white/30 mt-1 truncate">
-                        {player.club}
-                      </p>
-                    </div>
+                    <button className="w-full sm:w-auto bg-[#1DA1F2]/10 text-[#1DA1F2] border border-[#1DA1F2]/20 hover:bg-[#1DA1F2] hover:text-white px-4 md:px-6 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all">
+                      <MdOutlineMail size={16} />
+                      Contact
+                    </button>
                   </div>
-                  <button className="w-full sm:w-auto bg-[#1DA1F2]/10 text-[#1DA1F2] border border-[#1DA1F2]/20 hover:bg-[#1DA1F2] hover:text-white px-4 md:px-6 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center gap-2 transition-all">
-                    <MdOutlineMail size={16} />
-                    Contact
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -358,19 +311,50 @@ const EventDetailsPage = () => {
               Register to observe players and access full event details
             </p>
 
-            <Link
-              href={
-                isRegistered ? "#" : `/scout/eventRegister?eventId=${event.id}`
-              }
-              className={`w-full ${isRegistered ? "bg-gray-600 cursor-not-allowed" : "bg-[#00E5FF] hover:bg-[#00E5FF]/90"} text-black font-black py-4 rounded-xl text-center block transition-all shadow-[0_4px_20px_rgba(0,229,255,0.2)] mb-4 uppercase tracking-wider`}
-            >
-              {isRegistered ? "Registered" : "Register Now"}
-            </Link>
+            {isRegistered ? (
+              <div className="space-y-4">
+                <button 
+                  disabled
+                  className="w-full bg-[#1DA1F2]/10 text-[#00E5FF] border border-[#00E5FF]/20 font-black py-4 rounded-xl text-center flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider"
+                >
+                  <BsCheckCircleFill /> Already Registered
+                </button>
+              </div>
+            ) : (event.status || "").toUpperCase() === "PENDING" ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full bg-amber-500/10 text-amber-500 border border-amber-500/20 font-black py-4 rounded-xl text-center flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider"
+                >
+                  Pending Status
+                </button>
+                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Registration is currently closed</p>
+              </div>
+            ) : (event.status || "").toUpperCase() === "COMPLETED" ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full bg-blue-500/10 text-blue-500 border border-blue-500/20 font-black py-4 rounded-xl text-center flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider"
+                >
+                  <BsCheckCircleFill /> Completed
+                </button>
+                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">This event has already ended</p>
+              </div>
+            ) : (
+              <Link
+                href={`/scout/eventRegister?eventId=${event.id}`}
+                className="w-full bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-black font-black py-4 rounded-xl text-center block transition-all shadow-[0_4px_20px_rgba(0,229,255,0.2)] mb-4 uppercase tracking-wider"
+              >
+                Register Now
+              </Link>
+            )}
 
-            <p className="flex items-center justify-center gap-2 text-white/30 text-[10px] uppercase tracking-widest font-bold">
-              <FaUserFriends />
-              {event.maximum_capacity - event.registered_count} spots remaining
-            </p>
+            {!isRegistered && event.status !== "PENDING" && event.status !== "COMPLETED" && (
+              <p className="flex items-center justify-center gap-2 text-white/30 text-[10px] uppercase tracking-widest font-bold mt-4">
+                <FaUserFriends />
+                {event.maximum_capacity - event.registered_count} spots remaining
+              </p>
+            )}
 
             <div className="mt-10 pt-8 border-t border-white/5 space-y-6">
               <h4 className="text-white font-bold flex items-center gap-2">

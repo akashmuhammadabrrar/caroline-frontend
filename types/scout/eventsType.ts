@@ -1,7 +1,7 @@
 // @/types/scout/eventsType.ts
 
 export type EventType = "TRIAL" | "SHOWCASE" | "TRAINING";
-export type EventStatus = "ACTIVE" | "INACTIVE" | "CANCELLED" | "COMPLETED";
+export type EventStatus = "ACTIVE" | "PENDING" | "INACTIVE" | "CANCELLED" | "COMPLETED";
 
 export interface Event {
   id: number;
