@@ -13,7 +13,13 @@ export const subscriptionApi = baseApi.injectEndpoints({
       query: () => "/players/subscription/payment-history/",
       providesTags: ["PaymentHistory"],
     }),
-    createCheckout: builder.mutation<any, { plan_type: string; billing_cycle: string; success_url?: string; cancel_url?: string; promo_code?: string }>({
+    createCheckout: builder.mutation<
+      any,
+      {
+        plan_id: number;
+        promo_code?: string;
+      }
+    >({
       query: (data) => ({
         url: "/players/subscription/create-checkout/",
         method: "POST",
@@ -44,7 +50,10 @@ export const subscriptionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Subscription"],
     }),
-    validatePromo: builder.mutation<any, { code: string; amount: number; usage_type: string }>({
+    validatePromo: builder.mutation<
+      any,
+      { code: string; amount: number; usage_type: string }
+    >({
       query: (data) => ({
         url: "/players/promo/validate/",
         method: "POST",
