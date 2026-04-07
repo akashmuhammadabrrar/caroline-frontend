@@ -17,6 +17,7 @@ export interface AdminEventListResponse {
 }
 
 export const adminEventApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     getEvents: builder.query<AdminEventListResponse, void>({
       query: () => "/admin-dashboard/events/",

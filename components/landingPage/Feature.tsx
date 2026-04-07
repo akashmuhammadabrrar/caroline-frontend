@@ -2,7 +2,7 @@
 
 import { useAppSelector } from "@/redux/hooks";
 import { Lock, Loader2, ArrowRight } from "lucide-react";
-import { useGetFeaturedPlayersQuery } from "@/redux/features/home/homeApi";
+import { useGetFeaturedPlayersQuery } from "@/redux/features/admin/adminSettingsApi";
 import { getFlagEmoji } from "@/lib/utils/flagUtils";
 import Link from "next/link";
 
@@ -10,7 +10,9 @@ const Feature = () => {
   const theme = useAppSelector((state) => state.theme);
   const { data: playersData, isLoading } = useGetFeaturedPlayersQuery();
 
-  const players = playersData?.data || playersData || [];
+  const players = Array.isArray(playersData?.data) 
+    ? playersData.data 
+    : [];
 
   return (
     <section id="players" className="py-20 px-4 bg-[var(--bg-dark,#07142b)] text-white">
