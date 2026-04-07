@@ -43,7 +43,9 @@ export interface EventListResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: Event[];
+  results?: Event[];
+  data?: Event[];
+  events?: Event[];
 }
 
 export interface ClubDetails {

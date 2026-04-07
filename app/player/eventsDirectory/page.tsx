@@ -135,7 +135,7 @@ const EventsDirectoryPage = () => {
   const [typeFilter, setTypeFilter] = useState("All Types");
   const [activeTab, setActiveTab] = useState<"BROWSE" | "UPCOMING" | "PAST">("BROWSE");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 4;
 
   const { data: eventsData, isLoading: isEventsLoading } = useGetEventsQuery();
   const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
@@ -145,8 +145,19 @@ const EventsDirectoryPage = () => {
 
   const eventsArray: EventDataApi[] = useMemo(() => {
     if (!eventsData) return [];
-    if (Array.isArray(eventsData)) return eventsData;
-    return (eventsData as any).results || (eventsData as any).data || [];
+    let data = [];
+    if (Array.isArray(eventsData)) {
+      data = eventsData;
+    } else {
+      data = (eventsData as any).results || (eventsData as any).data || [];
+    }
+
+    // Sort by created_at DESC (Newest first)
+    return [...data].sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateB - dateA;
+    });
   }, [eventsData]);
 
   const upcomingArray: MyRegistration[] = useMemo(() => {

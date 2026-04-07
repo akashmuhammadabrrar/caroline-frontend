@@ -3,7 +3,7 @@ import { baseApi } from "../../api/baseApi";
 export const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getSubscription: builder.query<any, void>({
-      query: () => "/players/subscription/",
+      query: () => "/players/subscription/info/",
       providesTags: ["Subscription"],
     }),
     getPlans: builder.query<any, void>({
