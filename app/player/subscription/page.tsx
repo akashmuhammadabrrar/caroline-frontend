@@ -126,9 +126,10 @@ const SubscriptionContent = () => {
         setIsPromoApplied(true);
         toast.success("Promo code applied successfully!");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Record<string, Record<string, string>>;
       setPromoError(
-        err?.data?.message || err?.data?.error || "Invalid promo code",
+        error?.data?.message || error?.data?.error || "Invalid promo code",
       );
       setPromoAmount(0);
       setIsPromoApplied(false);
@@ -177,10 +178,11 @@ const SubscriptionContent = () => {
       if (res.checkout_url) {
         window.location.href = res.checkout_url;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Record<string, Record<string, string[] | string>>;
       toast.error(
-        err?.data?.plan_type?.[0] ||
-          err?.data?.message ||
+        (error?.data?.plan_type?.[0] as string) ||
+          (error?.data?.message as string) ||
           "Failed to initiate checkout",
       );
     }
@@ -221,7 +223,7 @@ const SubscriptionContent = () => {
   // View 1: Plan Selection (No Active Subscription and No recent Success)
   if (!displaySub) {
     return (
-      <div className="p-8 max-w-6xl mx-auto space-y-12 animate-in fade-in duration-500">
+      <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-12 animate-in fade-in duration-500">
         <div className="text-center space-y-4 py-8">
           <h1 className="text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight">
             Choose Your Power Up
@@ -233,12 +235,12 @@ const SubscriptionContent = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {plans.map((plan: any) => (
+          {plans.map((plan: Plan) => (
             <div
               key={plan.id}
               className="relative group/card bg-[#12143A]/50 border border-white/5 rounded-[40px] p-8 flex flex-col hover:bg-[#12143A] hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
             >
-              <div className="absolute xl:lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest xl:lg:px-9 px-4 xl:lg:py-1 py-3 rounded-full shadow-lg text-center">
+              <div className="absolute lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest lg:px-9 px-4 lg:py-1 py-3 rounded-full shadow-lg text-center w-max min-w-[120px]">
                 {plan.plan_name || plan.planName || plan.plan_type}
               </div>
 

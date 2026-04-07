@@ -64,7 +64,7 @@ const EventDetailsPage = () => {
   });
   
   const status = (reg?.status || reg?.registration_status || "").toUpperCase();
-  const isRegistered = !!reg && ["PENDING", "CONFIRMED", "PAID", "CONFIRM", "SUCCESS"].includes(status);
+  const isRegistered = !!reg;
   const localRegistrationId = String(reg?.registration_id || reg?.id || "");
 
   const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
@@ -83,6 +83,10 @@ const EventDetailsPage = () => {
   };
 
   const handleRegister = () => {
+    if (isRegistered) {
+      toast.error("You are already registered for this event.");
+      return;
+    }
     setView("REGISTRATION");
   };
 
@@ -120,6 +124,7 @@ const EventDetailsPage = () => {
       <EventDetailsView 
         event={event} 
         onRegister={handleRegister} 
+        onBack={handleBackToListing}
         registrationStatus={registrationStatus?.data || registrationStatus || reg}
         isRegistered={isRegistered}
       />
@@ -130,11 +135,13 @@ const EventDetailsPage = () => {
 const EventDetailsView = ({ 
   event, 
   onRegister, 
+  onBack,
   registrationStatus,
   isRegistered = false,
 }: { 
   event: EventDataApi, 
   onRegister: () => void,
+  onBack: () => void,
   registrationStatus?: RegistrationStatusData | MyRegistration,
   isRegistered?: boolean,
 }) => {
@@ -144,7 +151,7 @@ const EventDetailsView = ({
     regData?.status ||
     null;
 
-  const isFull = event.is_full || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+  const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -254,16 +261,26 @@ const EventDetailsView = ({
 
           <div className="bg-[#121433] border border-[#1E2550] rounded-[24px] p-7">
             <h4 className="text-gray-300 font-bold mb-6">Availability</h4>
-            <div className="space-y-2">
-               <div className="flex justify-between text-xs font-bold">
-                 <span className="text-gray-500">Spots Available</span>
-                 <span className="text-white">{(event.maximum_capacity ?? 0) - (event.registered_count ?? 0)} / {event.maximum_capacity ?? 0}</span>
+            <div className="space-y-4">
+               <div className="flex justify-between items-end">
+                 <div>
+                   <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Total Capacity</p>
+                   <p className="text-2xl font-black text-white">
+                     <span className="text-[#04B5A3]">{event.registered_count || 0}</span>
+                     <span className="text-gray-500 mx-2">/</span>
+                     {event.maximum_capacity || 0}
+                   </p>
+                 </div>
+                 <div className="text-right">
+                   <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Spots Left</p>
+                   <p className="text-xl font-bold text-cyan-400">{(event.maximum_capacity ?? 0) - (event.registered_count ?? 0)}</p>
+                 </div>
                </div>
-               <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden">
-                 <div className="h-full bg-cyan-400" style={{ width: `${Math.min((((event.registered_count ?? 0) / (event.maximum_capacity || 1)) * 100), 100)}%` }}></div>
+               <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden border border-[#1E2550]">
+                 <div className="h-full bg-linear-to-r from-[#04B5A3] to-cyan-400 transition-all duration-1000" style={{ width: `${Math.min((((event.registered_count ?? 0) / (event.maximum_capacity || 1)) * 100), 100)}%` }}></div>
                </div>
-               <p className="text-[10px] text-[#04B5A3] font-bold">
-                 {((event.maximum_capacity ?? 0) - (event.registered_count ?? 0)) <= 5 ? "Hurry! Limited spots remaining" : "Spots available"}
+               <p className="text-[10px] text-[#04B5A3] font-bold uppercase tracking-widest text-center">
+                 {((event.maximum_capacity ?? 0) - (event.registered_count ?? 0)) <= 5 ? "Hurry! Limited spots remaining" : "Registration Open"}
                </p>
             </div>
           </div>
@@ -282,31 +299,52 @@ const EventDetailsView = ({
             </div>
           </div>
 
-          {isRegistered ? (
-            <div className="space-y-4">
+          <div className="bg-[#121433] border border-[#1E2550] rounded-[24px] p-7 text-center">
+            {isRegistered ? (
+               <div className="space-y-4">
+                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl mb-4">
+                    <p className="text-emerald-500 text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                       <Check size={16} /> Already Registered
+                    </p>
+                  </div>
+                  <button 
+                    disabled
+                    className="w-full py-4 rounded-2xl bg-[#0B0E1E] text-emerald-500 border border-emerald-500/20 font-bold cursor-not-allowed uppercase tracking-widest text-sm flex items-center justify-center gap-2"
+                  >
+                    <Check size={16} /> Registered
+                  </button>
+               </div>
+            ) : (event.status || "").toUpperCase() === "PENDING" ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-amber-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-amber-500/20 flex items-center justify-center gap-2"
+                >
+                  <Clock size={20} />
+                  Pending Status
+                </button>
+                <p className="text-[10px] text-gray-500 font-bold uppercase">Registration is currently closed</p>
+              </div>
+            ) : ((event.status || "").toUpperCase() === "COMPLETED" || isFull) ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-blue-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-blue-500/20 flex items-center justify-center gap-2"
+                >
+                  <Check size={20} />
+                  Completed
+                </button>
+                <p className="text-[10px] text-gray-500 font-bold uppercase">{isFull ? "Event capacity reached" : "This event has already ended"}</p>
+              </div>
+            ) : (
               <button 
-                disabled
-                className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-[#04B5A3] font-black text-lg cursor-not-allowed uppercase tracking-widest shadow-inner border border-[#1E2548] flex items-center justify-center gap-2"
+                onClick={onRegister}
+                className="w-full py-5 rounded-2xl bg-[#04B5A3] text-white font-black text-lg hover:bg-[#039d8f] active:scale-[0.98] transition-all shadow-[0_12px_24px_-8px_rgba(4,181,163,0.4)] uppercase tracking-widest"
               >
-                {status === "PENDING" ? <Clock size={20} /> : <Check size={20} />}
-                {status === "PENDING" ? "Registration Pending" : "Already Registered"}
+                Register Now
               </button>
-            </div>
-          ) : isFull ? (
-            <button 
-              disabled
-              className="w-full py-5 rounded-2xl bg-gray-800 text-gray-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-gray-700"
-            >
-              Event Full
-            </button>
-          ) : (
-            <button 
-              onClick={onRegister}
-              className="w-full py-5 rounded-2xl bg-[#04B5A3] text-white font-black text-lg hover:bg-[#039d8f] active:scale-[0.98] transition-all shadow-[0_12px_24px_-8px_rgba(4,181,163,0.4)] uppercase tracking-widest"
-            >
-              Register Now
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -314,6 +352,8 @@ const EventDetailsView = ({
 };
 
 const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, onBack: () => void, onComplete: () => void }) => {
+  const params = useParams();
+  const id = params.id as string;
   const [step, setStep] = useState(1);
   const [registrationId, setRegistrationId] = useState<string | null>(null);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
@@ -357,7 +397,7 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
       setRegistrationError(null);
       try {
         const payload = {
-          event_id: event.id,
+          event_id: Number(id),
           first_name: data.firstName,
           last_name: data.lastName,
           email: data.email,
@@ -368,43 +408,32 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
           relationship: data.relationship,
           medical_conditions: data.medical || "",
           allergies: data.allergies || "",
-          ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {})
         };
+
         const res = await createRegistration(payload).unwrap();
         const regId = res?.data?.registration_id || res?.registration_id || res?.data?.id || res?.id;
         const finalRegId = regId ? String(regId) : null;
         setRegistrationId(finalRegId);
-        // Store registration_id in localStorage keyed by event id
+        
         if (finalRegId && event.id) {
           try {
             const existing = JSON.parse(localStorage.getItem("playerRegistrations") || "{}");
             existing[String(event.id)] = finalRegId;
             localStorage.setItem("playerRegistrations", JSON.stringify(existing));
           } catch {}
+          toast.success("Registration success! Now proceed to payment.");
+          setStep(4);
         }
-        setStep(4);
       } catch (err: unknown) {
         const error = err as { data?: { message?: string, error?: string } };
         const errMsg = error?.data?.message || error?.data?.error || "Registration failed. Please try again.";
-        // Handle "Already registered" specifically
-        if (errMsg.toLowerCase().includes("already registered")) {
-          setRegistrationError("You are already registered for this event. Please check your registrations.");
-        } else {
-          setRegistrationError(errMsg);
-          toast.error(errMsg);
-        }
+        setRegistrationError(errMsg);
+        toast.error(errMsg);
       }
     } else if (step === 4) {
       try {
-        const baseUrl = window.location.origin;
-        const successUrl = `${baseUrl}/player/eventsDirectory/success?session_id={CHECKOUT_SESSION_ID}&registration_id=${registrationId}`;
-        const cancelUrl = `${baseUrl}/player/eventsDirectory/cancel?registration_id=${registrationId}`;
-
         const res = await checkout({ 
           registration_id: registrationId!,
-          success_url: successUrl,
-          cancel_url: cancelUrl,
-          ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {})
         }).unwrap();
         
         if (res.checkout_url) {

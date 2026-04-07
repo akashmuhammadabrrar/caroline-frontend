@@ -136,7 +136,10 @@ export default function UpcomingEvent() {
                 </div>
 
                 {(() => {
-                  const reg = registrations.find((r: any) => (r.event === event.id || r.event_id === event.id || r.event?.id === event.id));
+                  const reg = registrations.find((r: any) => {
+                    const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null ? r.event.id : r.event);
+                    return Number(regEventId) === Number(event.id);
+                  });
                   const isRegistered = !!reg && reg.status !== "CANCELLED";
                   const isFull = event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity);
 
@@ -174,7 +177,7 @@ export default function UpcomingEvent() {
                       {isRegistered && user?.role === "PLAYER" ? (
                          <>Already Registered</>
                       ) : isFull && user?.role === "PLAYER" ? (
-                        "Event Full"
+                        "Completed"
                       ) : (
                         "See more details"
                       )}

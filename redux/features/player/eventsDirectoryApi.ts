@@ -16,6 +16,7 @@ export interface EventDataApi {
   minimum_age?: number;
   maximum_age?: number;
   created_at?: string;
+  status?: string;
 }
 
 export interface EventsResponse {
@@ -75,6 +76,7 @@ export interface MyRegistration {
   registration_id?: string;
   event_id?: number | string;
   event?: EventDataApi | number | string;
+  event_details?: EventDataApi;
   status?: string;
   registration_status?: string;
   created_at?: string;
@@ -94,10 +96,12 @@ export interface PromoValidateResponse {
 export const eventsDirectoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getEvents: builder.query<EventsResponse | EventDataApi[], void>({
-      query: () => "/events/",
+      query: () => "/players/events/",
+      providesTags: ["Events"],
     }),
     getEventDetails: builder.query<EventDetailsResponse | EventDataApi, string | number>({
-      query: (id) => `/events/${id}/`,
+      query: (id) => `/players/events/${id}/`,
+      providesTags: (result, error, id) => [{ type: "Events", id }, "Events"],
     }),
     createRegistration: builder.mutation<RegistrationResponse, RegistrationPayload>({
       query: (data) => ({
@@ -105,14 +109,12 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Events"],
     }),
     checkout: builder.mutation<
       CheckoutResponse,
       {
         registration_id: string;
-        success_url: string;
-        cancel_url: string;
-        promo_code?: string;
       }
     >({
       query: (data) => ({
@@ -120,6 +122,22 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Events"],
+    }),
+    getUpcomingRegistrations: builder.query<MyRegistrationsResponse | MyRegistration[], void>({
+      query: () => "/players/event-registrations/upcoming/",
+      providesTags: ["Events"],
+    }),
+    getPastRegistrations: builder.query<MyRegistrationsResponse | MyRegistration[], void>({
+      query: () => "/players/event-registrations/past/",
+      providesTags: ["Events"],
+    }),
+    cancelRegistration: builder.mutation<any, string | number>({
+      query: (id) => ({
+        url: `/players/event-registrations/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Events"],
     }),
     verifyPayment: builder.mutation<
       VerifyPaymentResponse,
@@ -130,6 +148,7 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Events"],
     }),
     getRegistrationStatus: builder.query<
       RegistrationStatusResponse,
@@ -137,9 +156,9 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
     >({
       query: (params) => {
         if (typeof params === 'object') {
-          return `/events/registration-status/?player_name=${params.player_name}&contact_email=${params.contact_email}`;
+          return `/players/event-registration/status/?player_name=${params.player_name}&contact_email=${params.contact_email}`;
         }
-        return `/events/registration-status/${params}/`;
+        return `/players/event-registration/status/${params}/`;
       },
     }),
     getMyRegistrations: builder.query<MyRegistrationsResponse | MyRegistration[], void>({
@@ -177,6 +196,9 @@ export const {
   useVerifyPaymentMutation,
   useGetRegistrationStatusQuery,
   useGetMyRegistrationsQuery,
+  useGetUpcomingRegistrationsQuery,
+  useGetPastRegistrationsQuery,
+  useCancelRegistrationMutation,
   useApplyPromoCodeMutation,
   useValidatePromoMutation,
 } = eventsDirectoryApi;
