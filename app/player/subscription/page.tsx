@@ -37,7 +37,7 @@ interface Plan {
   price: string | number;
   billingInterval?: string;
   billing_cycle?: string;
-  features: string[];
+  features: any[];
 }
 
 interface ActiveSubscription {
@@ -47,11 +47,13 @@ interface ActiveSubscription {
   amount: string | number;
   billing_cycle: string;
   billing_cycle_name?: string;
+  subscription_start?: string;
+  subscription_end?: string;
   next_billing_date: string;
   card_brand: string | null;
   card_last_four: string | null;
   auto_renewal: boolean;
-  features: string[];
+  features: any[];
   is_active: boolean;
   is_expired: boolean;
 }
@@ -98,6 +100,9 @@ const SubscriptionContent = () => {
     useGetPaymentHistoryQuery();
   const [createCheckout, { isLoading: isCreatingCheckout }] =
     useCreateCheckoutMutation();
+
+  console.log("subscription", createCheckout);
+
   const [cancelSubscription, { isLoading: isCancelling }] =
     useCancelSubscriptionMutation();
   const [updatePaymentMethod, { isLoading: isUpdating }] =
@@ -113,7 +118,7 @@ const SubscriptionContent = () => {
     activeSub &&
     activeSub.plan_type !== "FREE" &&
     activeSub.is_active &&
-    activeSub.auto_renewal
+    !activeSub.is_expired
       ? activeSub
       : null;
 
@@ -126,7 +131,13 @@ const SubscriptionContent = () => {
     setIsSubscribeModalOpen(true);
   };
 
-  const PlansGrid = ({ title, subtitle }: { title: string; subtitle: string }) => (
+  const PlansGrid = ({
+    title,
+    subtitle,
+  }: {
+    title: string;
+    subtitle: string;
+  }) => (
     <div className="space-y-12">
       <div className="text-center space-y-4 py-8">
         <h2 className="text-4xl sm:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight">
@@ -169,6 +180,8 @@ const SubscriptionContent = () => {
                 const featureText =
                   typeof feature === "string"
                     ? feature
+                    : Array.isArray(Object.values(feature)[0])
+                    ? (Object.values(feature)[0] as string[]).join(", ")
                     : feature?.name ||
                       feature?.title ||
                       feature?.description ||
@@ -228,54 +241,32 @@ const SubscriptionContent = () => {
   const handleConfirmSubscribe = async () => {
     if (!selectedPlan) return;
     try {
-      const baseUrl = window.location.origin;
-
-      const rawName = String(
-        selectedPlan.plan_type ||
-          selectedPlan.plan_name ||
-          selectedPlan.planName ||
-          "BASIC",
-      ).toUpperCase();
-      let pType = "BASIC";
-      if (rawName.includes("PRO") || rawName.includes("PREMIUM")) pType = "PRO";
-      else if (rawName.includes("ELITE")) pType = "ELITE";
-      else if (rawName.includes("BASIC") || rawName.includes("STARTER"))
-        pType = "BASIC";
-      else pType = "BASIC";
-
-      const rawCycle = String(
-        selectedPlan.billing_cycle || selectedPlan.billingInterval || "MONTHLY",
-      ).toUpperCase();
-      const bCycle = rawCycle.includes("MONTH") ? "MONTHLY" : "ANNUAL";
-
-      // Final plan type from selected plan OR derived
-      const finalPType = selectedPlan.plan_type?.toUpperCase() || pType;
-
       const payload: {
-        plan_type: string;
-        billing_cycle: string;
-        success_url?: string;
-        cancel_url?: string;
+        plan_id: number;
         promo_code?: string;
       } = {
-        plan_type: finalPType,
-        billing_cycle: bCycle,
-        success_url: `${baseUrl}/player/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${baseUrl}/player/subscription/cancel`,
+        plan_id: selectedPlan.id,
         ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {}),
       };
 
-      const res = await createCheckout(payload).unwrap();
+      console.log("Sending checkout payload:", payload);
 
-      if (res.checkout_url) {
-        window.location.href = res.checkout_url;
+      const res = await createCheckout(payload).unwrap();
+      console.log("Checkout API Response:", res);
+
+      const checkoutUrl = res.checkout_url || res.data?.checkout_url;
+
+      if (checkoutUrl) {
+        console.log("Redirecting to Stripe:", checkoutUrl);
+        window.location.href = checkoutUrl;
+      } else {
+        console.error("Checkout URL missing in response:", res);
+        throw new Error("No checkout URL returned from server.");
       }
-    } catch (err: unknown) {
-      const error = err as Record<string, Record<string, string[] | string>>;
+    } catch (err: any) {
+      console.error("Checkout Error:", err);
       toast.error(
-        (error?.data?.plan_type?.[0] as string) ||
-          (error?.data?.message as string) ||
-          "Failed to initiate checkout",
+        err?.data?.message || err?.message || "Payment bridge failed. Try again.",
       );
     }
   };
@@ -315,9 +306,9 @@ const SubscriptionContent = () => {
   if (!displaySub) {
     return (
       <div className="p-4 sm:p-8 max-w-6xl mx-auto animate-in fade-in duration-500">
-        <PlansGrid 
-          title="Choose Your Power Up" 
-          subtitle="Join the NextGen network and get exclusive access to scouts, premium content, and more." 
+        <PlansGrid
+          title="Choose Your Power Up"
+          subtitle="Join the NextGen network and get exclusive access to scouts, premium content, and more."
         />
       </div>
     );
@@ -376,7 +367,7 @@ const SubscriptionContent = () => {
             })}
           </div>
 
-          {displaySub.auto_renewal && (
+          {displaySub.is_active && (
             <div className="mt-2">
               <button
                 onClick={() => setIsCancelModalOpen(true)}
