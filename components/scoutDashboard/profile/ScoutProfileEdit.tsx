@@ -197,7 +197,9 @@ export default function ProfileEditForm({
       preferred_leagues: profile.preferred_leagues ?? "",
       contact_status: profile.contact_status ?? "",
       availability: profile.availability ?? "",
-      specialization: profile.specialization?.join(", ") ?? "",
+      specialization: Array.isArray(profile.specialization) 
+        ? profile.specialization.map(s => typeof s === 'string' ? s : Object.values(s)[0] || JSON.stringify(s)).join(", ") 
+        : "",
       scouting_statistics: {
         players_scouted: profile.scouting_statistics?.players_scouted ?? "",
         players_recommended:
@@ -275,8 +277,12 @@ export default function ProfileEditForm({
   const onSubmit = async (data: FormValues) => {
     try {
       const fd = new FormData();
-      if (coverFile) fd.append("cover_image", coverFile);
-      if (avatarFile) fd.append("profile_image", avatarFile);
+      if (coverFile) {
+        fd.append("cover_image", coverFile);
+      }
+      if (avatarFile) {
+        fd.append("profile_image", avatarFile);
+      }
 
       // Split full name back into first and last
       const nameParts = data.full_name.trim().split(" ");
@@ -286,13 +292,19 @@ export default function ProfileEditForm({
       fd.append("first_name", firstName);
       fd.append("last_name", lastName);
 
-      // Other fields
+      // Clean integer fields
+      const parseNum = (val: any) => parseInt(String(val).replace(/\D/g, ""), 10) || 0;
+      
+      const expYears = parseNum(data.experience_years);
+      const conns = parseNum(data.connections);
+      
+      if (expYears >= 0) fd.append("experience_years", String(expYears));
+      if (conns >= 0) fd.append("connections", String(conns));
+
       const scalar: (keyof FormValues)[] = [
         "bio",
         "about",
         "location",
-        "experience_years",
-        "connections",
         "email",
         "phone",
         "website",
@@ -308,43 +320,62 @@ export default function ProfileEditForm({
 
       scalar.forEach((k) => {
         const v = (data as any)[k];
-        if (v !== undefined && v !== null && v !== "") fd.append(k, String(v));
+        if (v !== undefined && v !== null && v !== "" && String(v).trim() !== "") {
+          fd.append(k, String(v).trim());
+        }
       });
 
       fd.append("contact_requests", String(data.contact_requests));
       fd.append("show_online_status", String(data.show_online_status));
       fd.append("activity_history", String(data.activity_history));
 
-      fd.append(
-        "specialization",
-        JSON.stringify(
-          data.specialization
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean),
-        ),
-      );
-      fd.append(
-        "scouting_statistics",
-        JSON.stringify(data.scouting_statistics),
-      );
-      fd.append("achievements", JSON.stringify(data.achievements));
-      fd.append(
-        "notable_discoveries",
-        JSON.stringify(data.notable_discoveries),
-      );
-      fd.append("scouting_regions", JSON.stringify(data.scouting_regions));
-      fd.append(
-        "professional_history",
-        JSON.stringify(data.professional_history),
-      );
+      // Handle Specialization safely (allow for objects or strings)
+      const specList = data.specialization
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+        
+      fd.append("specialization", JSON.stringify(specList));
+
+      if (data.scouting_statistics) {
+        fd.append("scouting_statistics", JSON.stringify(data.scouting_statistics));
+      }
+
+      // Clean achievement ints
+      const cleanAchs = data.achievements.map((a) => ({
+        ...a,
+        year: parseNum(a.year) || new Date().getFullYear(),
+      }));
+      if (cleanAchs.length > 0) {
+        fd.append("achievements", JSON.stringify(cleanAchs));
+      } else {
+        fd.append("achievements", "[]");
+      }
+
+      if (data.notable_discoveries?.length > 0) {
+        fd.append("notable_discoveries", JSON.stringify(data.notable_discoveries));
+      } else {
+        fd.append("notable_discoveries", "[]");
+      }
+      
+      if (data.scouting_regions?.length > 0) {
+        fd.append("scouting_regions", JSON.stringify(data.scouting_regions));
+      } else {
+        fd.append("scouting_regions", "[]");
+      }
+      
+      if (data.professional_history?.length > 0) {
+        fd.append("professional_history", JSON.stringify(data.professional_history));
+      } else {
+        fd.append("professional_history", "[]");
+      }
 
       await updateProfile({ id: profile.id, data: fd }).unwrap();
       toast.success("Profile updated successfully!");
       onSuccess();
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile. Please check all fields.");
+    } catch (err: any) {
+      console.error("Profile update error:", err);
+      toast.error(err?.data?.message || err?.data?.detail || "Failed to update profile. Please verify your inputs.");
     }
   };
 

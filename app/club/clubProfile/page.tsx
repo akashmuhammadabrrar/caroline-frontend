@@ -27,6 +27,7 @@ import {
   useGetClubProfileQuery,
   useUpdateClubProfileMutation,
 } from "../../../redux/features/club/clubProfileApi";
+import { useGetClubEventsQuery } from "../../../redux/features/club/clubEventManagementApi";
 
 interface Achievement {
   title: string;
@@ -222,7 +223,8 @@ const GradientTitle = ({
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 const ClubProfilePage = () => {
-  const { data: apiData, isLoading } = useGetClubProfileQuery();
+  const { data: apiData, isLoading: isProfileLoading } = useGetClubProfileQuery();
+  const { data: apiEventsResponse, isLoading: isEventsLoading } = useGetClubEventsQuery();
   const [updateProfile, { isLoading: isSaving }] =
     useUpdateClubProfileMutation();
 
@@ -235,7 +237,33 @@ const ClubProfilePage = () => {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   const raw = apiData?.data || apiData || {};
-  const profile = { ...FALLBACK, ...raw };
+  
+  // Real events from the management system
+  const realEvents = Array.isArray(apiEventsResponse) 
+    ? apiEventsResponse 
+    : (apiEventsResponse?.results || apiEventsResponse?.data || []);
+
+  const profile = { 
+    ...FALLBACK, 
+    ...raw,
+    // Prioritize real events from the management system
+    upcoming_events: (raw.upcoming_events && raw.upcoming_events.length > 0)
+      ? raw.upcoming_events 
+      : (realEvents.length > 0)
+        ? realEvents.map((e: any) => ({
+            title: e.event_name,
+            date: e.event_date ? new Date(e.event_date).toLocaleDateString('en-GB') : "TBD",
+            venue: e.venue_name || e.location || "TBD",
+            fee: e.registration_fee
+          }))
+        : (raw.hasOwnProperty('upcoming_events') || apiData) ? [] : FALLBACK.upcoming_events,
+    
+    featured_players: raw.featured_players || (raw.hasOwnProperty('featured_players') || apiData ? [] : FALLBACK.featured_players),
+    achievements: raw.achievements || (raw.hasOwnProperty('achievements') || apiData ? [] : FALLBACK.achievements),
+    facilities: raw.facilities || (raw.hasOwnProperty('facilities') || apiData ? [] : FALLBACK.facilities),
+  };
+
+  const isLoading = isProfileLoading || isEventsLoading;
 
   const startEditing = () => {
     setForm(JSON.parse(JSON.stringify(profile)));
@@ -1060,78 +1088,69 @@ const ClubProfilePage = () => {
         <section>
           <GradientTitle first="Upcoming" second="Events" />
           <div className="grid md:grid-cols-3 gap-6">
-            {(profile.upcoming_events || []).map((ev: any, i: number) => (
-              <Card
-                key={i}
-                className="hover:border-cyan-400/30 transition-all space-y-3"
-              >
-                <h3 className="text-white font-black">{ev.title}</h3>
-                <div className="space-y-1.5 text-xs text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <Calendar size={12} className="text-cyan-400" /> {ev.date}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={12} className="text-cyan-400" /> {ev.venue}
-                  </div>
-                  {ev.fee && (
+            {(profile.upcoming_events || []).length > 0 ? (
+              (profile.upcoming_events || []).map((ev: any, i: number) => (
+                <Card
+                  key={i}
+                  className="hover:border-cyan-400/30 transition-all space-y-3"
+                >
+                  <h3 className="text-white font-black">{ev.title}</h3>
+                  <div className="space-y-1.5 text-xs text-gray-400">
                     <div className="flex items-center gap-2">
-                      <span className="text-cyan-400">$</span> {ev.fee}
+                      <Calendar size={12} className="text-cyan-400" /> {ev.date}
                     </div>
-                  )}
-                </div>
-              </Card>
-            ))}
+                    <div className="flex items-center gap-2">
+                      <MapPin size={12} className="text-cyan-400" /> {ev.venue}
+                    </div>
+                    {ev.fee && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-cyan-400">$</span> {ev.fee}
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full py-12 border border-dashed border-white/5 rounded-[24px] text-center text-gray-500">
+                <p className="text-sm">No upcoming events scheduled yet.</p>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Gallery */}
-        <section>
-          <GradientTitle first="Photo" second="Gallery" />
-          <div className="grid grid-cols-3 gap-4">
-            {(profile.gallery || []).map((url: string, i: number) => (
-              <div
-                key={i}
-                className="aspect-[4/3] rounded-[20px] overflow-hidden bg-[#111530] group cursor-pointer"
-              >
-                <img
-                  src={url}
-                  alt={`Gallery ${i + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop";
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+      
 
         {/* Featured Players */}
         <section>
           <GradientTitle first="Featured" second="Players" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {(profile.featured_players || []).map((p: any, i: number) => (
-              <Card
-                key={i}
-                className="flex flex-col items-center text-center gap-3 hover:border-cyan-400/30 transition-all group"
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1a1f4e] to-[#0f1228] flex items-center justify-center border-2 border-[#1e2650] group-hover:border-cyan-400/30 transition-all">
-                  <span className="text-2xl font-black text-gray-600">
-                    {p.name?.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <h4 className="text-white font-black text-sm">{p.name}</h4>
-                  <p className="text-cyan-400 text-xs font-bold">
-                    {p.position}
-                  </p>
-                  <p className="text-gray-500 text-xs mt-1">
-                    {p.age_group || p.age} years • {p.country}
-                  </p>
-                </div>
-              </Card>
-            ))}
+            {(profile.featured_players || []).length > 0 ? (
+              (profile.featured_players || []).map((p: any, i: number) => (
+                <Card
+                  key={i}
+                  className="flex flex-col items-center text-center gap-3 hover:border-cyan-400/30 transition-all group"
+                >
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1a1f4e] to-[#0f1228] flex items-center justify-center border-2 border-[#1e2650] group-hover:border-cyan-400/30 transition-all">
+                    <span className="text-2xl font-black text-gray-600">
+                      {p.name?.charAt(0)}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="text-white font-black text-sm">{p.name}</h4>
+                    <p className="text-cyan-400 text-xs font-bold">
+                      {p.position}
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">
+                      {p.age_group || p.age} years • {p.country || "N/A"}
+                    </p>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full py-12 border border-dashed border-white/5 rounded-[24px] text-center text-gray-500">
+                <p className="text-sm">No featured players added yet.</p>
+              </div>
+            )}
           </div>
         </section>
 
