@@ -62,7 +62,7 @@ export default function HomePageSettings() {
       primary_button_text: "Get Started",
       primary_button_url: "/register",
       secondary_button_text: "Join Now",
-      secondary_button_url: "/signup",
+      secondary_button_url: "/login",
       background_color: "#080D2C",
       title_color: "#FFFFFF",
       subtitle_color: "#B0B0B0",

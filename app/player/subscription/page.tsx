@@ -349,7 +349,7 @@ const SubscriptionContent = () => {
 
   if (!displaySub) {
     return (
-      <div className="p-4 sm:p-8 max-w-6xl mx-auto animate-in fade-in duration-500">
+      <div className="p-4 sm:p-8 mx-auto animate-in fade-in duration-500">
         <PlansGrid
           title="Choose Your Power Up"
           subtitle="Join the NextGen network and get exclusive access to scouts, premium content, and more."
@@ -360,7 +360,7 @@ const SubscriptionContent = () => {
 
   // View 2: Active Subscription Management
   return (
-    <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <div className="p-4 sm:p-8  mx-auto space-y-6 animate-in fade-in duration-500">
       {/* Page Title */}
       <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-6">
         Subscription Management
@@ -466,26 +466,26 @@ const SubscriptionContent = () => {
       </div>
 
       {/* Payment History Section */}
-      <div className="bg-[#12143A] border border-[#1d204a] rounded-2xl p-6 sm:p-8">
+      <div className="bg-[#12143A] border border-[#1d204a] rounded-2xl p-6 sm:p-8 ">
         <h3 className="text-lg font-bold text-white mb-6">Payment History</h3>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px]">
-            <thead>
+        <div className="overflow-x-auto overflow-y-auto max-h-[350px] pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-white/20">
+          <table className="w-full min-w-[500px] relative">
+            <thead className="sticky top-0 bg-[#12143A] z-10 shadow-[0_4px_6px_-1px_rgba(18,20,58,1)]">
               <tr className="border-b border-white/5">
-                <th className="text-left pb-4 text-xs font-bold text-white">
+                <th className="text-left py-4 text-xs font-bold text-white bg-[#12143A]">
                   Date
                 </th>
-                <th className="text-left pb-4 text-xs font-bold text-white">
+                <th className="text-left py-4 text-xs font-bold text-white bg-[#12143A]">
                   Description
                 </th>
-                <th className="text-left pb-4 text-xs font-bold text-white">
+                <th className="text-left py-4 text-xs font-bold text-white bg-[#12143A]">
                   Amount
                 </th>
-                <th className="text-left pb-4 text-xs font-bold text-white">
+                <th className="text-left py-4 text-xs font-bold text-white bg-[#12143A]">
                   Status
                 </th>
-                {/* <th className="text-left pb-4 text-xs font-bold text-white">
+                {/* <th className="text-left py-4 text-xs font-bold text-white bg-[#12143A]">
                   Invoice
                 </th> */}
               </tr>
