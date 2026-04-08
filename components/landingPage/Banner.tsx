@@ -4,10 +4,15 @@ import Image from "next/image";
 import { useEffect, useRef, useMemo } from "react";
 import gsap from "gsap";
 import Link from "next/link";
-import { useGetHeroDataQuery, useGetPublicSettingsQuery } from "@/redux/features/home/homeApi";
+import {
+  useGetHeroDataQuery,
+  useGetPublicSettingsQuery,
+} from "@/redux/features/home/homeApi";
 import { HeroData } from "@/types/home";
+import { useAppSelector } from "@/redux/hooks";
 
 const Banner = () => {
+  const user = useAppSelector((state) => state.auth.user);
   const { data, isLoading, isError } = useGetHeroDataQuery();
   const { data: settings } = useGetPublicSettingsQuery();
 
@@ -125,7 +130,7 @@ const Banner = () => {
                   <span className="text-white font-bold text-3xl md:text-4xl tracking-tight">
                     {name.substring(0, firstSpaceIndex)}
                   </span>
-                  <span 
+                  <span
                     className="font-black text-2xl md:text-3xl tracking-widest uppercase"
                     style={{ color: "var(--primary-cyan, #00E5FF)" }}
                   >
@@ -175,22 +180,28 @@ const Banner = () => {
           ref={btnRef}
           className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg mx-auto"
         >
-          <Link
-            href={activeHero.primary_button_url}
-            className="group relative w-full sm:w-auto overflow-hidden px-10 py-4 bg-white text-black font-black rounded-xl text-base uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)]"
-          >
-            <span className="relative z-10">
-              {activeHero.primary_button_text}
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-          </Link>
+         {
+          !user && activeHero.primary_button_url && activeHero.primary_button_text && (
+            <Link
+              href={activeHero.primary_button_url}
+              className="group relative w-full sm:w-auto overflow-hidden px-10 py-4 bg-white text-black font-black rounded-xl text-base uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)]"
+            >
+              <span className="relative z-10">
+                {activeHero.primary_button_text}
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            </Link>
+          )
+         }
 
-          <Link
-            href={activeHero.secondary_button_url}
-            className="w-full sm:w-auto px-10 py-4 bg-transparent text-white font-bold rounded-xl text-base border-2 border-white/30 backdrop-blur-md uppercase tracking-wider transition-all hover:bg-white hover:text-black hover:border-white shadow-xl hover:scale-105 active:scale-95"
-          >
-            {activeHero.secondary_button_text}
-          </Link>
+          {/* {!user && activeHero.secondary_button_url && activeHero.secondary_button_text && (
+            <Link
+              href={activeHero.secondary_button_url}
+              className="w-full sm:w-auto px-10 py-4 bg-transparent text-white font-black rounded-xl text-base border-2 border-white/30 backdrop-blur-md uppercase tracking-wider transition-all hover:bg-white hover:text-black hover:border-white shadow-xl hover:scale-105 active:scale-95 text-center"
+            >
+              {activeHero.secondary_button_text}
+            </Link>
+          )} */}
         </div>
       </div>
 

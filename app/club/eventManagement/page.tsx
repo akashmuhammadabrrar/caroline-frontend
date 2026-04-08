@@ -31,12 +31,14 @@ import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import {
   useGetClubEventsQuery,
-  useCreateEventMutation,
-  useUpdateEventMutation,
-  useDeleteEventMutation,
-  useToggleFeaturedEventMutation,
+  useGetClubEventDetailsQuery,
+  useClubCreateEventMutation,
+  useClubUpdateEventMutation,
+  useClubDeleteEventMutation,
+  useClubToggleFeaturedEventMutation,
 } from "@/redux/features/club/clubEventManagementApi";
 import { countryCodes } from "@/constants/countryCodes";
+import { EventListResponse } from "@/types/scout/eventsType";
 
 type Event = {
   id: string;
@@ -46,7 +48,7 @@ type Event = {
   location: string;
   fee: string;
   registrations: number;
-  status: "Active" | "Pending";
+  status: "Active" | "Pending" | "Completed";
   featured: boolean;
   views: number;
   confirmed: number;
@@ -64,16 +66,16 @@ type Event = {
   startTime?: string;
   endTime?: string;
   banner?: string | File | null;
-  _raw?: any;
+  _raw?: unknown;
 };
 
 export default function EventManagementPage() {
   const { data: apiEvents, isLoading } = useGetClubEventsQuery(undefined);
   console.log("create event data ", apiEvents);
-  const [createEvent] = useCreateEventMutation();
-  const [updateEvent] = useUpdateEventMutation();
-  const [deleteEventApi] = useDeleteEventMutation();
-  const [toggleFeaturedApi] = useToggleFeaturedEventMutation();
+  const [createEvent] = useClubCreateEventMutation();
+  const [updateEvent] = useClubUpdateEventMutation();
+  const [deleteEventApi] = useClubDeleteEventMutation();
+  const [toggleFeaturedApi] = useClubToggleFeaturedEventMutation();
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [mode, setMode] = useState<"view" | "edit" | null>(null);
@@ -88,16 +90,16 @@ export default function EventManagementPage() {
     // API might return a direct array or a paginated object with 'results'
     const sourceData = Array.isArray(apiEvents)
       ? apiEvents
-      : (apiEvents as any).results ||
-        (apiEvents as any).data ||
-        (apiEvents as any).events ||
+      : (apiEvents as EventListResponse).results ||
+        (apiEvents as EventListResponse).data ||
+        (apiEvents as EventListResponse).events ||
         [];
 
-    if (sourceData.length === 0) {
+    if (!Array.isArray(sourceData) || sourceData.length === 0) {
       return [];
     }
 
-    const mapped = sourceData.map((apiEvent: any) => {
+    const mapped = sourceData.map((apiEvent: Record<string, any>) => {
       // Robust mapping with fallbacks to ensure no empty fields
       const venue = apiEvent.venue_name || "Venue TBA";
       const addr = apiEvent.venue_address ? `, ${apiEvent.venue_address}` : "";
@@ -108,12 +110,13 @@ export default function EventManagementPage() {
       return {
         id: apiEvent.id?.toString() || Math.random().toString(),
         name: apiEvent.event_name || "Untitled Event",
+        event_type: apiEvent.event_type || "TRIAL",
         date: apiEvent.event_date || "Date TBA",
         location: `${venue}${addr}`,
         fee: fee,
         registrations:
           apiEvent.registered_count ?? apiEvent.confirmed_count ?? 0,
-        status: apiEvent.status === "ACTIVE" ? "Active" : "Pending",
+        status: (apiEvent.status === "ACTIVE" ? "Active" : apiEvent.status === "COMPLETED" ? "Completed" : "Pending") as "Active" | "Pending" | "Completed",
         featured: apiEvent.featured ?? apiEvent.is_featured ?? false,
         views: apiEvent.views ?? apiEvent.views_count ?? 0,
         confirmed: apiEvent.confirmed_count ?? 0,
@@ -243,7 +246,7 @@ export default function EventManagementPage() {
         description: formData.description,
         contact_email: formData.contactEmail,
         contact_phone: formData.contactPhone,
-        status: "ACTIVE",
+        status: "PENDING",
       };
 
       formDataToSend.append("data", JSON.stringify(eventData));
@@ -314,7 +317,9 @@ export default function EventManagementPage() {
                       <span
                         className={`
                         px-3 py-1 rounded-full text-xs font-medium
-                        ${ev.status === "Active" ? "bg-green-900/50 text-green-300" : "bg-amber-900/50 text-amber-300"}
+                        ${ev.status === "Active" ? "bg-green-900/50 text-green-300 border border-green-500/20" : 
+                          ev.status === "Completed" ? "bg-blue-900/50 text-blue-300 border border-blue-500/20" : 
+                          "bg-amber-900/50 text-amber-300 border border-amber-500/20"}
                       `}
                       >
                         {ev.status}
@@ -436,6 +441,11 @@ type ModalProps = {
 function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
   const isEdit = mode === "edit";
   const [form, setForm] = useState(event);
+
+  // Fetch full details if in "view" mode to get real participants
+  const { data: details, isLoading: isDetailsLoading } = useGetClubEventDetailsQuery(event.id, {
+    skip: !event.id || isEdit,
+  });
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -800,9 +810,11 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                     <span className="text-white font-semibold">1,234</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Registrations</span>
-                    <span className="text-cyan-400 font-bold">
-                      {form.registrations}/{form.capacity}
+                    <span className="text-gray-400">Total Capacity</span>
+                    <span className="text-white font-bold">
+                      <span className="text-cyan-400">{form.registrations}</span>
+                      <span className="text-gray-500 mx-1">/</span>
+                      {form.capacity}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -930,10 +942,12 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider">
-                    Registrations
+                    Registration Capacity
                   </p>
-                  <p className="text-lg font-semibold text-white">
-                    {event.registrations} Players
+                  <p className="text-lg font-bold text-white">
+                    <span className="text-cyan-400">{event.registrations}</span>
+                    <span className="text-gray-500 mx-1">/</span>
+                    {event.capacity} Players
                   </p>
                 </div>
               </div>
@@ -945,30 +959,32 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
-            <QuickStat
+          <div className="grid grid-cols-2 justify-center
+          
+          md:grid-cols-4 gap-4 shrink-0">
+            {/* <QuickStat
               icon={<Eye size={20} />}
               label="Event Views"
               value={event.views.toString()}
-              trend="+23% this week"
-            />
+              trend="Total Views"
+            /> */}
             <QuickStat
               icon={<Users size={20} />}
               label="Total Registrations"
               value={event.registrations.toString()}
-              trend="45% filled"
+              trend={`${Math.round((event.registrations / Math.max(1, event.capacity)) * 100)}% filled`}
             />
             <QuickStat
               icon={<Check className="text-emerald-400" size={20} />}
               label="Confirmed"
               value={event.confirmed.toString()}
-              trend="84% confirmed"
+              trend={`${Math.round((event.confirmed / Math.max(1, event.registrations)) * 100) || 0}% confirmed`}
             />
             <QuickStat
               icon={<Calendar size={20} />}
               label="Pending"
               value={event.pending.toString()}
-              trend="Awaiting confirmation"
+              trend={`${event.pending} awaiting confirmation`}
             />
           </div>
 
@@ -1049,67 +1065,74 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
               </div>
 
               <div className="space-y-4">
-                {[
-                  {
-                    name: "John Doe",
-                    role: "Midfielder",
-                    age: 19,
-                    registered: "2 days ago",
-                  },
-                  {
-                    name: "Sarah Player",
-                    role: "Forward",
-                    age: 18,
-                    registered: "3 days ago",
-                  },
-                  {
-                    name: "Mike Johnson",
-                    role: "Defender",
-                    age: 20,
-                    registered: "5 days ago",
-                  },
-                  {
-                    name: "Emma Garcia",
-                    role: "Goalkeeper",
-                    age: 17,
-                    registered: "1 week ago",
-                  },
-                ].map((participant, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-[#0B0E1E]/50 border border-[#1E2550] rounded-[20px] p-4 flex items-center justify-between group hover:bg-white/5 transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
-                        <div className="w-full h-full rounded-full bg-[#0B0E1E] flex items-center justify-center font-bold text-white">
-                          {participant.name[0]}
+                {isDetailsLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto" />
+                    <p className="text-gray-500 text-xs mt-2">Loading participants...</p>
+                  </div>
+                ) : (() => {
+                  const rawData = details || event._raw as Record<string, unknown>;
+                  const participants = Array.isArray(rawData?.participants) 
+                    ? rawData.participants 
+                    : Array.isArray(rawData?.registrations) 
+                      ? rawData.registrations 
+                      : (rawData as any)?.data?.participants || [];
+
+                  if (participants.length === 0) {
+                    return (
+                      <div className="text-center py-8">
+                        <Users className="mx-auto text-gray-700 mb-2" size={32} />
+                        <p className="text-gray-500 text-sm">No registered participants yet.</p>
+                      </div>
+                    );
+                  }
+
+                  return participants.map((participant: Record<string, unknown>, idx: number) => {
+                    const name = typeof participant.name === "string" ? participant.name : 
+                                 (typeof participant.first_name === "string" ? `${participant.first_name} ${participant.last_name || ""}` : "Unknown Player");
+                    const role = typeof participant.role === "string" ? participant.role : 
+                                 (typeof participant.position === "string" ? participant.position : (participant as any).event_type || "Player");
+                    const age = participant.age ? String(participant.age) : "N/A";
+                    const registeredDate = typeof participant.created_at === "string" ? new Date(participant.created_at).toLocaleDateString() : "Recently";
+
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-[#0B0E1E]/50 border border-[#1E2550] rounded-[20px] p-4 flex items-center justify-between group hover:bg-white/5 transition-all"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
+                            <div className="w-full h-full rounded-full bg-[#0B0E1E] flex items-center justify-center font-bold text-white uppercase">
+                              {name[0] || "?"}
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-white leading-tight">
+                              {name}
+                            </h4>
+                            <p className="text-xs text-gray-500">
+                              {role} • {age} years old
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-6">
+                          <div className="text-right">
+                            <p className="text-[10px] text-gray-500 uppercase tracking-tighter">
+                              Registered
+                            </p>
+                            <p className="text-xs font-semibold text-white">
+                              {registeredDate}
+                            </p>
+                          </div>
+
+                          <button className="text-gray-500 hover:text-cyan-400 transition-colors">
+                            <Eye size={18} />
+                          </button>
                         </div>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-white leading-tight">
-                          {participant.name}
-                        </h4>
-                        <p className="text-xs text-gray-500">
-                          {participant.role} • {participant.age} years old
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <p className="text-[10px] text-gray-500 uppercase tracking-tighter">
-                          Registered
-                        </p>
-                        <p className="text-xs font-semibold text-white">
-                          {participant.registered}
-                        </p>
-                      </div>
-
-                      <button className="text-gray-500 hover:text-cyan-400 transition-colors">
-                        <Eye size={18} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                    );
+                  });
+                })()}
               </div>
 
               <button className="w-full mt-8 py-3 bg-white/5 hover:bg-white/10 text-cyan-400 font-bold rounded-xl border border-white/5 transition-all text-sm">

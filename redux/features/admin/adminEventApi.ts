@@ -44,7 +44,15 @@ export const adminEventApi = baseApi.injectEndpoints({
       invalidatesTags: (result, error, { id }) => [{ type: "Events", id }, "Events"],
     }),
 
-    deleteEvent: builder.mutation<any, number>({
+    updateEventStatus: builder.mutation<any, { id: number | string; status: string }>({
+      query: ({ id, status }) => ({
+        url: `/admin-dashboard/events/${id}/update/`,
+        method: "PUT",
+        body: { status },
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Events", id }, "Events"],
+    }),
+    deleteEvent: builder.mutation<any, number | string>({
       query: (id) => ({
         url: `/admin-dashboard/events/${id}/delete/`,
         method: "DELETE",
@@ -59,5 +67,6 @@ export const {
   useGetEventDetailsQuery,
   useCreateEventMutation, 
   useUpdateEventMutation,
+  useUpdateEventStatusMutation,
   useDeleteEventMutation 
 } = adminEventApi;

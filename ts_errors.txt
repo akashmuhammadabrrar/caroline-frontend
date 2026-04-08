@@ -1,0 +1,2 @@
+components/clubDashboard/ClubDashboard.tsx(26,88): error TS2339: Property 'results' does not exist on type '{}'.
+components/clubDashboard/ClubDashboard.tsx(26,115): error TS2339: Property 'data' does not exist on type '{}'.

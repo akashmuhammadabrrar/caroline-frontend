@@ -12,9 +12,12 @@ import {
   CheckCircle,
   Clock,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import { 
   useGetEventsQuery,
   useGetMyRegistrationsQuery,
+  useGetUpcomingRegistrationsQuery,
+  useGetPastRegistrationsQuery,
   type EventDataApi,
   type MyRegistration,
 } from "../../../redux/features/player/eventsDirectoryApi";
@@ -33,7 +36,17 @@ const EventCard = ({
   isFull: boolean;
   status?: string;
 }) => {
-  const isPending = status === "PENDING";
+  const s = (status || event.status || "").toUpperCase();
+  const isPending = s === "PENDING";
+  const isCompleted = s === "COMPLETED";
+
+  const handleRegister = () => {
+    if (isRegistered) {
+      toast.error("You are already registered for this event.");
+      return;
+    }
+    onViewDetails(event.id);
+  };
 
   return (
     <div className="bg-[#121433] border border-[#1E2550] rounded-[24px] overflow-hidden hover:border-cyan-400/30 transition-all group">
@@ -71,22 +84,42 @@ const EventCard = ({
         </div>
 
         <div className="flex items-center justify-between pt-6 border-t border-[#1E2550]">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-500 uppercase font-black mb-1">Registration Fee</span>
-            <span className="text-2xl font-bold text-white">€{parseFloat(event.registration_fee || "0").toFixed(0)}</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-500 uppercase font-black">Capacity</span>
+              <span className="text-sm font-bold text-white">
+                <span className="text-[#04B5A3]">{event.registered_count || 0}</span>
+                <span className="text-gray-500 mx-1">/</span>
+                {event.maximum_capacity || 0}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-500 uppercase font-black">Fee</span>
+              <span className="text-lg font-black text-white">€{parseFloat(event.registration_fee || "0").toFixed(0)}</span>
+            </div>
           </div>
           <button
             onClick={() => onViewDetails(event.id)}
-            disabled={isFull && !isRegistered}
-            className={`px-8 py-3 rounded-xl font-bold transition-all border ${
+            disabled={!isRegistered && (isFull || isPending || isCompleted)}
+            className={`px-8 py-3 rounded-xl font-bold transition-all border flex items-center justify-center ${
               isRegistered
                 ? "bg-[#0B0E1E] text-[#04B5A3] border-[#04B5A3] hover:bg-[#04B5A3]/5"
+                : isPending
+                ? "bg-[#0B0E1E] text-amber-500 border-amber-500/20 cursor-not-allowed"
+                : isCompleted
+                ? "bg-[#0B0E1E] text-blue-500 border-blue-500/20 cursor-not-allowed"
                 : isFull
                 ? "bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed"
                 : "bg-[#04B5A3] text-white border-transparent hover:bg-[#039d8f] shadow-[0_4px_12px_rgba(4,181,163,0.3)]"
             }`}
           >
-            {isRegistered ? "View Details" : isFull ? "Event Full" : "Register Now"}
+            {isRegistered 
+              ? "View Details" 
+              : isPending 
+              ? "Pending Status" 
+              : (isCompleted || isFull)
+              ? "Completed"
+              : "Register Now"}
           </button>
         </div>
       </div>
@@ -100,61 +133,74 @@ const EventsDirectoryPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
-  const [locationFilter, setLocationFilter] = useState("All Locations");
+  const [activeTab, setActiveTab] = useState<"BROWSE" | "UPCOMING" | "PAST">("BROWSE");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 4;
 
-  const { data: eventsData, isLoading } = useGetEventsQuery();
-  console.log('player events ', eventsData);
-  const eventsDataArr = Array.isArray(eventsData) ? eventsData : [];
-  const events = (eventsData && 'results' in eventsData ? eventsData.results : undefined) || 
-                 (eventsData && 'data' in eventsData ? eventsData.data : undefined) || 
-                 eventsDataArr;
+  const { data: eventsData, isLoading: isEventsLoading } = useGetEventsQuery();
+  const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
+  const { data: pastData, isLoading: isPastLoading } = useGetPastRegistrationsQuery();
 
-  const { data: registrationsData } = useGetMyRegistrationsQuery();
-  const registrationsArray: MyRegistration[] = useMemo(() => {
-    if (!registrationsData) return [];
-    if (Array.isArray(registrationsData)) return registrationsData;
-    if ('results' in registrationsData && Array.isArray(registrationsData.results)) return registrationsData.results;
-    if ('data' in registrationsData && Array.isArray(registrationsData.data)) return registrationsData.data;
-    return [];
-  }, [registrationsData]);
+  const isLoading = isEventsLoading || isUpcomingLoading || isPastLoading;
 
-  const filteredEvents = useMemo(() => {
-    let result = [...events].filter((event: EventDataApi) => {
-      const matchesSearch = event.event_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesType = typeFilter === "All Types" || event.event_type === typeFilter;
-      const matchesLocation = locationFilter === "All Locations" || event.venue_name?.includes(locationFilter);
-      return matchesSearch && matchesType && matchesLocation;
-    });
-
-    try {
-      const map = JSON.parse(localStorage.getItem("playerRegistrations") || "{}") as Record<string, string>;
-      result.sort((a: EventDataApi, b: EventDataApi) => {
-        const aReg = !!map[String(a.id)];
-        const bReg = !!map[String(b.id)];
-        if (aReg !== bReg) return aReg ? 1 : -1; // Unregistered first
-
-        // Sort by created date (newest first)
-        const timeA = new Date(a.created_at || a.event_date || 0).getTime();
-        const timeB = new Date(b.created_at || b.event_date || 0).getTime();
-        if (timeA === timeB) return b.id - a.id;
-        return timeB - timeA;
-      });
-    } catch {
-      // safe fallback
+  const eventsArray: EventDataApi[] = useMemo(() => {
+    if (!eventsData) return [];
+    let data = [];
+    if (Array.isArray(eventsData)) {
+      data = eventsData;
+    } else {
+      data = (eventsData as any).results || (eventsData as any).data || [];
     }
 
-    return result;
-  }, [events, searchTerm, typeFilter, locationFilter]);
+    // Sort by created_at DESC (Newest first)
+    return [...data].sort((a, b) => {
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
+      return dateB - dateA;
+    });
+  }, [eventsData]);
 
-  useEffect(() => { setCurrentPage(1); }, [searchTerm, typeFilter, locationFilter]);
+  const upcomingArray: MyRegistration[] = useMemo(() => {
+    if (!upcomingData) return [];
+    if (Array.isArray(upcomingData)) return upcomingData;
+    return (upcomingData as any).results || (upcomingData as any).data || [];
+  }, [upcomingData]);
 
-  const totalPages = Math.ceil(filteredEvents.length / itemsPerPage);
-  const paginatedEvents = useMemo(() => {
+  const pastArray: MyRegistration[] = useMemo(() => {
+    if (!pastData) return [];
+    if (Array.isArray(pastData)) return pastData;
+    return (pastData as any).results || (pastData as any).data || [];
+  }, [pastData]);
+
+  const filteredItems = useMemo(() => {
+    if (activeTab === "BROWSE") {
+      return eventsArray.filter(e => {
+        const s = (e.status || "").toUpperCase();
+        const matchesSearch = e.event_name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesType = typeFilter === "All Types" || e.event_type === typeFilter;
+        
+        // Show ACTIVE, PENDING, COMPLETED. Exclude CANCELLED.
+        const isVisible = (s === "ACTIVE" || s === "PENDING" || s === "COMPLETED" || !s) && s !== "CANCELLED";
+        
+        return isVisible && matchesSearch && matchesType;
+      });
+    }
+    
+    const source = activeTab === "UPCOMING" ? upcomingArray : pastArray;
+    return source.filter(r => {
+      const event = typeof r.event === 'object' ? r.event : r.event_details;
+      const name = (event as any)?.event_name || "";
+      return name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  }, [activeTab, eventsArray, upcomingArray, pastArray, searchTerm, typeFilter]);
+
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, typeFilter, activeTab]);
+
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return filteredEvents.slice(start, start + itemsPerPage);
-  }, [filteredEvents, currentPage]);
+    return filteredItems.slice(start, start + itemsPerPage);
+  }, [filteredItems, currentPage]);
 
   const handleViewDetails = (id: number) => router.push(`/player/eventsDirectory/${id}`);
 
@@ -164,8 +210,29 @@ const EventsDirectoryPage = () => {
         Events Directory
       </h1>
 
+      {/* Tabs */}
+      <div className="flex items-center gap-2 mb-8 bg-[#121433]/50 p-1.5 rounded-2xl border border-[#1E2550] w-fit">
+        {[
+          { id: "BROWSE", label: "Browse Events" },
+          { id: "UPCOMING", label: "Upcoming" },
+          { id: "PAST", label: "Past Events" }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+              activeTab === tab.id 
+                ? "bg-cyan-400 text-[#0B0E1E] shadow-[0_0_15px_rgba(34,211,238,0.2)]" 
+                : "text-gray-500 hover:text-white"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* Filters */}
-      <div className="bg-[#121433] border border-[#1E2550] rounded-2xl p-6 mb-8 grid md:grid-cols-4 gap-4">
+      <div className="bg-[#121433] border border-[#1E2550] rounded-2xl p-6 mb-8 grid md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label className="text-xs text-gray-500 font-bold uppercase tracking-wider ml-1">Event Type</label>
           <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}
@@ -174,13 +241,6 @@ const EventsDirectoryPage = () => {
             <option>TOURNAMENT</option>
             <option>TRIAL</option>
             <option>SHOWCASE</option>
-          </select>
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs text-gray-500 font-bold uppercase tracking-wider ml-1">Location</label>
-          <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)}
-            className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-400 transition-all">
-            <option>All Locations</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -205,23 +265,35 @@ const EventsDirectoryPage = () => {
       ) : (
         <div className="space-y-8">
           <div className="grid lg:grid-cols-2 gap-6">
-            {paginatedEvents.map((event: EventDataApi) => {
-              const reg = registrationsArray.find((r) => {
-                const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event);
-                return Number(regEventId) === Number(event.id);
-              });
-              const status = (reg?.status || "").toUpperCase();
-              const isRegistered = !!reg && ["PENDING", "CONFIRMED", "PAID", "CONFIRM", "SUCCESS"].includes(status);
-              const isFull = event.is_full || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+            {paginatedItems.map((item: any) => {
+              const isRegistration = 'event' in item || 'event_details' in item;
+              const event = isRegistration ? (item.event_details || item.event) : item;
+              
+              const status = (isRegistration 
+                ? (item.status || item.registration_status || "") 
+                : (event.status || "")
+              ).toUpperCase();
+
+              // Correctly check if registered by looking in both upcoming and past registrations
+              const checkIsRegistered = (regArray: MyRegistration[]) => {
+                return regArray.some(u => {
+                  const regEventId = u.event_id || (typeof u.event === 'object' && u.event !== null ? (u.event as any).id : u.event);
+                  return Number(regEventId) === Number(event.id);
+                });
+              };
+
+              const isRegistered = isRegistration || checkIsRegistered(upcomingArray) || checkIsRegistered(pastArray);
+              
+              const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
               
               return (
                 <EventCard 
-                  key={event.id} 
+                  key={item.id} 
                   event={event} 
                   onViewDetails={handleViewDetails} 
                   isRegistered={isRegistered}
                   isFull={isFull}
-                  status={reg?.status}
+                  status={status}
                 />
               );
             })}

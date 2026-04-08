@@ -1,7 +1,7 @@
 // @/types/scout/eventsType.ts
 
 export type EventType = "TRIAL" | "SHOWCASE" | "TRAINING";
-export type EventStatus = "ACTIVE" | "INACTIVE" | "CANCELLED" | "COMPLETED";
+export type EventStatus = "ACTIVE" | "PENDING" | "INACTIVE" | "CANCELLED" | "COMPLETED";
 
 export interface Event {
   id: number;
@@ -43,7 +43,9 @@ export interface EventListResponse {
   count: number;
   next: string | null;
   previous: string | null;
-  results: Event[];
+  results?: Event[];
+  data?: Event[];
+  events?: Event[];
 }
 
 export interface ClubDetails {

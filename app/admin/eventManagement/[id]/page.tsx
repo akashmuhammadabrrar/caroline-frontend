@@ -167,6 +167,58 @@ export default function EventDetailsPage() {
              )}
           </div>
 
+          {/* Registered Participants Section */}
+          <div className="bg-[#0D1B2A]/50 border border-[#162d45] rounded-3xl p-8 backdrop-blur-sm shadow-xl">
+             <div className="flex items-center justify-between mb-8">
+               <div className="flex items-center gap-3">
+                 <Users size={24} className="text-[#00E5FF]" />
+                 <h2 className="text-2xl font-bold text-white">Registered Players</h2>
+               </div>
+               <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/10 text-sm text-slate-300">
+                 {event.registered_players?.length || 0} / {event.maximum_capacity} Enrolled
+               </div>
+             </div>
+
+             {event.registered_players && event.registered_players.length > 0 ? (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 {event.registered_players.map((player: any, idx: number) => {
+                   const name = player.first_name ? `${player.first_name} ${player.last_name || ""}` : (player.user_details?.first_name ? `${player.user_details.first_name} ${player.user_details.last_name || ""}` : "Unknown Player");
+                   const role = player.position || player.user_details?.position || "Player";
+                   const avatar = player.user_details?.profile_photo || null;
+
+                   return (
+                     <div key={player.id || idx} className="flex items-center gap-4 p-4 rounded-2xl bg-white/2 border border-white/5 hover:bg-white/5 transition-all group">
+                       <div className="w-12 h-12 rounded-full border-2 border-[#00E5FF]/20 overflow-hidden bg-[#0B0E1E] shrink-0">
+                         {avatar ? (
+                           <img src={avatar} alt={name} className="w-full h-full object-cover" />
+                         ) : (
+                           <div className="w-full h-full flex items-center justify-center text-[#00E5FF] font-bold text-lg">
+                             {name[0]}
+                           </div>
+                         )}
+                       </div>
+                       <div className="min-w-0 flex-1">
+                         <h4 className="text-white font-bold truncate">{name}</h4>
+                         <p className="text-slate-500 text-xs mt-0.5">{role}</p>
+                       </div>
+                       <div className="text-right">
+                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase border ${
+                           player.status === 'CONFIRMED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                         }`}>
+                           {player.status || 'PENDING'}
+                         </span>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
+             ) : (
+               <div className="py-12 text-center bg-white/2 rounded-2xl border border-dashed border-white/10">
+                 <Users size={32} className="mx-auto text-slate-700 mb-3" />
+                 <p className="text-slate-500">No players registered yet.</p>
+               </div>
+             )}
+          </div>
         </div>
 
         {/* Sidebar Info (Right Col) */}

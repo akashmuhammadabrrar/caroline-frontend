@@ -58,7 +58,7 @@ const CreateEventPage = () => {
     contact_phone: "",
     website: "",
     event_media: "",
-    status: "ACTIVE",
+    status: "PENDING",
     is_featured: false,
     schedules: [
       { activity_title: "", description: "", start_time: "", end_time: "", order: 1 }

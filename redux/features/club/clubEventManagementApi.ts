@@ -1,12 +1,17 @@
 import { baseApi } from "@/redux/api/baseApi";
+import { EventListResponse, Event } from "@/types/scout/eventsType";
 
 export const clubEventManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getClubEvents: builder.query({
+    getClubEvents: builder.query<EventListResponse | Event[], void>({
       query: () => "/club-academy/events/",
       providesTags: ["Events"],
     }),
-    createEvent: builder.mutation({
+    getClubEventDetails: builder.query<any, string | number>({
+      query: (id) => `/club-academy/events/${id}/`,
+      providesTags: (result, error, id) => [{ type: "Events", id }],
+    }),
+    clubCreateEvent: builder.mutation<unknown, FormData | Record<string, unknown>>({
       query: (data) => ({
         url: "/club-academy/events/create/",
         method: "POST",
@@ -14,7 +19,7 @@ export const clubEventManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Events"],
     }),
-    updateEvent: builder.mutation({
+    clubUpdateEvent: builder.mutation<unknown, { id: string | number; body: FormData | Record<string, unknown> }>({
       query: ({ id, body }) => ({
         url: `/club-academy/events/${id}/update/`,
         method: "PUT",
@@ -22,14 +27,14 @@ export const clubEventManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Events"],
     }),
-    deleteEvent: builder.mutation({
+    clubDeleteEvent: builder.mutation<unknown, string | number>({
       query: (id) => ({
         url: `/club-academy/events/${id}/delete/`,
         method: "DELETE",
       }),
       invalidatesTags: ["Events"],
     }),
-    toggleFeaturedEvent: builder.mutation({
+    clubToggleFeaturedEvent: builder.mutation<unknown, string | number>({
       query: (id) => ({
         url: `/club-academy/events/${id}/toggle-featured/`, 
         method: "POST",
@@ -41,8 +46,9 @@ export const clubEventManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetClubEventsQuery,
-  useCreateEventMutation,
-  useUpdateEventMutation,
-  useDeleteEventMutation,
-  useToggleFeaturedEventMutation,
+  useGetClubEventDetailsQuery,
+  useClubCreateEventMutation,
+  useClubUpdateEventMutation,
+  useClubDeleteEventMutation,
+  useClubToggleFeaturedEventMutation,
 } = clubEventManagementApi;
