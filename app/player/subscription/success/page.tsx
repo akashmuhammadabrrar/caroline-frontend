@@ -85,18 +85,18 @@ const SuccessContent = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] p-4 sm:p-8 animate-in fade-in zoom-in duration-700 w-full">
-      <div className="relative mb-8 sm:mb-12">
+      <div className="relative mb-4 sm:mb-8">
         <div className="absolute inset-0 bg-cyan-400 blur-3xl opacity-20 animate-pulse" />
-        <div className="relative w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-[#00D4AA] to-cyan-500 rounded-[30px] sm:rounded-[40px] flex items-center justify-center text-white shadow-[0_20px_50px_rgba(0,212,170,0.4)] rotate-3">
-          <Check className="w-12 h-12 sm:w-16 sm:h-16" strokeWidth={3} />
+        <div className="relative w-14 h-14 sm:w-22 sm:h-22 bg-gradient-to-br from-[#00D4AA] to-cyan-500 rounded-[30px] sm:rounded-[40px] flex items-center justify-center text-white shadow-[0_20px_50px_rgba(0,212,170,0.4)] rotate-4">
+          <Check className="w-8 h-5 sm:w-16 sm:h-16" strokeWidth={4} />
         </div>
       </div>
 
       <div className="text-center space-y-6 w-full max-w-2xl mx-auto">
         <div className="space-y-2">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white uppercase italic leading-none tracking-tighter">
-            Payment <br />
-            <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent pb-1 inline-block">Successful!</span>
+          <h1 className="text-2xl sm:text-5xl md:text-3xl font-black text-white uppercase italic leading-none tracking-tighter">
+            Payment{" "}
+             <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent pb-1 inline-block">Successful!</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-400 font-medium">Welcome to the elite league.</p>
         </div>
