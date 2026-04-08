@@ -181,13 +181,13 @@ const SubscriptionContent = () => {
                   typeof feature === "string"
                     ? feature
                     : Array.isArray(Object.values(feature)[0])
-                    ? (Object.values(feature)[0] as string[]).join(", ")
-                    : feature?.name ||
-                      feature?.title ||
-                      feature?.description ||
-                      feature?.more ||
-                      Object.values(feature)[0] ||
-                      JSON.stringify(feature);
+                      ? (Object.values(feature)[0] as string[]).join(", ")
+                      : feature?.name ||
+                        feature?.title ||
+                        feature?.description ||
+                        feature?.more ||
+                        Object.values(feature)[0] ||
+                        JSON.stringify(feature);
                 return (
                   <div key={i} className="flex gap-3 text-sm">
                     <div className="mt-1 flex-shrink-0">
@@ -266,7 +266,9 @@ const SubscriptionContent = () => {
     } catch (err: any) {
       console.error("Checkout Error:", err);
       toast.error(
-        err?.data?.message || err?.message || "Payment bridge failed. Try again.",
+        err?.data?.message ||
+          err?.message ||
+          "Payment bridge failed. Try again.",
       );
     }
   };
