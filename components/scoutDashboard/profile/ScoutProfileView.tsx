@@ -154,9 +154,8 @@ export default function ProfileView({ profile }: { profile: ScoutProfile }) {
       <div className="h-[60px]" />
 
       {/* ── Stats Card Bar ── */}
-      <section className="px-0 max-w-7xl mx-auto mb-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="px-0 max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
         {[
-          { label: "Players Viewed", val: profile.dashboard_stats?.players_viewed || 0, sub: "Total count", icon: Eye },
           { label: "Shortlisted Players", val: profile.dashboard_stats?.shortlisted_players || 0, sub: "Ready for review", icon: Star },
           { label: "Upcoming Events", val: profile.dashboard_stats?.upcoming_events || 0, sub: "In calendar", icon: CalendarDays },
           { label: "Active Conversations", val: profile.dashboard_stats?.active_conversations || 0, sub: "Messaging", icon: MessageSquare },
