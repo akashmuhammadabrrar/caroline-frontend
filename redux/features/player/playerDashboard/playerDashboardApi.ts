@@ -44,6 +44,7 @@ export interface CareerStats {
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const playerDashboardApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     // GET dashboard statistics
     getDashboardStats: builder.query<DashboardStats, void>({
