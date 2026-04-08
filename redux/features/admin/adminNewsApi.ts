@@ -18,36 +18,35 @@ export interface NewsMetricsResponse {
 
 export interface NewsArticle {
   id: number;
+  unique_id: string;
   title: string;
-  image?: string;
-  category_name: string;
-  author_name: string;
-  date: string;
-  views_count: number;
-  status: string;
+  image_url?: string;
+  category: string;
+  author: string;
+  date_published: string;
+  views: number;
+  status: 'DRAFT' | 'PUBLISHED';
 }
 
 export interface NewsArticleDetail {
   id: number;
+  unique_id: string;
   title: string;
   slug: string;
-  category: number;
-  category_name: string;
-  author: number;
-  author_name: string;
+  category: string;
+  author: string;
+  date_published: string;
+  read_time: string;
+  image_url: string;
+  views: number;
+  shares: number;
+  engagement_rate: number;
   excerpt: string;
   content: string;
-  featured_image: string;
   meta_title: string;
   meta_description: string;
-  tags: string;
-  status: string;
-  published_date: string;
-  views_count: number;
-  shares_count: number;
-  avg_read_time: number;
-  formatted_read_time: string;
-  engagement_rate: number;
+  tags: string[];
+  status: 'DRAFT' | 'PUBLISHED';
   created_at: string;
   updated_at: string;
 }

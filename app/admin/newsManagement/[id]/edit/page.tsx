@@ -36,7 +36,7 @@ export default function EditArticlePage() {
   // Form State
   const [formData, setFormData] = useState({
     title: '',
-    category: 0,
+    category: '' as string | number,
     excerpt: '',
     content: '',
     meta_title: '',
@@ -55,15 +55,15 @@ export default function EditArticlePage() {
       const article = articleData.data;
       setFormData({
         title: article.title || '',
-        category: article.category || 0,
+        category: article.category || '',
         excerpt: article.excerpt || '',
         content: article.content || '',
         meta_title: article.meta_title || '',
         meta_description: article.meta_description || '',
-        tags: article.tags || '',
-        status: article.status || 'DRAFT',
+        tags: Array.isArray(article.tags) ? article.tags.join(', ') : (article.tags || ''),
+        status: (article as any).status || 'DRAFT',
       });
-      setImagePreview(article.featured_image || null);
+      setImagePreview(article.image_url || null);
     }
   }, [articleData]);
 
@@ -86,7 +86,7 @@ export default function EditArticlePage() {
 
   const removeImage = () => {
     setImageFile(null);
-    setImagePreview(articleData?.data?.featured_image || null);
+    setImagePreview(articleData?.data?.image_url || null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 

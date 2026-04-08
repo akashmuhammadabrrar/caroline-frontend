@@ -91,13 +91,13 @@ export default function ArticleDetailsPage() {
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-full overflow-hidden bg-indigo-500/20 flex items-center justify-center border-2 border-indigo-500/30">
                 <img 
-                  src={`https://ui-avatars.com/api/?name=${article.author_name}&background=6366f1&color=fff`}
-                  alt={article.author_name}
+                  src={`https://ui-avatars.com/api/?name=${article.author}&background=6366f1&color=fff`}
+                  alt={article.author}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <p className="font-bold text-lg leading-none mb-1">{article.author_name}</p>
+                <p className="font-bold text-lg leading-none mb-1">{article.author}</p>
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Author</p>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function ArticleDetailsPage() {
             <div className="flex items-center gap-3 text-gray-400">
               <Calendar className="text-cyan-400" size={20} />
               <span className="text-sm font-medium">
-                Published on {new Date(article.published_date || article.created_at).toISOString().split('T')[0]}
+                Published on {new Date(article.date_published || article.created_at).toISOString().split('T')[0]}
               </span>
             </div>
 
@@ -114,7 +114,7 @@ export default function ArticleDetailsPage() {
             <div className="flex items-center gap-3 text-gray-400">
               <TrendingUp className="text-emerald-400" size={20} />
               <span className="text-sm font-medium">
-                Trending in {article.category_name}
+                Trending in {article.category}
               </span>
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function ArticleDetailsPage() {
               </div>
               <div>
                 <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Total Views</p>
-                <p className="text-xl font-black text-white">{article.views_count.toLocaleString()}</p>
+                <p className="text-xl font-black text-white">{(article.views ?? 0).toLocaleString()}</p>
               </div>
             </div>
 
@@ -154,7 +154,7 @@ export default function ArticleDetailsPage() {
               </div>
               <div>
                 <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Read Time</p>
-                <p className="text-xl font-black text-white">{article.formatted_read_time}</p>
+                <p className="text-xl font-black text-white">{article.read_time ?? 'N/A'}</p>
               </div>
             </div>
 
@@ -174,10 +174,10 @@ export default function ArticleDetailsPage() {
         </div>
 
         {/* Featured Image */}
-        {article.featured_image && (
+        {article.image_url && (
           <div className="max-w-7xl mx-auto mb-14 rounded-[2rem] overflow-hidden border border-gray-800/50 bg-[#171b2f] relative aspect-video shadow-2xl group">
             <img 
-              src={article.featured_image} 
+              src={article.image_url} 
               alt={article.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -217,9 +217,9 @@ export default function ArticleDetailsPage() {
           {/* Footer Navigation */}
           <div className="mt-20 pt-12 border-t border-gray-800/50">
             {/* Tags */}
-            {article.tags && (
+            {article.tags && article.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {article.tags.split(',').map((tag, i) => (
+                {article.tags.map((tag, i) => (
                   <span key={i} className="px-4 py-2 bg-[#171b2f] border border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all cursor-default">
                     #{tag.trim()}
                   </span>

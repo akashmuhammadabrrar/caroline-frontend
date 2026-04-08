@@ -151,9 +151,6 @@ const UserDetailModal = ({ userId, onClose }: { userId: number; onClose: () => v
                   {user.is_active ? "Deactivate User" : "Activate User"}
                 </button>
                 <div className="flex gap-3">
-                  <button className="flex-1 py-3 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-bold hover:opacity-90 transition-opacity">
-                    Edit Permissions
-                  </button>
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
