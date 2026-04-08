@@ -25,8 +25,12 @@ export const homeApi = baseApi.injectEndpoints({
       query: () => "/admin-dashboard/home/upcoming-events/",
       providesTags: ["Events"],
     }),
-    getLatestNewsArticles: builder.query<any, void>({
-      query: () => "/admin-dashboard/home/latest-news/",
+    getLatestNews: builder.query<any, void>({
+      query: () => "/news/",
+      providesTags: ["Dashboard"],
+    }),
+    getNewsById: builder.query<any, string>({
+      query: (id) => `/news/${id}/`,
       providesTags: ["Dashboard"],
     }),
     getPublicSettings: builder.query<PublicSettings, void>({
@@ -41,5 +45,6 @@ export const {
   useGetHeroDataQuery, 
   useGetPublicSettingsQuery, 
   useGetUpcomingEventsQuery, 
-  useGetLatestNewsArticlesQuery, 
+  useGetLatestNewsQuery, 
+  useGetNewsByIdQuery,
 } = homeApi;

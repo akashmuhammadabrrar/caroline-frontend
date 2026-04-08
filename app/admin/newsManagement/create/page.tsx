@@ -29,7 +29,7 @@ export default function CreateArticlePage() {
   // Form State
   const [formData, setFormData] = useState({
     title: '',
-    category: 3, // Default category
+    category: '', // Initial empty state for dynamic selection
     excerpt: '',
     content: '',
     meta_title: '',
@@ -47,6 +47,13 @@ export default function CreateArticlePage() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  // Automatically select the first category once they load
+  React.useEffect(() => {
+    if (categories.length > 0 && !formData.category) {
+      setFormData(prev => ({ ...prev, category: String(categories[0].id) }));
+    }
+  }, [categories, formData.category]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -69,6 +76,11 @@ export default function CreateArticlePage() {
   const handleSubmit = async (status: 'DRAFT' | 'PUBLISHED') => {
     if (!formData.title || !formData.content) {
       toast.error('Title and content are required');
+      return;
+    }
+
+    if (!formData.category) {
+      toast.error('Please select a category');
       return;
     }
 
@@ -223,6 +235,7 @@ export default function CreateArticlePage() {
                     onChange={handleInputChange}
                     className="w-full bg-[#171b2f] border border-gray-800 focus:border-cyan-500/50 rounded-2xl p-4 text-sm font-bold transition-all outline-none appearance-none cursor-pointer"
                   >
+                    {!formData.category && <option value="">Select a Category</option>}
                     {categories.map((cat: any) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}

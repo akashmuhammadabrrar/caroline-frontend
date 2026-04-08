@@ -437,9 +437,9 @@ export default function NewsManagementPage() {
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 shrink-0 rounded-xl overflow-hidden bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform border border-gray-800">
-                            {article.image ? (
+                            {article.image_url ? (
                               <img 
-                                src={article.image} 
+                                src={article.image_url} 
                                 alt={article.title}
                                 className="w-full h-full object-cover"
                               />
@@ -454,19 +454,21 @@ export default function NewsManagementPage() {
                       </td>
                       <td className="px-6 py-6">
                         <span className="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full text-[10px] font-black tracking-widest uppercase">
-                          {article.category_name}
+                          {article.category}
                         </span>
                       </td>
-                      <td className="px-6 py-6 text-sm text-gray-400">{article.author_name}</td>
-                      <td className="px-6 py-6 text-sm text-gray-400">{article.date}</td>
-                      <td className="px-6 py-6 text-sm font-bold text-cyan-400">{article.views_count.toLocaleString()}</td>
+                      <td className="px-6 py-6 text-sm text-gray-400">{article.author}</td>
+                      <td className="px-6 py-6 text-sm text-gray-400">
+                        {new Date(article.date_published).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-6 text-sm font-bold text-cyan-400">{(article.views ?? 0).toLocaleString()}</td>
                       <td className="px-6 py-6">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ${
                           article.status === 'PUBLISHED' 
                           ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
                           : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         }`}>
-                          {article.status.charAt(0) + article.status.slice(1).toLowerCase()}
+                          {article.status ? (article.status.charAt(0) + article.status.slice(1).toLowerCase()) : 'Draft'}
                         </span>
                       </td>
                       <td className="px-8 py-6 text-right">

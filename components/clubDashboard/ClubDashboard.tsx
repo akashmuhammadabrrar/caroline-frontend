@@ -14,14 +14,24 @@ import {
 import Link from "next/link";
 import { useGetConversationsQuery } from "@/redux/features/chat/chatApi";
 import { useGetClubEventsQuery } from "@/redux/features/club/clubEventManagementApi";
-import { useGetLatestNewsArticlesQuery } from "@/redux/features/home/homeApi";
-import { formatDistanceToNow, format } from "date-fns";
+import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
+import { formatDistanceToNow, format, parseISO } from "date-fns";
+import { useMemo } from "react";
 
 const ClubDashboard: React.FC = () => {
   const { data: chatData, isLoading: isChatLoading } = useGetConversationsQuery();
   const { data: eventsResponse, isLoading: isEventsLoading } = useGetClubEventsQuery(undefined);
   
-  const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsArticlesQuery();
+  const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsQuery();
+
+  const newsItems = useMemo(() => {
+    const items = [...(newsData?.articles || newsData?.data || [])];
+    return items.sort((a: any, b: any) => {
+      const dateA = a.date_published ? parseISO(a.date_published).getTime() : 0;
+      const dateB = b.date_published ? parseISO(b.date_published).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [newsData]);
 
   const eventsData = Array.isArray(eventsResponse) 
     ? eventsResponse 
@@ -144,19 +154,19 @@ const ClubDashboard: React.FC = () => {
                <div className="col-span-full flex justify-center py-4">
                  <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
                </div>
-            ) : newsData?.data?.slice(0, 2).map((article: any) => (
-              <div key={article.id} className="flex gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800/70 transition-colors h-full">
+            ) : newsItems.slice(0, 2).map((article: any) => (
+              <Link key={article.unique_id || article.id} href={`/latest-news/${article.unique_id}`} className="flex gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800/70 transition-colors h-full">
                 <div className="flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug">
                       {article.title}
                     </h3>
                     <p className="text-[10px] text-slate-400 mt-2">
-                      {article.subtitle}
+                      {article.excerpt}
                     </p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
             {(!newsData?.data || newsData.data.length === 0) && !isNewsLoading && (
               <div className="col-span-full py-8 text-center text-slate-400 border border-slate-700/50 rounded-xl border-dashed">

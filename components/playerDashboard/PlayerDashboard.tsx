@@ -7,8 +7,9 @@ import {
 } from "@/redux/features/player/playerDashboard/playerDashboardApi";
 import { useGetMyProfileQuery } from "@/redux/features/player/playerProfileAndEdit/profileAndEditApi";
 import { useGetConversationsQuery } from "@/redux/features/chat/chatApi";
-import { useGetLatestNewsArticlesQuery } from "@/redux/features/home/homeApi";
-import { formatDistanceToNow, format } from "date-fns";
+import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
+import { formatDistanceToNow, format, parseISO } from "date-fns";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { FaEye } from "react-icons/fa";
 import { FiMessageSquare } from "react-icons/fi";
@@ -97,10 +98,19 @@ export default function PlayerDashboard() {
   const { data: upcomingEventsData, isLoading: isEventsLoading } =
     useGetUpcomingEventsQuery();
   const { data: chatData, isLoading: isChatLoading } = useGetConversationsQuery();
-  const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsArticlesQuery();
+  const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsQuery();
 
   const completeness = profile?.profile_completeness ?? 0;
   const upcomingEvents = upcomingEventsData ?? [];
+
+  const newsItems = useMemo(() => {
+    const items = [...(newsData?.articles || newsData?.data || [])];
+    return items.sort((a: any, b: any) => {
+      const dateA = a.date_published ? parseISO(a.date_published).getTime() : 0;
+      const dateB = b.date_published ? parseISO(b.date_published).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [newsData]);
 
   const conversations = chatData?.conversations || [];
   const recentMessages = conversations.slice(0, 3).map((conv) => ({
@@ -307,19 +317,19 @@ export default function PlayerDashboard() {
                   </div>
                 </div>
               ))
-            ) : newsData?.data?.slice(0, 2).map((article: any) => (
-              <div key={article.id} className="flex gap-4 p-3 rounded-lg bg-[#0A0F2C] border border-[#1E2554] transition-colors h-full">
+            ) : newsItems.slice(0, 2).map((article: any) => (
+              <Link key={article.unique_id || article.id} href={`/latest-news/${article.unique_id}`} className="flex gap-4 p-3 rounded-lg bg-[#0A0F2C] border border-[#1E2554] transition-colors h-full">
                 <div className="flex flex-col justify-between min-w-0">
                   <div>
                     <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug">
                       {article.title}
                     </h3>
                     <p className="text-[10px] text-[#9BA3C8] mt-2">
-                      {article.subtitle}
+                      {article.excerpt}
                     </p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
             {(!newsData?.data || newsData.data.length === 0) && !isNewsLoading && (
               <div className="col-span-full py-4 text-center text-[#9BA3C8] border border-dashed border-[#1E2554] rounded-lg">
