@@ -23,8 +23,16 @@ const ClubDashboard: React.FC = () => {
   
   const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsArticlesQuery();
 
-  const eventsData = Array.isArray(eventsResponse) ? eventsResponse : (eventsResponse?.results || eventsResponse?.data || []);
-  const activeEvents = eventsData.slice(0, 4);
+  const eventsData = Array.isArray(eventsResponse) 
+    ? eventsResponse 
+    : (eventsResponse?.results || eventsResponse?.data || eventsResponse?.events || []);
+  
+  // Sort by created_at (descending) so new events appear at the top
+  const sortedEvents = [...eventsData].sort((a: any, b: any) => {
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
+
+  const activeEvents = sortedEvents.slice(0, 3);
 
   const conversations = chatData?.conversations || [];
   const dynamicRecentMessages = conversations.slice(0, 3).map((conv) => ({
