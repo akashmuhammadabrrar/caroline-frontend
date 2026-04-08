@@ -10,8 +10,9 @@ import {
 } from "@/redux/features/scout/scoutProfileApi";
 import { useGetConversationsQuery } from "@/redux/features/chat/chatApi";
 import { useGetEventsQuery } from "@/redux/features/admin/adminEventApi";
-import { useGetNewsArticlesQuery } from "@/redux/features/admin/adminNewsApi";
-import { formatDistanceToNow, format } from "date-fns";
+import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
+import { formatDistanceToNow, format, parseISO } from "date-fns";
+import { useMemo } from "react";
 import Link from "next/link";
 
 /* ─── Fake Data ─────────────────────────────────────────────── */
@@ -70,7 +71,16 @@ const ScoutDashboard: React.FC = () => {
   const { data: shortlistData } = useGetShortlistedPlayersQuery();
   const { data: chatData } = useGetConversationsQuery();
   const { data: eventsData, isLoading: isEventsLoading } = useGetEventsQuery();
-  const { data: newsData, isLoading: isNewsLoading } = useGetNewsArticlesQuery();
+  const { data: newsData, isLoading: isNewsLoading } = useGetLatestNewsQuery();
+
+  const newsItems = useMemo(() => {
+    const items = [...(newsData?.articles || newsData?.data || [])];
+    return items.sort((a: any, b: any) => {
+      const dateA = a.date_published ? parseISO(a.date_published).getTime() : 0;
+      const dateB = b.date_published ? parseISO(b.date_published).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [newsData]);
 
   const scoutName = profile?.first_name || "Member";
   const shortlistedPlayers = shortlistData?.results || [];
@@ -226,12 +236,12 @@ const ScoutDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {newsData?.data?.filter(a => a.status?.toUpperCase() === "PUBLISHED").slice(0, 2).map((article) => (
-              <Link href={`/latest-news/${article.id}`} key={article.id}>
+            {newsItems.slice(0, 2).map((article: any) => (
+              <Link href={`/latest-news/${article.unique_id}`} key={article.unique_id || article.id}>
                 <div className="bg-[#0B0D2C] border border-white/[0.06] rounded-xl p-4 flex gap-4 hover:border-[#00E5FF1A] transition-colors h-full">
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                     <img 
-                      src={article.image || "/images/event-banner.jpg"} 
+                      src={article.image_url || "/images/event-banner.jpg"} 
                       alt={article.title} 
                       className="object-cover w-full h-full"
                     />
@@ -239,14 +249,14 @@ const ScoutDashboard: React.FC = () => {
                   <div className="flex flex-col justify-between min-w-0">
                     <div>
                       <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-1">
-                        {article.category_name || "News"}
+                        {article.category || "News"}
                       </p>
                       <h3 className="text-sm font-semibold text-white line-clamp-2 leading-snug">
                         {article.title}
                       </h3>
                     </div>
                     <p className="text-[10px] text-white/40">
-                      {article.date ? format(new Date(article.date), "MMM d, yyyy") : "Recent"}
+                      {article.date_published ? format(parseISO(article.date_published), "MMM d, yyyy") : "Recent"}
                     </p>
                   </div>
                 </div>
