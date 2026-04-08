@@ -25,8 +25,9 @@ import {
   useGetPlansQuery,
   useCreateCheckoutMutation,
   useValidatePromoMutation,
+  useVerifyPaymentMutation,
 } from "../../../redux/features/player/subscriptionApi";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 interface Plan {
@@ -89,6 +90,8 @@ const SubscriptionContent = () => {
   const [promoError, setPromoError] = useState("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
 
   const {
     data: subscription,
@@ -100,8 +103,6 @@ const SubscriptionContent = () => {
     useGetPaymentHistoryQuery();
   const [createCheckout, { isLoading: isCreatingCheckout }] =
     useCreateCheckoutMutation();
-
-  console.log("subscription", createCheckout);
 
   const [cancelSubscription, { isLoading: isCancelling }] =
     useCancelSubscriptionMutation();
@@ -116,19 +117,42 @@ const SubscriptionContent = () => {
 
   const displaySub =
     activeSub &&
-    activeSub.plan_type !== "FREE" &&
+    activeSub.plan_name !== "FREE" &&
     activeSub.is_active &&
-    !activeSub.is_expired
+    !activeSub.is_expired &&
+    activeSub.auto_renewal !== false
       ? activeSub
       : null;
 
-  const handleSubscribeClick = (plan: Plan) => {
+  const handleSubscribeClick = async (plan: Plan) => {
     setSelectedPlan(plan);
-    setPromoCode("");
-    setPromoAmount(0);
-    setIsPromoApplied(false);
-    setPromoError("");
-    setIsSubscribeModalOpen(true);
+    console.log('Initiating checkout for plan:', plan);
+    toast.loading("Preparing secure checkout...", { id: "checkoutLoading" });
+
+    try {
+      const payload = { plan_id: plan.id };
+      const res = await createCheckout(payload).unwrap();
+      
+      const checkoutUrl = res.checkout_url || res.data?.checkout_url;
+
+      if (checkoutUrl) {
+        toast.success("Navigating to Stripe...", { id: "checkoutLoading" });
+        window.location.href = checkoutUrl;
+      } else if (res.success || res.status === 200 || res.message) {
+        toast.success("Subscription activated successfully!", { id: "checkoutLoading" });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        throw new Error("No checkout URL returned from server.");
+      }
+    } catch (err: any) {
+      console.error("Checkout Error:", err);
+      toast.error(
+        err?.data?.message || err?.message || "Payment bridge failed. Try again.",
+        { id: "checkoutLoading" }
+      );
+    }
   };
 
   const PlansGrid = ({
@@ -138,78 +162,91 @@ const SubscriptionContent = () => {
     title: string;
     subtitle: string;
   }) => (
-    <div className="space-y-12">
+    <div className="space-y-12 w-full relative z-10 mt-6 mb-12">
       <div className="text-center space-y-4 py-8">
-        <h2 className="text-4xl sm:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight px-4 tracking-tighter">
           {title}
         </h2>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto font-medium">
+        <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium px-4">
           {subtitle}
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {plans.map((plan: Plan) => (
-          <div
-            key={plan.id}
-            className="relative group/card bg-[#12143A]/50 border border-white/5 rounded-[40px] p-8 flex flex-col hover:bg-[#12143A] hover:border-cyan-400/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-          >
-            <div className="absolute lg:-top-6 -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-sm font-bold uppercase tracking-widest lg:px-9 px-4 lg:py-1 py-3 rounded-full shadow-lg text-center w-max min-w-[120px]">
-              {plan.plan_name || plan.planName || plan.plan_type}
-            </div>
+      <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10 w-full max-w-6xl mx-auto px-4">
+        {plans.map((plan: Plan) => {
+          const planName = plan.plan_name || plan.planName || plan.plan_type || "Pro Plan";
+          const isPopular = planName.toLowerCase().includes("elite") || planName.toLowerCase().includes("pro");
+          const billingCycle = (plan.billing_cycle || plan.billingInterval || "Month").toLowerCase();
 
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-white mb-2"></h3>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-white">
-                  €{plan.price}
-                </span>
-                <span className="text-gray-500 font-bold text-xs">
-                  /
-                  {(
-                    plan.billing_cycle ||
-                    plan.billingInterval ||
-                    ""
-                  ).toLowerCase()}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4 flex-1 mb-10">
-              {(plan.features || []).map((feature: any, i: number) => {
-                const featureText =
-                  typeof feature === "string"
-                    ? feature
-                    : Array.isArray(Object.values(feature)[0])
-                      ? (Object.values(feature)[0] as string[]).join(", ")
-                      : feature?.name ||
-                        feature?.title ||
-                        feature?.description ||
-                        feature?.more ||
-                        Object.values(feature)[0] ||
-                        JSON.stringify(feature);
-                return (
-                  <div key={i} className="flex gap-3 text-sm">
-                    <div className="mt-1 flex-shrink-0">
-                      <CheckIcon />
-                    </div>
-                    <span className="text-gray-400 font-medium leading-tight">
-                      {featureText}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            <button
-              onClick={() => handleSubscribeClick(plan)}
-              disabled={isCreatingCheckout}
-              className="w-full py-4 rounded-2xl bg-[#0B0D2C] border border-white/10 text-white font-black uppercase tracking-widest text-xs group-hover/card:bg-gradient-to-r group-hover/card:from-cyan-400 group-hover/card:to-purple-500 group-hover/card:border-transparent transition-all active:scale-95"
+          return (
+            <div
+              key={plan.id}
+              className={`relative group bg-[#0f113a]/80 backdrop-blur-3xl border ${isPopular ? "border-cyan-400/50 shadow-[0_0_40px_rgba(34,211,238,0.15)]" : "border-white/10 shadow-2xl"} rounded-[2.5rem] p-6 sm:p-10 flex flex-col w-full max-w-[360px] hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden`}
             >
-              Get Started
-            </button>
-          </div>
-        ))}
+              {/* Internal glow for popular cards */}
+              {isPopular && (
+                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 blur-[80px] rounded-full pointer-events-none" />
+              )}
+              
+              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+              
+              <div className="relative z-10 text-center mb-8">
+                <div className="inline-block relative">
+                  <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-widest mb-1">
+                    {planName}
+                  </h3>
+                  {isPopular && (
+                    <span className="absolute -top-3 -right-6 text-[9px] sm:text-[10px] bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-2 py-1 rounded-full font-black uppercase tracking-widest rotate-6 shadow-lg whitespace-nowrap">
+                      🔥 Most Popular
+                    </span>
+                  )}
+                </div>
+                <div className="mt-6 flex justify-center items-end gap-1">
+                  <span className="text-xl text-gray-400 font-bold mb-2">€</span>
+                  <span className="text-5xl sm:text-6xl font-black text-white tracking-tighter shadow-sm">{plan.price}</span>
+                  <span className="text-gray-500 font-medium text-xs sm:text-sm mb-2 ml-1">/{billingCycle}</span>
+                </div>
+              </div>
+
+              <div className="space-y-4 flex-1 mb-10 relative z-10 px-2 mt-4">
+                {(plan.features || []).map((feature: any, i: number) => {
+                  const featureText =
+                    typeof feature === "string"
+                      ? feature
+                      : Array.isArray(Object.values(feature)[0])
+                        ? (Object.values(feature)[0] as string[]).join(", ")
+                        : feature?.name ||
+                          feature?.title ||
+                          feature?.description ||
+                          feature?.more ||
+                          Object.values(feature)[0] ||
+                          JSON.stringify(feature);
+                  return (
+                    <div key={i} className="flex gap-4 items-start group/feature">
+                      <div className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-cyan-400/10 flex items-center justify-center border border-cyan-400/20 group-hover/feature:bg-cyan-400/30 transition-colors">
+                        <Check size={12} className="text-cyan-400" strokeWidth={3} />
+                      </div>
+                      <span className="text-gray-300 font-medium text-sm sm:text-base leading-snug group-hover/feature:text-white transition-colors">
+                        {featureText}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handleSubscribeClick(plan)}
+                disabled={isCreatingCheckout}
+                className="relative z-10 w-full py-4 sm:py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-xs sm:text-sm hover:border-cyan-400/50 transition-all active:scale-95 group/btn overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Get Started <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                </span>
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -257,8 +294,13 @@ const SubscriptionContent = () => {
       const checkoutUrl = res.checkout_url || res.data?.checkout_url;
 
       if (checkoutUrl) {
-        console.log("Redirecting to Stripe:", checkoutUrl);
         window.location.href = checkoutUrl;
+      } else if (res.success || res.status === 200 || res.message) {
+        toast.success("Subscription activated successfully!");
+        setIsSubscribeModalOpen(false);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         console.error("Checkout URL missing in response:", res);
         throw new Error("No checkout URL returned from server.");
