@@ -100,8 +100,15 @@ const ClubSettingsPage = () => {
   }, [notifData]);
 
   useEffect(() => {
-    if (generalData?.data || generalData) {
-      setGeneral((prev) => ({ ...prev, ...(generalData.data || generalData) }));
+    const raw = generalData?.data || generalData;
+    if (raw && typeof raw === "object") {
+      // Only sync primitive values to avoid rendering objects as React children
+      const safe = Object.fromEntries(
+        Object.entries(raw).filter(
+          ([, v]) => v === null || typeof v !== "object"
+        )
+      );
+      setGeneral((prev) => ({ ...prev, ...safe }));
     }
   }, [generalData]);
 

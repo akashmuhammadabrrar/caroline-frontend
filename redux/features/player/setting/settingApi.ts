@@ -6,6 +6,7 @@ import { AccountSettings, AllSettings, ChangePasswordPayload, DownloadDataRespon
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 export const settingApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     // GET all settings
     getAllSettings: builder.query<AllSettings, void>({
