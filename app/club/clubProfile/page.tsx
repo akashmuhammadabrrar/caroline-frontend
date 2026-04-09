@@ -216,40 +216,47 @@ export default function ClubProfilePage() {
     try {
       const fd = new FormData();
 
-      // Attempt all possible keys for the files to ensure backend compatibility
+      // Binary files
       if (logoFile) {
         fd.append("club_logo", logoFile);
-        fd.append("club_academy_logo", logoFile);
       }
       if (bannerFile) {
         fd.append("club_banner", bannerFile);
-        fd.append("cover_photo", bannerFile);
       }
 
       // Handle player images
       formData.Featured_players.forEach((player, idx) => {
         if (player._file) {
-          // Try standard and indexed keys
-          fd.append("player_image", player._file);
+          // Based on your report, it seems to expect player_image_X
           fd.append(`player_image_${idx}`, player._file);
+          // Also append to standard key just in case
+          fd.append("player_image", player._file);
         }
       });
 
-      // Map back to API structure
-      const payload = {
+      // Prepare the JSON data payload as documented
+      const dataPayload = {
         organization_name: formData.organization_name,
         tagline: formData.tagline,
-        founded_year: formData.year_established,
+        founded_year: Number(formData.year_established),
+        location: formData.location,
         city: formData.city,
         country: formData.country,
-        location: formData.location,
         age_groups: formData.age_groups,
-        total_players: formData.total_players,
+        total_players: Number(formData.total_players),
         overview: formData.overview,
         mission: formData.mission,
         facilities: formData.facilities.map(f => f.value),
-        recent_achievements: formData.recent_achievements,
-        Featured_players: formData.Featured_players.map(({ _file, _preview, ...rest }) => rest),
+        recent_achievements: formData.recent_achievements.map(ach => ({
+          title: ach.title,
+          year: ach.year
+        })),
+        Featured_players: formData.Featured_players.map(({ _file, _preview, ...rest }) => ({
+          "player-name": rest["player-name"],
+          age: Number(rest.age),
+          position: rest.position,
+          country: rest.country
+        })),
         email: formData.email,
         phone_number: formData.phone_number,
         website: formData.website,
@@ -260,18 +267,22 @@ export default function ClubProfilePage() {
         youtube: formData.youtube
       };
 
-      fd.append("data", JSON.stringify(payload));
+      fd.append("data", JSON.stringify(dataPayload));
 
+      // Execute the mutation (which is now definitely PUT)
       await updateProfile(fd).unwrap();
+      
       toast.success("Profile updated successfully!");
       setIsEditing(false);
+      
+      // Clear local file states
       setLogoPreview(null);
       setBannerPreview(null);
       setLogoFile(null);
       setBannerFile(null);
     } catch (error: any) {
-      console.error(error);
-      toast.error(error?.data?.message || "Failed to update profile");
+      console.error("Update Error:", error);
+      toast.error(error?.data?.detail || error?.data?.message || "Failed to update profile");
     }
   };
 
