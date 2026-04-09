@@ -283,13 +283,17 @@ const ClubRegisterForm = () => {
                      icon={<Building2 size={16} />}
                      placeholder="e.g., FC Barcelona Youth Academy"
                   />
-                  <DarkInput
-                     label="Organization Type *"
+                  <DarkSelect
+                     label="Organization Type"
                      name="organization_type"
                      register={register}
                      error={errors.organization_type?.message}
                      icon={<Briefcase size={16} />}
-                     placeholder="Select Type"
+                     options={[
+                       { label: "Club", value: "club" },
+                       { label: "Academy", value: "academy" },
+                       { label: "Both", value: "both" },
+                     ]}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      <DarkSelect

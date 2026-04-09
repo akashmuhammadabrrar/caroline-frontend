@@ -19,7 +19,7 @@ const BrandedLogo: React.FC<BrandedLogoProps> = ({
   hideNameOnMobile = false
 }) => {
   const { data: settings } = useGetPublicSettingsQuery();
-  const name = settings?.platformName || "NextGen Pros";
+  const name = String(settings?.platformName || "NextGen Pros");
   const firstSpaceIndex = name.indexOf(" ");
 
   const logoSize = {

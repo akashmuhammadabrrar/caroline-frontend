@@ -9,7 +9,7 @@ export const clubProfileApi = baseApi.injectEndpoints({
     updateClubProfile: builder.mutation<any, FormData | Record<string, any>>({
       query: (data) => ({
         url: "/club-academy/profile/update/",
-        method: "PATCH",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ["ClubProfile"],
