@@ -271,10 +271,10 @@ export default function ClubProfilePage() {
 
       // Execute the mutation (which is now definitely PUT)
       await updateProfile(fd).unwrap();
-      
+
       toast.success("Profile updated successfully!");
       setIsEditing(false);
-      
+
       // Clear local file states
       setLogoPreview(null);
       setBannerPreview(null);
