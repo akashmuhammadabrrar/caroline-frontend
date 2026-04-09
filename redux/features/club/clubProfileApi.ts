@@ -6,15 +6,18 @@ export const clubProfileApi = baseApi.injectEndpoints({
       query: () => "/club-academy/profile/me/",
       providesTags: ["ClubProfile"],
     }),
-    updateClubProfile: builder.mutation<any, FormData | Record<string, any>>({
+    updateClubProfile: builder.mutation<any, FormData>({
       query: (data) => ({
         url: "/club-academy/profile/update/",
         method: "PUT",
         body: data,
+        // FormData should not have Content-Type set manually; 
+        // fetch will set it with the correct boundary.
       }),
       invalidatesTags: ["ClubProfile"],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
