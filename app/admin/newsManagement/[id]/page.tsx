@@ -217,11 +217,16 @@ export default function ArticleDetailsPage() {
           {/* Footer Navigation */}
           <div className="mt-20 pt-12 border-t border-gray-800/50">
             {/* Tags */}
-            {article.tags && article.tags.length > 0 && (
+            {article.tags && (
               <div className="flex flex-wrap gap-2">
-                {article.tags.map((tag, i) => (
+                {(Array.isArray(article.tags) 
+                  ? article.tags 
+                  : typeof article.tags === 'string' 
+                    ? (article.tags as any).split(',').filter(Boolean) 
+                    : []
+                ).map((tag: any, i: number) => (
                   <span key={i} className="px-4 py-2 bg-[#171b2f] border border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all cursor-default">
-                    #{tag.trim()}
+                    #{typeof tag === 'string' ? tag.trim() : String(tag)}
                   </span>
                 ))}
               </div>
