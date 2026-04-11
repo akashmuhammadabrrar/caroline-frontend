@@ -1,4 +1,4 @@
-.PHONY: build
+g.PHONY: build
 
 build:
 	@docker compose --profile prod build --no-cache

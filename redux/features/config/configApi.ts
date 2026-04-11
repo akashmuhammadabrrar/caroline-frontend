@@ -27,7 +27,7 @@ export const configApi = baseApi.injectEndpoints({
         try {
           await cacheDataLoaded;
           // Example: Setting up Server-Sent Events for real-time config updates
-          const apiUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+          const apiUrl = "http://98.81.136.120:9000/api";
           if (!apiUrl) return;
 
           const eventSource = new EventSource(`${apiUrl}/admin/config/stream`);

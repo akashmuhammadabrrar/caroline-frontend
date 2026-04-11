@@ -534,7 +534,7 @@ const SubscriptionContent = () => {
                         );
 
                       const baseUrl = (
-                        process.env.NEXT_PUBLIC_BASE_URL || ""
+                        "http://98.81.136.120:9000/api"
                       ).replace("/api", "");
                       const fullUrl =
                         downloadUrl.startsWith("http") ||
