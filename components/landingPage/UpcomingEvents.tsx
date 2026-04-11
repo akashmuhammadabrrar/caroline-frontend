@@ -20,8 +20,8 @@ export default function UpcomingEvent() {
     skip: !user || user.role !== "PLAYER",
   });
 
-  const registrations = Array.isArray(registrationsData)
-    ? registrationsData
+  const registrations = Array.isArray(registrationsData) 
+    ? registrationsData 
     : (registrationsData as any)?.results || (registrationsData as any)?.data || [];
 
   // Get active/upcoming events and limit to 4
@@ -38,7 +38,7 @@ export default function UpcomingEvent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-9">
           <SectionTitel
-            title="LATEST EVENTS"
+            title="LATEST Events"
             subtitle="Stay updated with training tips, nutrition advice, and gear reviews."
           />
         </div>
@@ -152,7 +152,7 @@ export default function UpcomingEvent() {
                           router.push("/login");
                           return;
                         }
-
+                        
                         const role = user.role?.toUpperCase();
                         if (role === "PLAYER") {
                           router.push(`/latest-events/${event.id}`);
@@ -166,15 +166,16 @@ export default function UpcomingEvent() {
                           router.push(`/latest-events/${event.id}`);
                         }
                       }}
-                      className={`w-full font-semibold py-3 rounded-md transition-all duration-200 flex items-center justify-center gap-2 ${isRegistered && user?.role === "PLAYER"
-                        ? "bg-gray-800/80 text-cyan-400 border border-cyan-400/30 cursor-not-allowed"
-                        : isFull && user?.role === "PLAYER"
+                      className={`w-full font-semibold py-3 rounded-md transition-all duration-200 flex items-center justify-center gap-2 ${
+                        isRegistered && user?.role === "PLAYER"
+                          ? "bg-gray-800/80 text-cyan-400 border border-cyan-400/30 cursor-not-allowed" 
+                          : isFull && user?.role === "PLAYER"
                           ? "bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed"
                           : "text-white"
-                        }`}
+                      }`}
                     >
                       {isRegistered && user?.role === "PLAYER" ? (
-                        <>Already Registered</>
+                         <>Already Registered</>
                       ) : isFull && user?.role === "PLAYER" ? (
                         "Completed"
                       ) : (
@@ -191,7 +192,7 @@ export default function UpcomingEvent() {
         <div className="flex justify-center">
           <div className="flex justify-center mt-10">
             <button
-              onClick={() => router.push("/latest-events")}
+              onClick={() => router.push("/latest-events")} 
               className="px-8 py-2 border border-purple-700 rounded-full text-foreground hover:bg-purple/10 transition-colors flex items-center gap-2 text-white"
             >
               View All Events <Lock size={14} className="hidden" />
@@ -305,9 +306,9 @@ export default function UpcomingEvent() {
               <div className="flex justify-center">
                 <Link
                   href={user ? (
-                    user.role === "PLAYER" ? "/player" :
-                      user.role === "CLUB_ACADEMY" ? "/club" :
-                        user.role === "SCOUT_AGENT" ? "/scout" : "/admin"
+                    user.role === "PLAYER" ? "/player" : 
+                    user.role === "CLUB_ACADEMY" ? "/club" : 
+                    user.role === "SCOUT_AGENT" ? "/scout" : "/admin"
                   ) : "/login"}
                   className="text-center bg-[#00F6FF] text-black px-8 py-3 font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
                 >
