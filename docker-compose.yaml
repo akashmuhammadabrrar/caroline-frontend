@@ -4,17 +4,59 @@ services:
     container_name: caroline-admin
     profiles:
       - prod
-    image: softvence/caroline-admin:latest
+    image: softvence/caroline-admin:akash
     build:
       context: .
       dockerfile: Dockerfile
       platforms:
         - linux/amd64
-    env_file:
-      - .env.production
-      - .env.local
+
     environment:
-      - NODE_ENV=production
-      - NEXT_TELEMETRY_DISABLED=1
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+
+      NEXT_PUBLIC_BASE_URL: http://98.81.136.120:9000/api
+
+      FIREBASE_TYPE: service_account
+      FIREBASE_PROJECT_ID: carolinatta-cdf61
+      FIREBASE_PRIVATE_KEY_ID: 38cd32a2c5b1ba549eeabd6d8416115ce119a52c
+      FIREBASE_PRIVATE_KEY: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDorFHCkmroGPO0
+        9S18ZvM+GJoQQf6yXdAJ+a7iH2LBqxKbssvag+B21Bp/yMOrCMXrynGfe1ZoKn0S
+        aU8wrjSWNo7BWl+Ygs7ljOVkqsheiuZcbgOQwMUkrIm2HOwyj8+r7HOPrx4CICCF
+        zp4KHTsMqaWnt10RK/YQeQl92K6zBp8FW37QF7zGvPQuea7rR6d9Ey8RenSHumVK
+        nD8f7t32tMIpHRfYW3SsB/yYfNTG4Zy3J8m1puS23U8m0mMpJU2HhrPMgDZxexuI
+        wqOW2D+wEpJZ6L1xr2TsndRqmKEyzFjjDnYoPZw2BC9+X6RFhaHHgYVvS7zjUaPs
+        5JQEHbudAgMBAAECggEAGEK7hbfBqPDNHI3CD+omK8/h5JcVCSEqC5g6yX4vTHVb
+        i9uRUPgWRB2qo69Z47AW/xaNUW1JXbQsdWqApNlNR2pp6TRUqnDdROczlhMOsHj4
+        OyQHgCTxiXjqJRCP+levdkRB6nX+gYc7DOi15uUUXqYjzUCb1ioIzr/oIvSghq8T
+        qCtnpwV12q2vDieac8nnIBB/oK7o/5UJCHfD99nlSF6Kh9pr5bS6/ByP6nF79/gl
+        EQEp6Y82lgPsq6CjEcUhC0fo8gpp3GXHE0+moPIfnTAXsWYx5PEtdHKGpJSZmBxC
+        mHzXq1uj9bFQSAhhoBbHZn2afR0ngC11A088IPELsQKBgQD3P79vn5LvA5KNnkIu
+        SlL+lp5PGyipE6fyEFIgapel2rTUzZc6hORD0wgr82CKyE+7y7w/Pzyx+GCFmYRC
+        +Hw5jqk+KjjECJMc64yHUdXZ/hvRhv6PH4LH0C8iU98+fYyr7D9Eosf73jZg6aJt
+        +GRWawfok2SusAtozixrKuWFVQKBgQDw6IDspuCXb8EChpoLJn8H3m9XiSI150Sb
+        qxi/LLOKXfpPwbjvbzOoUk0UlT+2j/65fBd1mzeP7GqEc1A8KMkwulxRWnM08N8F
+        +N+mM++NJnbqudtHUnPaPsR7PVuN4CrgUN8b73d80OjzE0M6cSdh50+ZbEvhqeaj
+        YwqsTD3dKQKBgA6blZPiuaulamMzlnVlrsGb5H6H/D8BCksi67c+lPcXlNd9zhGH
+        CHV5YmI2Xt3UN+HAh7603cEmC43ZJBdQ1wYPh7BEjlYGq6ppwEO+cgQPH1WhxChw
+        lCl6A07j5ayrfkQqERLdCzO2TUAsjYwxwLvaVv1GuAwaGpJ2m+k4/5aBAoGAKObg
+        1M00fqGrvHkL+G6tzLE4aD1RQKOmY2O2TOcTCKASGq6CbqyLsb1fduosKhvinK1z
+        8jTLRzVVlG1bpwsptYs+l1VrEAcBZqstlbNlraplME8j6sUWBGz5wQ7W14zC2tkA
+        OGb8+4Ugt/yCQo7pp9a1DhB0Bblp/j2Xl09OhZkCgYBryGv7yighRsFpSEowRsA7
+        4kVjyykNqSce3zorOsrtI9ZXoVNEo6kGu73ISk6nEGWMtqeYI52pUMPQeszpoRkN
+        N5/RrUdfqHj7WuC3cGRpzEiREF0qTmfdK6T0KWgZsBcPaBP2sck9GvL8OrMagEo5
+        TnOzMahVmVDkDgdRlnbRIw==
+        -----END PRIVATE KEY-----
+
+      FIREBASE_CLIENT_EMAIL: firebase-adminsdk-fbsvc@carolinatta-cdf61.iam.gserviceaccount.com
+      FIREBASE_CLIENT_ID: 106870415937533100000
+      FIREBASE_AUTH_URI: https://accounts.google.com/o/oauth2/auth
+      FIREBASE_TOKEN_URI: https://oauth2.googleapis.com/token
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: https://www.googleapis.com/oauth2/v1/certs
+      FIREBASE_CLIENT_X509_CERT_URL: https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40carolinatta-cdf61.iam.gserviceaccount.com
+      FIREBASE_UNIVERSE_DOMAIN: googleapis.com
+
     ports:
       - "3000:3000"

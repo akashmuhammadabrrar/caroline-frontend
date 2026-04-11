@@ -22,7 +22,7 @@ const SubscriptionTrackingPage = () => {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const baseUrl = "http://98.81.136.120:9000/api";
       const res = await fetch(`${baseUrl}/admin-dashboard/subscription/export/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
