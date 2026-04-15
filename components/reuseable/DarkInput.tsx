@@ -13,6 +13,7 @@ interface Props {
   icon?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
+  rules?: any;
 }
 
 const DarkInput = ({
@@ -25,6 +26,7 @@ const DarkInput = ({
   icon,
   onChange,
   value,
+  rules,
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
   const [hasValue, setHasValue] = useState(value ? String(value).length > 0 : false);
@@ -73,7 +75,7 @@ const DarkInput = ({
       )}
       <div className="relative">
         <input
-          {...register(name)}
+          {...register(name, rules)}
           type={resolvedType}
           placeholder={placeholder || (label ? `Enter ${label.toLowerCase()}` : "")}
           onFocus={() => setIsFocused(true)}

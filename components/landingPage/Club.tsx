@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Lock, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight,  Loader2 } from "lucide-react";
 import { useAppSelector } from "@/redux/hooks";
 import { useGetFeaturedClubsQuery } from "@/redux/features/admin/adminHomePageApi";
 
@@ -77,30 +77,20 @@ export default function Club() {
       className="py-16 bg-[var(--bg-dark,#07142b)] text-white"
     >
       <div className="container mx-auto px-4">
-        {/* Tabs */}
-        <div className="flex justify-center mb-6 text-white">
-          <div className="flex bg-[var(--bg-card,#12143A)] rounded-lg overflow-hidden border border-white/10 px-2 shadow-sm">
-            <button
-              onClick={() => setActiveTab("clubs")}
-              className={`px-6 py-2 text-sm font-medium transition-colors  ${
-                activeTab === "clubs"
-                  ? "bg-[#1A1C3D] text-white border-b-2 rounded-md border-cyan-400 m-2 shadow-sm"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Clubs
-            </button>
-            {/* <button
-              onClick={() => setActiveTab("academies")}
-              className={`px-6 py-2 text-sm font-medium transition-colors ${
-                activeTab === "academies"
-                  ? "bg-[#1A1C3D] text-white border-b-2 border-cyan-400 m-2 rounded-md shadow-sm"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Academies
-            </button> */}
-          </div>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 inline-block"
+            style={{
+              backgroundImage: `linear-gradient(90deg, ${theme.colors.primaryCyan}, ${theme.colors.primaryMagenta})`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            FEATURED CLUBS
+          </h2>
         </div>
 
         {/* Subtitle */}
@@ -171,9 +161,9 @@ export default function Club() {
 
         {/* View All Button */}
         <div className="flex justify-center mt-12">
-          <button className="px-8 py-2.5 border border-white/10 bg-[var(--bg-card,#12143A)] hover:bg-white/5 hover:border-[var(--primary-cyan)] rounded-full transition-all flex items-center gap-2 text-white font-medium shadow-sm">
+          <button       className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3">
             View All {activeTab === "clubs" ? "Clubs" : "Academies"}{" "}
-            <Lock size={14} className="text-cyan-400" />
+           <ArrowRight size={18}/>
           </button>
         </div>
       </div>

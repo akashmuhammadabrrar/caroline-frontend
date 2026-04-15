@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import Image from "next/image";
 import SectionTitel from "@/components/reuseable/SectionTitel";
 import { useAppSelector } from "@/redux/hooks";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock, Loader2, ArrowRight } from "lucide-react";
 import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
 import { format, parseISO } from "date-fns";
 
@@ -120,9 +120,9 @@ export default function LatestNews() {
           <div className="flex justify-center">
             <button
               onClick={handleViewAllNews}
-              className="px-8 py-2 border border-purple-700 rounded-full text-foreground hover:bg-purple/10 transition-colors flex items-center gap-2 text-white"
+                     className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
             >
-              View All News <Lock size={14} className="hidden" />
+              View All News <ArrowRight size={18}/>
             </button>
           </div>
         </div>

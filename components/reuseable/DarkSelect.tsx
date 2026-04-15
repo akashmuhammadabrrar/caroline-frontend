@@ -9,6 +9,7 @@ interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { label: string; value: string }[];
   error?: string;
   icon?: React.ReactNode;
+  rules?: any;
 }
 
 const DarkSelect = ({
@@ -18,6 +19,7 @@ const DarkSelect = ({
   options,
   error,
   icon,
+  rules,
   ...props
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -32,7 +34,7 @@ const DarkSelect = ({
       </div>
       <div className="relative">
         <select
-          {...register(name)}
+          {...register(name, rules)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className={`w-full bg-[#050B14]/60 border rounded-xl px-4 py-3 text-white outline-none transition-all duration-300 appearance-none

@@ -279,6 +279,7 @@ const ClubRegisterForm = () => {
                      label="Organization Name *"
                      name="organization_name"
                      register={register}
+                     rules={{ required: "Organization name is required" }}
                      error={errors.organization_name?.message}
                      icon={<Building2 size={16} />}
                      placeholder="e.g., FC Barcelona Youth Academy"
@@ -287,6 +288,7 @@ const ClubRegisterForm = () => {
                      label="Organization Type"
                      name="organization_type"
                      register={register}
+                     rules={{ required: "Organization type is required" }}
                      error={errors.organization_type?.message}
                      icon={<Briefcase size={16} />}
                      options={[
@@ -300,6 +302,7 @@ const ClubRegisterForm = () => {
                         label="Country"
                         name="country"
                         register={register}
+                        rules={{ required: "Country is required" }}
                         error={errors.country?.message}
                         icon={<Globe size={16} />}
                         options={countries}
@@ -308,6 +311,7 @@ const ClubRegisterForm = () => {
                         label="City *"
                         name="city"
                         register={register}
+                        rules={{ required: "City is required" }}
                         error={errors.city?.message}
                         icon={<MapPin size={16} />}
                         placeholder="Barcelona"
@@ -317,6 +321,15 @@ const ClubRegisterForm = () => {
                         label="Phone Number *"
                         name="phone_number"
                         control={control as any}
+                        rules={{
+                          required: "Phone number is required",
+                          validate: (value: string) => {
+                            const number = value.split(" ")[1] || "";
+                            if (number.length < 7) return "Phone number is too short";
+                            if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                            return true;
+                          }
+                        }}
                         error={errors.phone_number?.message}
                         icon={<Phone size={14} />}
                         placeholder="XXX XXX XXX"
@@ -334,6 +347,13 @@ const ClubRegisterForm = () => {
                      name="email"
                      type="email"
                      register={register}
+                     rules={{ 
+                        required: "Official email is required",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Invalid email address"
+                        }
+                     }}
                      error={errors.email?.message}
                      icon={<Mail size={16} />}
                      placeholder="contact@yourclub.com"
@@ -345,6 +365,10 @@ const ClubRegisterForm = () => {
                      name="password"
                      type="password"
                      register={register}
+                     rules={{ 
+                       required: "Password is required",
+                       minLength: { value: 8, message: "Password must be at least 8 characters" }
+                     }}
                      error={errors.password?.message}
                      icon={<Lock size={16} />}
                      placeholder="********"
@@ -354,6 +378,10 @@ const ClubRegisterForm = () => {
                      name="confirm_password"
                      type="password"
                      register={register}
+                     rules={{ 
+                        required: "Please confirm your password",
+                        validate: (value: string) => value === watch("password") || "Passwords do not match"
+                     }}
                      error={errors.confirm_password?.message}
                      icon={<Lock size={16} />}
                      placeholder="********"
@@ -384,6 +412,7 @@ const ClubRegisterForm = () => {
                      label="Full Address *"
                      name="full_address"
                      register={register}
+                     rules={{ required: "Full address is required" }}
                      error={errors.full_address?.message}
                      icon={<MapPin size={16} />}
                      placeholder="Street address, building number, district"
@@ -394,6 +423,7 @@ const ClubRegisterForm = () => {
                         label="Postal Code *"
                         name="postal_code"
                         register={register}
+                        rules={{ required: "Postal code is required" }}
                         error={errors.postal_code?.message}
                         placeholder="08028"
                      />
@@ -402,6 +432,7 @@ const ClubRegisterForm = () => {
                         name="established_year"
                         type="number"
                         register={register}
+                        rules={{ required: "Established year is required" }}
                         error={errors.established_year?.message}
                         icon={<Calendar size={16} />}
                         placeholder="1899"
@@ -413,6 +444,7 @@ const ClubRegisterForm = () => {
                         label="Registration Number *"
                         name="registration_number"
                         register={register}
+                        rules={{ required: "Registration number is required" }}
                         error={errors.registration_number?.message}
                         icon={<Hash size={16} />}
                         placeholder="Official registration #"
@@ -452,6 +484,7 @@ const ClubRegisterForm = () => {
                         label="Full Name *"
                         name="contact_full_name"
                         register={register}
+                        rules={{ required: "Contact name is required" }}
                         error={errors.contact_full_name?.message}
                         icon={<User size={16} />}
                         placeholder="Contact person's full name"
@@ -460,6 +493,7 @@ const ClubRegisterForm = () => {
                         label="Role / Position *"
                         name="contact_role_position"
                         register={register}
+                        rules={{ required: "Role/Position is required" }}
                         error={errors.contact_role_position?.message}
                         icon={<Briefcase size={16} />}
                         placeholder="Select Role"
@@ -471,6 +505,13 @@ const ClubRegisterForm = () => {
                      name="contact_email"
                      type="email"
                      register={register}
+                     rules={{ 
+                        required: "Contact email is required",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Invalid email address"
+                        }
+                     }}
                      error={errors.contact_email?.message}
                      icon={<Mail size={16} />}
                      placeholder="contact@yourclub.com"
@@ -480,7 +521,16 @@ const ClubRegisterForm = () => {
                            <DarkPhoneInput
                               label="Contact Phone"
                               name="contact_phone_number"
-                              control={control as never}
+                              control={control as any}
+                              rules={{
+                                required: "Contact phone number is required",
+                                validate: (value: string) => {
+                                  const number = value.split(" ")[1] || "";
+                                  if (number.length < 7) return "Phone number is too short";
+                                  if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                                  return true;
+                                }
+                              }}
                               error={errors.contact_phone_number?.message}
                               icon={<Phone size={14} />}
                               placeholder="XXX XXX XXX"
@@ -503,6 +553,7 @@ const ClubRegisterForm = () => {
                      name="number_of_training_fields"
                      type="number"
                      register={register}
+                     rules={{ required: "Number of fields is required" }}
                      error={errors.number_of_training_fields?.message}
                      placeholder="Select"
                   />
@@ -537,6 +588,7 @@ const ClubRegisterForm = () => {
                     <Controller
                       name="age_groups_work_with"
                       control={control}
+                      rules={{ required: "Please select at least one age group" }}
                       render={({ field }) => (
                         <div className="grid grid-cols-3 gap-2">
                           {["U-8", "U-10", "U-12", "U-14", "U-16", "U-18", "U-21", "Senior"].map(opt => (

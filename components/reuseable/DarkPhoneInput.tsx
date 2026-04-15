@@ -10,6 +10,7 @@ interface Props {
   name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
+  rules?: any;
   error?: string;
   placeholder?: string;
   icon?: React.ReactNode;
@@ -21,6 +22,7 @@ const DarkPhoneInput = ({
   label,
   name,
   control,
+  rules,
   error,
   placeholder,
   icon,
@@ -44,6 +46,7 @@ const DarkPhoneInput = ({
       <Controller
         name={name}
         control={control}
+        rules={rules}
         render={({ field: { onChange, value } }) => {
           // Parse value "+1 555-5555" into code and number
           const stringValue = value || "";
@@ -91,24 +94,44 @@ const DarkPhoneInput = ({
             >
               {/* Country Code Dropdown */}
               <div className={`relative border-r border-white/10 shrink-0 ${dropdownClassName || ''}`}>
+                {/* Visual Display */}
+                <div className="flex items-center gap-2 h-full py-3 pl-4 pr-10 text-white text-sm pointer-events-none">
+                  {(() => {
+                    const selected = countryCodes.find((c) => c.code === code) || countryCodes[0];
+                    return (
+                      <div className="flex items-center gap-2">
+                        <img 
+                          src={`https://flagcdn.com/w40/${selected.iso}.png`} 
+                          alt="Flag"
+                          className="w-5 h-auto rounded-[2px] shadow-sm brightness-90 group-hover:brightness-100 transition-all border border-white/10"
+                        />
+                        <span className="whitespace-nowrap font-medium">
+                          {selected.code}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 <select
                   value={code}
                   onChange={handleCodeChange}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  className="w-[100px] h-full py-3 pl-3 pr-8 bg-transparent text-white text-sm outline-none appearance-none cursor-pointer"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 >
                   {countryCodes.map((c) => (
                     <option key={c.code} value={c.code} className="bg-[#050B14] text-white">
-                      {c.code}
+                      {c.label}
                     </option>
                   ))}
                 </select>
-                {/* Custom Chevron */}
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
+                
+                {/* Custom Chevron with Flag Preview */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                   <div className="flex items-center gap-1">
+                      <span className="text-[10px] opacity-40">▼</span>
+                   </div>
                 </div>
               </div>
 
@@ -116,9 +139,15 @@ const DarkPhoneInput = ({
               <input
                 type="tel"
                 value={number}
-                onChange={handleNumberChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, ""); // Keep only digits
+                  if (val.length <= 15) {
+                    handleNumberChange({ ...e, target: { ...e.target, value: val } } as any);
+                  }
+                }}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
+                maxLength={15}
                 placeholder={placeholder || (label ? `Enter ${label.toLowerCase()}` : "")}
                 className="flex-1 w-full bg-transparent px-4 py-3 text-white outline-none placeholder:text-gray-600"
               />
