@@ -196,7 +196,7 @@ const SubscriptionContent = () => {
                     {planName}
                   </h3>
                   {isPopular && (
-                    <span className="absolute -top-3 -right-6 text-[9px] sm:text-[10px] bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-2 py-1 rounded-full font-black uppercase tracking-widest rotate-6 shadow-lg whitespace-nowrap">
+                    <span className="absolute xl:lg:-top-7 md:-top-7 -top-5 -right-6 text-[9px] sm:text-[10px] bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-2 py-1 rounded-full font-black uppercase tracking-widest rotate-6 shadow-lg whitespace-nowrap">
                       🔥 Most Popular
                     </span>
                   )}

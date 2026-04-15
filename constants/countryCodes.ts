@@ -192,5 +192,6 @@ export const countryCodes = [
   { code: "+974", label: "Qatar (+974)", iso: "qa" },
   { code: "+975", label: "Bhutan (+975)", iso: "bt" },
   { code: "+976", label: "Mongolia (+976)", iso: "mn" },
-  { code: "+977", label: "Nepal (+977)", iso: "np" }
+  { code: "+977", label: "Nepal (+977)", iso: "np" },
+
 ];
