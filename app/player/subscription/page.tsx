@@ -172,7 +172,7 @@ const SubscriptionContent = () => {
         </p>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10 w-full max-w-6xl mx-auto px-4">
+      <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10 w-full  mx-auto px-4">
         {plans.map((plan: Plan) => {
           const planName = plan.plan_name || plan.planName || plan.plan_type || "Pro Plan";
           const isPopular = planName.toLowerCase().includes("elite") || planName.toLowerCase().includes("pro");

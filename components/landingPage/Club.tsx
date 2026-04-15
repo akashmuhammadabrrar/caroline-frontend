@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight,  Loader2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useAppSelector } from "@/redux/hooks";
 import { useGetFeaturedClubsQuery } from "@/redux/features/admin/adminHomePageApi";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+
 
 export default function Club() {
-  const [activeTab, setActiveTab] = useState("clubs"); // "clubs" or "academies"
+  const [activeTab, setActiveTab] = useState("clubs");// "clubs" or "academies"
+   const router = useRouter(); 
+    const user = useAppSelector((state) => state.auth.user);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(4);
   const [mounted, setMounted] = useState(false);
@@ -161,9 +166,36 @@ export default function Club() {
 
         {/* View All Button */}
         <div className="flex justify-center mt-12">
-          <button       className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3">
+          <button
+           onClick={() => {
+              if (!user) {
+                router.push("/login");
+                return;
+              }
+              const role = user.role?.toUpperCase();
+              if (role === "CLUB" || role === "CLUB_ACADEMY") {
+                router.push("/club/playerDiscovery");
+              } else if (role === "SCOUT" || role === "SCOUT_AGENT") {
+                router.push("/scout/playerDiscovery");
+              } else if (role === "ADMIN") {
+                router.push("/admin/players");
+              } else {
+                toast.error("You don't have access to explore players.", {
+                  style: {
+                    background: "#090C22",
+                    color: "#fff",
+                    border: "1px solid #06A295",
+                  },
+                  iconTheme: {
+                    primary: "#06A295",
+                    secondary: "#fff",
+                  },
+                });
+              }
+            }}
+           className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3">
             View All {activeTab === "clubs" ? "Clubs" : "Academies"}{" "}
-           <ArrowRight size={18}/>
+            <ArrowRight size={18} />
           </button>
         </div>
       </div>
