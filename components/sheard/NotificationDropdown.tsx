@@ -10,7 +10,13 @@ import Link from "next/link";
 import { useMarkAsReadMutation, useDeleteNotificationMutation } from "@/redux/features/notification/notificationApi";
 import { toast } from "react-hot-toast";
 
-const NotificationDropdown = ({ onClose }: { onClose: () => void }) => {
+const NotificationDropdown = ({ 
+  onClose, 
+  onOpenModal 
+}: { 
+  onClose: () => void; 
+  onOpenModal: () => void;
+}) => {
   const { notifications, unreadCount, loading } = useNotifications();
   const [markAsRead] = useMarkAsReadMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
@@ -139,15 +145,14 @@ const NotificationDropdown = ({ onClose }: { onClose: () => void }) => {
       </div>
 
       {/* Footer */}
-      {/* <div className="p-3 border-t border-white/5 text-center bg-[#0E1129]/30">
-        <Link 
-          href="/notifications" 
-          onClick={onClose}
-          className="text-[11px] font-black uppercase tracking-[0.2em] text-teal-400/60 hover:text-teal-400 transition-colors"
+      <div className="p-3 border-t border-white/5 text-center bg-[#0E1129]/30">
+        <button 
+          onClick={onOpenModal}
+          className="text-[11px] font-black uppercase tracking-[0.2em] text-teal-400 hover:text-teal-300 transition-colors w-full py-1"
         >
           View All Logs
-        </Link>
-      </div> */}
+        </button>
+      </div>
 
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {

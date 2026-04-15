@@ -287,6 +287,7 @@ const ScoutRegistretionForm = () => {
                       label="First Name"
                       name="first_name"
                       register={register}
+                      rules={{ required: "First name is required" }}
                       error={errors.first_name?.message}
                       icon={<User size={16} />}
                       placeholder="John"
@@ -295,6 +296,7 @@ const ScoutRegistretionForm = () => {
                       label="Last Name"
                       name="last_name"
                       register={register}
+                      rules={{ required: "Last name is required" }}
                       error={errors.last_name?.message}
                       icon={<User size={16} />}
                       placeholder="Doe"
@@ -305,6 +307,16 @@ const ScoutRegistretionForm = () => {
                     name="date_of_birth"
                     type="date"
                     register={register}
+                    rules={{ 
+                      required: "Date of birth is required",
+                      validate: (value: string) => {
+                        const date = new Date(value);
+                        const today = new Date();
+                        if (date.getFullYear() < 1920) return "Invalid date";
+                        if (date > today) return "Date of birth cannot be in the future";
+                        return true;
+                      }
+                    }}
                     error={errors.date_of_birth?.message}
                     icon={<Calendar size={16} />}
                     value={watch("date_of_birth")}
@@ -313,6 +325,7 @@ const ScoutRegistretionForm = () => {
                     label="Nationality"
                     name="nationality"
                     register={register}
+                    rules={{ required: "Nationality is required" }}
                     error={errors.nationality?.message}
                     icon={<Globe size={16} />}
                     options={countries}
@@ -321,6 +334,15 @@ const ScoutRegistretionForm = () => {
                     label="Phone Number"
                     name="phone_number"
                     control={control as any}
+                    rules={{
+                      required: "Phone number is required",
+                      validate: (value: string) => {
+                        const number = value.split(" ")[1] || "";
+                        if (number.length < 7) return "Phone number is too short";
+                        if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                        return true;
+                      }
+                    }}
                     error={errors.phone_number?.message}
                     icon={<Phone size={16} />}
                     placeholder="XXX XXX XXX"
@@ -330,6 +352,13 @@ const ScoutRegistretionForm = () => {
                     name="email"
                     type="email"
                     register={register}
+                    rules={{ 
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      }
+                    }}
                     error={errors.email?.message}
                     icon={<Mail size={16} />}
                     placeholder="scout@example.com"
@@ -339,6 +368,10 @@ const ScoutRegistretionForm = () => {
                     name="password"
                     type="password"
                     register={register}
+                    rules={{ 
+                      required: "Password is required",
+                      minLength: { value: 8, message: "Password must be at least 8 characters" }
+                    }}
                     error={errors.password?.message}
                     icon={<Lock size={16} />}
                     placeholder="********"
@@ -348,6 +381,10 @@ const ScoutRegistretionForm = () => {
                     name="confirm_password"
                     type="password"
                     register={register}
+                    rules={{ 
+                      required: "Please confirm your password",
+                      validate: (value: string) => value === watch("password") || "Passwords do not match"
+                    }}
                     error={errors.confirm_password?.message}
                     icon={<Lock size={16} />}
                     placeholder="********"
@@ -388,6 +425,7 @@ const ScoutRegistretionForm = () => {
                       label="License Type"
                       name="license_type"
                       register={register}
+                      rules={{ required: "License type is required" }}
                       error={errors.license_type?.message}
                       placeholder="Select License Type"
                     />
@@ -396,6 +434,7 @@ const ScoutRegistretionForm = () => {
                         label="License Number (if applicable)"
                         name="license_number"
                         register={register}
+                        rules={{ required: "License number is required" }}
                         error={errors.license_number?.message}
                         placeholder="e.g. FIFA-12345"
                       />
@@ -403,6 +442,7 @@ const ScoutRegistretionForm = () => {
                         label="Agency Name (if applicable)"
                         name="agency_name"
                         register={register}
+                        rules={{ required: "Agency name or 'Independent' is required" }}
                         error={errors.agency_name?.message}
                         placeholder="Independent or Agency name"
                       />
@@ -411,6 +451,7 @@ const ScoutRegistretionForm = () => {
                       label="Agency Affiliation"
                       name="agency_affiliation"
                       register={register}
+                      rules={{ required: "Agency affiliation is required" }}
                       error={errors.agency_affiliation?.message}
                       placeholder="Select Affiliation"
                     />
@@ -422,6 +463,7 @@ const ScoutRegistretionForm = () => {
                       <Controller
                         name="specialization"
                         control={control}
+                        rules={{ required: "Please select at least one specialization" }}
                         render={({ field }) => (
                           <div className="flex flex-wrap gap-2">
                             {[
@@ -486,6 +528,7 @@ const ScoutRegistretionForm = () => {
                       <Controller
                         name="primary_scouting_regions"
                         control={control}
+                        rules={{ required: "Please select at least one primary region" }}
                         render={({ field }) => (
                           <div className="grid grid-cols-3 gap-2">
                             {[
@@ -529,6 +572,7 @@ const ScoutRegistretionForm = () => {
                       <Controller
                         name="age_group_focus"
                         control={control}
+                        rules={{ required: "Please select at least one age group" }}
                         render={({ field }) => (
                           <div className="grid grid-cols-4 gap-2">
                             {[
@@ -568,6 +612,7 @@ const ScoutRegistretionForm = () => {
                       <Controller
                         name="position_focus"
                         control={control}
+                        rules={{ required: "Please select at least one position focus" }}
                         render={({ field }) => (
                           <div className="grid grid-cols-3 gap-2">
                             {[
@@ -607,6 +652,7 @@ const ScoutRegistretionForm = () => {
                       <Controller
                         name="languages_spoken"
                         control={control}
+                        rules={{ required: "Please select at least one language" }}
                         render={({ field }) => (
                           <div className="grid grid-cols-3 gap-2">
                             {[
@@ -662,6 +708,7 @@ const ScoutRegistretionForm = () => {
                       label="Players Discovered *"
                       name="players_discovered"
                       register={register}
+                      rules={{ required: "Please enter number of players discovered" }}
                       error={errors.players_discovered?.message}
                       placeholder="e.g. 5-10"
                     />
@@ -669,6 +716,7 @@ const ScoutRegistretionForm = () => {
                       label="Contracts Signed *"
                       name="contracts_signed"
                       register={register}
+                      rules={{ required: "Please enter number of contracts signed" }}
                       error={errors.contracts_signed?.message}
                       placeholder="e.g. 3"
                     />

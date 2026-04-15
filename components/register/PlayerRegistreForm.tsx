@@ -284,6 +284,7 @@ const PlayerRegisterForm = () => {
                     label="First Name"
                     name="first_name"
                     register={register}
+                    rules={{ required: "First name is required" }}
                     error={errors.first_name?.message}
                     icon={<User size={16} />}
                     placeholder="John"
@@ -292,6 +293,7 @@ const PlayerRegisterForm = () => {
                     label="Last Name"
                     name="last_name"
                     register={register}
+                    rules={{ required: "Last name is required" }}
                     error={errors.last_name?.message}
                     icon={<User size={16} />}
                     placeholder="Doe"
@@ -302,6 +304,16 @@ const PlayerRegisterForm = () => {
                   name="date_of_birth"
                   type="date"
                   register={register}
+                  rules={{ 
+                    required: "Date of birth is required",
+                    validate: (value: string) => {
+                      const date = new Date(value);
+                      const today = new Date();
+                      if (date.getFullYear() < 1900) return "Invalid date (year too old)";
+                      if (date > today) return "Date of birth cannot be in the future";
+                      return true;
+                    }
+                  }}
                   error={errors.date_of_birth?.message}
                   icon={<Calendar size={16} />}
                   value={watch("date_of_birth")}
@@ -310,6 +322,7 @@ const PlayerRegisterForm = () => {
                   label="Nationality"
                   name="nationality"
                   register={register}
+                  rules={{ required: "Nationality is required" }}
                   error={errors.nationality?.message}
                   icon={<Globe size={16} />}
                   options={countries}
@@ -318,6 +331,15 @@ const PlayerRegisterForm = () => {
                   label="Phone Number"
                   name="phone_number"
                   control={control as any}
+                  rules={{
+                    required: "Phone number is required",
+                    validate: (value: string) => {
+                      const number = value.split(" ")[1] || "";
+                      if (number.length < 7) return "Phone number is too short";
+                      if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                      return true;
+                    }
+                  }}
                   error={errors.phone_number?.message}
                   icon={<Phone size={16} />}
                   placeholder="XXX XXX XXX"
@@ -327,6 +349,13 @@ const PlayerRegisterForm = () => {
                   name="email"
                   type="email"
                   register={register}
+                  rules={{ 
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address"
+                    }
+                  }}
                   error={errors.email?.message}
                   icon={<Mail size={16} />}
                   placeholder="player@example.com"
@@ -336,6 +365,10 @@ const PlayerRegisterForm = () => {
                   name="password"
                   type="password"
                   register={register}
+                  rules={{ 
+                    required: "Password is required",
+                    minLength: { value: 8, message: "Password must be at least 8 characters" }
+                  }}
                   error={errors.password?.message}
                   icon={<Lock size={16} />}
                   placeholder="********"
@@ -345,6 +378,10 @@ const PlayerRegisterForm = () => {
                   name="confirm_password"
                   type="password"
                   register={register}
+                  rules={{ 
+                    required: "Please confirm your password",
+                    validate: (value: string) => value === watch("password") || "Passwords do not match"
+                  }}
                   error={errors.confirm_password?.message}
                   icon={<Lock size={16} />}
                   placeholder="********"
@@ -397,6 +434,7 @@ const PlayerRegisterForm = () => {
                     label="Playing Position"
                     name="playing_position"
                     register={register}
+                    rules={{ required: "Playing position is required" }}
                     error={errors.playing_position?.message}
                     options={[
                       { label: "Forward", value: "forward" },
@@ -409,6 +447,7 @@ const PlayerRegisterForm = () => {
                     label="Preferred Foot"
                     name="preferred_foot"
                     register={register}
+                    rules={{ required: "Preferred foot is required" }}
                     error={errors.preferred_foot?.message}
                     options={[
                       { label: "Left", value: "left" },
@@ -423,6 +462,7 @@ const PlayerRegisterForm = () => {
                     name="height"
                     type="number"
                     register={register}
+                    rules={{ required: "Height is required" }}
                     error={errors.height?.message}
                     placeholder="175"
                   />
@@ -431,6 +471,7 @@ const PlayerRegisterForm = () => {
                     name="weight"
                     type="number"
                     register={register}
+                    rules={{ required: "Weight is required" }}
                     error={errors.weight?.message}
                     placeholder="70"
                   />
@@ -440,6 +481,7 @@ const PlayerRegisterForm = () => {
                     label="City"
                     name="city"
                     register={register}
+                    rules={{ required: "City is required" }}
                     error={errors.city?.message}
                     placeholder="Barcelona"
                   />
@@ -447,6 +489,7 @@ const PlayerRegisterForm = () => {
                     label="Country"
                     name="country"
                     register={register}
+                    rules={{ required: "Country is required" }}
                     error={errors.country?.message}
                     options={countries}
                   />
@@ -509,6 +552,7 @@ const PlayerRegisterForm = () => {
                     label="Current Club / Academy"
                     name="current_club_academy"
                     register={register}
+                    rules={{ required: "Current club or 'None' is required" }}
                     error={errors.current_club_academy?.message}
                     placeholder="e.g. FC Barcelona Youth Academy or 'None' if free agent"
                     onChange={(e: any) => {
@@ -567,6 +611,7 @@ const PlayerRegisterForm = () => {
                   label="Type of Commitment"
                   name="type_of_commitment"
                   register={register}
+                  rules={{ required: "Type of commitment is required" }}
                   error={errors.type_of_commitment?.message}
                   options={[
                     { label: "Academy Player", value: "academy_player" },
@@ -594,6 +639,16 @@ const PlayerRegisterForm = () => {
                   name="contract_valid_until"
                   type="date"
                   register={register}
+                  rules={{ 
+                    required: "Contract validity date is required",
+                    validate: (value: string) => {
+                       const date = new Date(value);
+                       const today = new Date();
+                       today.setHours(0,0,0,0);
+                       if (date < today) return "Contract date cannot be in the past";
+                       return true;
+                    }
+                  }}
                   error={errors.contract_valid_until?.message}
                   placeholder="dd/mm/yyyy"
                   icon={<Calendar size={16} />}
@@ -710,6 +765,7 @@ const PlayerRegisterForm = () => {
                     label="Parent/Guardian First Name"
                     name="parent_guardian_first_name"
                     register={register}
+                    rules={{ required: isMinor ? "Parent's first name is required" : false }}
                     error={errors.parent_guardian_first_name?.message}
                     icon={<User size={14} />}
                     placeholder="Enter parent's first name"
@@ -718,6 +774,7 @@ const PlayerRegisterForm = () => {
                     label="Parent/Guardian Last Name"
                     name="parent_guardian_last_name"
                     register={register}
+                    rules={{ required: isMinor ? "Parent's last name is required" : false }}
                     error={errors.parent_guardian_last_name?.message}
                     icon={<User size={14} />}
                     placeholder="Enter parent's last name"
@@ -728,6 +785,7 @@ const PlayerRegisterForm = () => {
                     label="Parent/Guardian ID Number"
                     name="parent_id_number"
                     register={register}
+                    rules={{ required: isMinor ? "Parent's ID number is required" : false }}
                     error={errors.parent_id_number?.message}
                     placeholder="National ID / Passport number"
                   />
@@ -735,6 +793,13 @@ const PlayerRegisterForm = () => {
                     label="Parent/Guardian Email Address"
                     name="parent_guardian_email"
                     register={register}
+                    rules={{ 
+                      required: isMinor ? "Parent's email is required" : false,
+                      pattern: isMinor ? {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      } : false
+                    }}
                     error={errors.parent_guardian_email?.message}
                     icon={<Mail size={14} />}
                     placeholder="guardian@example.com"

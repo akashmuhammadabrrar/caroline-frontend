@@ -11,13 +11,15 @@ import { logout } from "@/redux/features/auth/authSlice";
 import { UserRole } from "@/types/auth";
 import { useNotifications } from "@/components/providers/NotificationProvider";
 import NotificationDropdown from "./NotificationDropdown";
+import NotificationModal from "./NotificationModal";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 import { useGetPublicSettingsQuery } from "@/redux/features/home/homeApi";
 import BrandedLogo from "../reuseable/BrandedLogo";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Membership", href: "#" },
+  { name: "Membership", href: "/#membership" },
   { name: "Academies", href: "/#academies" },
   { name: "Players", href: "/#players" },
   { name: "Latest News", href: "/latest-news" },
@@ -27,10 +29,12 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+  const [notifModalOpen, setNotifModalOpen] = useState(false);
 
   const auth = useAppSelector((state) => state.auth);
   const { unreadCount } = useNotifications();
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   const { data: settings } = useGetPublicSettingsQuery();
 
   const navRef = useRef<HTMLElement>(null);
@@ -102,15 +106,24 @@ const Navbar = () => {
           {/* Desktop Nav Links - Center */}
           <div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2">
             <div className="flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-[#B0B0B0] hover:text-white transition-colors font-medium text-[15px] whitespace-nowrap"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={cn(
+                      "transition-all font-medium text-[15px] whitespace-nowrap relative group py-2",
+                      isActive ? "text-cyan-400" : "text-[#B0B0B0] hover:text-white"
+                    )}
+                  >
+                    {link.name}
+                    {isActive && (
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
@@ -141,9 +154,20 @@ const Navbar = () => {
                   </button>
 
                   {notifMenuOpen && (
-                    <NotificationDropdown onClose={() => setNotifMenuOpen(false)} />
+                    <NotificationDropdown 
+                      onClose={() => setNotifMenuOpen(false)} 
+                      onOpenModal={() => {
+                        setNotifMenuOpen(false);
+                        setNotifModalOpen(true);
+                      }}
+                    />
                   )}
                 </div>
+
+                <NotificationModal 
+                  isOpen={notifModalOpen} 
+                  onClose={() => setNotifModalOpen(false)} 
+                />
 
                 {/* User Menu */}
                 <div ref={userMenuRef} className="relative">
@@ -237,15 +261,22 @@ const Navbar = () => {
         {mobileMenuOpen && (
           <div className="lg:hidden p-7 rounded-xl border-t border-white/10 bg-blur backdrop-blur-md">
             <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-white/80 hover:text-[#00E5FF] text-base font-medium py-2 transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "text-base font-medium py-2 transition-colors",
+                      isActive ? "text-cyan-400" : "text-white/80 hover:text-[#00E5FF]"
+                    )}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
               <div className="flex flex-col gap-3 pt-4">
                 {auth.user ? (
                   <>

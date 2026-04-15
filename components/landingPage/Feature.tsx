@@ -4,10 +4,14 @@ import { useAppSelector } from "@/redux/hooks";
 import { Lock, Loader2, ArrowRight } from "lucide-react";
 import { useGetFeaturedPlayersQuery } from "@/redux/features/admin/adminSettingsApi";
 import { getFlagEmoji } from "@/lib/utils/flagUtils";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import Link from "next/link";
 
 const Feature = () => {
+  const router = useRouter();
   const theme = useAppSelector((state) => state.theme);
+  const user = useAppSelector((state) => state.auth.user);
   const { data: playersData, isLoading } = useGetFeaturedPlayersQuery();
 
   const players = Array.isArray(playersData?.data) 
@@ -98,12 +102,37 @@ const Feature = () => {
 
         {/* View All Button */}
         <div className="flex justify-center mt-10">
-          <Link
-            href={!useAppSelector((state) => state.auth.user) ? "/login" : "/scout/playerDiscovery"}
+          <button
+            onClick={() => {
+              if (!user) {
+                router.push("/login");
+                return;
+              }
+              const role = user.role?.toUpperCase();
+              if (role === "CLUB" || role === "CLUB_ACADEMY") {
+                router.push("/club/playerDiscovery");
+              } else if (role === "SCOUT" || role === "SCOUT_AGENT") {
+                router.push("/scout/playerDiscovery");
+              } else if (role === "ADMIN") {
+                router.push("/admin/players");
+              } else {
+                toast.error("You don't have access to explore players.", {
+                  style: {
+                    background: "#090C22",
+                    color: "#fff",
+                    border: "1px solid #06A295",
+                  },
+                  iconTheme: {
+                    primary: "#06A295",
+                    secondary: "#fff",
+                  },
+                });
+              }
+            }}
             className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
           >
             Explore All Players <ArrowRight size={18} />
-          </Link>
+          </button>
         </div>
       </div>
     </section>
