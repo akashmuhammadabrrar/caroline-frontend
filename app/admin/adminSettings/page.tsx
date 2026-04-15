@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Settings,
-  Globe,
   Users,
   DollarSign,
   Bell,
@@ -14,8 +13,6 @@ import {
 import {
   useGetGeneralSettingsQuery,
   useUpdateGeneralSettingsMutation,
-  useGetLocalizationSettingsQuery,
-  useUpdateLocalizationSettingsMutation,
   useGetUserManagementSettingsQuery,
   useUpdateUserManagementSettingsMutation,
   useGetMonetizationSettingsQuery,
@@ -50,14 +47,12 @@ const Toggler = ({
       </div>
       <button
         onClick={() => onChange(!enabled)}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-          enabled ? "bg-[#00E5FF]" : "bg-gray-800"
-        }`}
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${enabled ? "bg-[#00E5FF]" : "bg-gray-800"
+          }`}
       >
         <span
-          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-            enabled ? "translate-x-5" : "translate-x-0"
-          }`}
+          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${enabled ? "translate-x-5" : "translate-x-0"
+            }`}
         />
       </button>
     </div>
@@ -66,12 +61,7 @@ const Toggler = ({
 
 const TABS = [
   { id: "General", icon: <Settings size={18} />, label: "General" },
-  { id: "Localization", icon: <Globe size={18} />, label: "Localization" },
-  {
-    id: "User Management",
-    icon: <Users size={18} />,
-    label: "User Management",
-  },
+  { id: "User Management", icon: <Users size={18} />, label: "User Management" },
   { id: "Monetization", icon: <DollarSign size={18} />, label: "Monetization" },
   { id: "Notifications", icon: <Bell size={18} />, label: "Notifications" },
 ];
@@ -237,158 +227,8 @@ const GeneralSettingsForm = ({
   );
 };
 
-const LocalizationSettingsForm = () => {
-  const {
-    data: locData,
-    isLoading,
-    isError,
-  } = useGetLocalizationSettingsQuery();
-  const [updateLoc, { isLoading: isUpdating }] =
-    useUpdateLocalizationSettingsMutation();
-  const [formData, setFormData] = useState({
-    defaultLanguage: "English",
-    enabledLanguages: ["English", "Spanish", "French", "German"],
-  });
 
-  const availableLanguages = [
-    "English",
-    "Spanish",
-    "French",
-    "German",
-    "Italian",
-    "Portuguese",
-    "Russian",
-    "Chinese",
-    "Japanese",
-  ];
 
-  useEffect(() => {
-    if (locData) {
-      setFormData(locData);
-    }
-  }, [locData]);
-
-  const handleToggleLanguage = (lang: string) => {
-    setFormData((prev) => {
-      const isEnabled = prev.enabledLanguages.includes(lang);
-      const newEnabled = isEnabled
-        ? prev.enabledLanguages.filter((l) => l !== lang)
-        : [...prev.enabledLanguages, lang];
-
-      // Ensure default language is always enabled
-      if (isEnabled && lang === prev.defaultLanguage && newEnabled.length > 0) {
-        return prev; // Don't allow disabling default language if it's the only one or something?
-        // Better: if disabling default, pick another one?
-      }
-
-      return { ...prev, enabledLanguages: newEnabled };
-    });
-  };
-
-  const handleSave = async () => {
-    try {
-      await updateLoc(formData).unwrap();
-      toast.success("Localization settings updated successfully");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update localization");
-    }
-  };
-
-  if (isLoading)
-    return (
-      <div className="flex justify-center p-20">
-        <Loader2 className="w-10 h-10 text-cyan-500 animate-spin" />
-      </div>
-    );
-
-  if (isError || (!locData && !isLoading)) {
-    return (
-      <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-10 text-center">
-        <p className="text-red-400 font-bold">
-          Failed to load localization settings.
-        </p>
-        <p className="text-gray-500 mt-2 text-sm">Please try again later.</p>
-      </div>
-    );
-  }
-
-  const cardClass =
-    "bg-[#171b2f] border border-gray-800 rounded-[2rem] p-8 md:p-10 mb-8 shadow-2xl backdrop-blur-sm";
-  const sectionTitleClass = "text-lg font-bold text-white mb-8";
-  const labelClass = "text-sm font-medium text-gray-400 mb-2.5 block ml-1";
-
-  return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className={cardClass}>
-        <h2 className={sectionTitleClass}>Language Settings</h2>
-
-        <div className="space-y-10">
-          <div>
-            <label className={labelClass}>Default Language</label>
-            <select
-              value={formData.defaultLanguage}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  defaultLanguage: e.target.value,
-                }))
-              }
-              className="w-full bg-[#0a0c16] border border-gray-800 rounded-xl px-4 py-4 text-sm text-gray-300 focus:outline-none focus:border-cyan-500/50 transition-all appearance-none cursor-pointer"
-            >
-              {formData.enabledLanguages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className={labelClass}>Enabled Languages</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {availableLanguages.map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => handleToggleLanguage(lang)}
-                  className={`flex items-center justify-between px-5 py-4 rounded-2xl border transition-all font-bold text-sm ${
-                    formData.enabledLanguages.includes(lang)
-                      ? "bg-cyan-500/10 border-cyan-500/50 text-white"
-                      : "bg-[#0a0c16] border-gray-800 text-gray-600 hover:border-gray-700"
-                  }`}
-                >
-                  {lang}
-                  {formData.enabledLanguages.includes(lang) && (
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-4 pt-4">
-        <button
-          onClick={() => setFormData(locData || formData)}
-          className="px-8 py-3 rounded-xl bg-white/5 border border-gray-800 font-bold hover:bg-white/10 transition-all"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={isUpdating}
-          className="px-10 py-3 rounded-xl bg-[#00d8b6] hover:bg-[#00c2a3] text-white font-bold transition-all shadow-lg shadow-[#00d8b6]/20 disabled:opacity-50"
-        >
-          {isUpdating ? (
-            <Loader2 size={18} className="animate-spin" />
-          ) : (
-            "Save Changes"
-          )}
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const UserManagementSettingsForm = () => {
   const {
@@ -1084,11 +924,10 @@ export default function AdminSettingsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2.5 px-6 py-3.5 rounded-t-2xl font-bold text-sm transition-all relative ${
-              activeTab === tab.id
+            className={`flex items-center gap-2.5 px-6 py-3.5 rounded-t-2xl font-bold text-sm transition-all relative ${activeTab === tab.id
                 ? "bg-[#171b2f] text-white border-t border-x border-gray-800"
                 : "text-gray-500 hover:text-gray-300"
-            }`}
+              }`}
           >
             <span className={activeTab === tab.id ? "text-cyan-400" : ""}>
               {tab.icon}
@@ -1109,25 +948,23 @@ export default function AdminSettingsPage() {
             isUpdating={genUpdating}
           />
         )}
-        {activeTab === "Localization" && <LocalizationSettingsForm />}
         {activeTab === "User Management" && <UserManagementSettingsForm />}
         {activeTab === "Monetization" && <MonetizationSettingsForm />}
         {activeTab === "Notifications" && <NotificationSettingsForm />}
         {![
           "General",
-          "Localization",
           "User Management",
           "Monetization",
           "Notifications",
         ].includes(activeTab) && (
-          <div className="bg-[#171b2f] border border-gray-800 rounded-[2rem] flex flex-col items-center justify-center py-40">
-            <div className="p-6 rounded-full bg-white/5 border border-gray-800 mb-6">
-              <Settings size={48} className="text-gray-600 animate-pulse" />
+            <div className="bg-[#171b2f] border border-gray-800 rounded-[2rem] flex flex-col items-center justify-center py-40">
+              <div className="p-6 rounded-full bg-white/5 border border-gray-800 mb-6">
+                <Settings size={48} className="text-gray-600 animate-pulse" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2">{activeTab} Settings</h3>
+              <p className="text-gray-500">This module is coming soon.</p>
             </div>
-            <h3 className="text-2xl font-bold mb-2">{activeTab} Settings</h3>
-            <p className="text-gray-500">This module is coming soon.</p>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import ScoutTopBar from "@/components/layout/ScoutTopBar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import React from "react";
-import { poppins } from "../font";
+import { poppins } from "@/app/font";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

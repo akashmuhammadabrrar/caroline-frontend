@@ -2,7 +2,7 @@ import React from "react";
 import ClubSidebar from "@/components/layout/ClubSideBar";
 import ClubTopBar from "@/components/layout/ClubTopBar";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { poppins } from "../font";
+import { poppins } from "@/app/font";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute allowedRole="CLUB_ACADEMY">

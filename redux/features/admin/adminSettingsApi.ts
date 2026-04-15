@@ -22,6 +22,8 @@ export interface LocalizationSettings {
   enabledLanguages: string[];
 }
 
+
+
 export interface UserManagementSettings {
   requireEmailVerification: boolean;
   adminApprovalForClubs: boolean;
@@ -194,6 +196,7 @@ export const adminSettingsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Dashboard"],
     }),
+
     getUserManagementSettings: builder.query<UserManagementSettings, void>({
       query: () => "/admin-dashboard/settings/user-management/",
       providesTags: ["Dashboard"],
@@ -294,6 +297,7 @@ export const {
   useUpdateGeneralSettingsMutation,
   useGetLocalizationSettingsQuery,
   useUpdateLocalizationSettingsMutation,
+
   useGetUserManagementSettingsQuery,
   useUpdateUserManagementSettingsMutation,
   useGetMonetizationSettingsQuery,
