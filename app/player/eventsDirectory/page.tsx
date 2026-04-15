@@ -138,6 +138,7 @@ const EventsDirectoryPage = () => {
   const itemsPerPage = 4;
 
   const { data: eventsData, isLoading: isEventsLoading } = useGetEventsQuery();
+  console.log('all events ',eventsData);
   const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
   const { data: pastData, isLoading: isPastLoading } = useGetPastRegistrationsQuery();
 

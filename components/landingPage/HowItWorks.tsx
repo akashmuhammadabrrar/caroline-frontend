@@ -30,9 +30,7 @@ const HowItWorks = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 inline-block text-white"
-          >
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 inline-block text-white">
             HOW IT WORKS
           </h2>
           <p className="text-landing mt-2">
@@ -44,10 +42,7 @@ const HowItWorks = () => {
         {/* Steps */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 relative">
           {steps.map((step, index) => (
-            <div
-              key={index}
-              className="group relative"
-            >
+            <div key={index} className="group relative">
               {/* Main Card with Gradient Border */}
               <div className="relative p-8 md:p-10 rounded-2xl bg-[var(--bg-card,#0A1424)] h-full">
                 {/* Gradient Border using pseudo-element */}
@@ -55,10 +50,11 @@ const HowItWorks = () => {
                   className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
                     background: `linear-gradient(135deg, ${theme.colors.primaryCyan}, ${theme.colors.primaryMagenta})`,
-                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
-                    pointerEvents: 'none',
+                    WebkitMask:
+                      "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMaskComposite: "xor",
+                    maskComposite: "exclude",
+                    pointerEvents: "none",
                   }}
                 />
 
@@ -67,9 +63,11 @@ const HowItWorks = () => {
                   {/* Step Number with Staggered Position */}
                   <div
                     className={`font-display text-7xl md:text-8xl font-black mb-4 ${
-                      index === 0 ? 'self-start -mt-4 ml-[-0.5rem]' : 
-                      index === 1 ? 'self-center' : 
-                      'self-end -mt-2 mr-[-0.5rem]'
+                      index === 0
+                        ? "self-center -mt-4 ml-[-0.5rem]"
+                        : index === 1
+                          ? "self-center"
+                          : "self-center -mt-2 mr-[-0.5rem]"
                     }`}
                     style={{ color: "#09585E" }}
                   >
@@ -107,8 +105,6 @@ const HowItWorks = () => {
             </div>
           ))}
         </div>
-
-        
       </div>
     </section>
   );

@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useVerifyPaymentMutation, useGetSubscriptionQuery } from "../../../../redux/features/player/subscriptionApi";
+import {
+  useVerifyPaymentMutation,
+  useGetSubscriptionQuery,
+} from "../../../../redux/features/player/subscriptionApi";
 import { Check, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -11,7 +14,8 @@ const SuccessContent = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
-  const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
+  const [verifyPayment, { isLoading: isVerifying }] =
+    useVerifyPaymentMutation();
   const { data: subscription, refetch } = useGetSubscriptionQuery();
   const activeSub = subscription?.data;
 
@@ -29,16 +33,23 @@ const SuccessContent = () => {
         })
         .catch(async (err: any) => {
           console.error("Verification response:", err);
-          
+
           // Gracefully swallow the IntegrityError (500) if a webhook already verified the payment in the background
-          const isDuplicate = err?.status === 'PARSING_ERROR' || err?.originalStatus === 500 || String(err?.error).includes("Integrity");
-          
+          const isDuplicate =
+            err?.status === "PARSING_ERROR" ||
+            err?.originalStatus === 500 ||
+            String(err?.error).includes("Integrity");
+
           if (isDuplicate) {
             toast.success("Payment verified successfully!");
             await refetch();
             setIsDone(true);
           } else {
-            const errorMessage = err?.data?.message || err?.data?.detail || err?.error || "Failed to verify payment. Please contact support.";
+            const errorMessage =
+              err?.data?.message ||
+              err?.data?.detail ||
+              err?.error ||
+              "Failed to verify payment. Please contact support.";
             setError(errorMessage);
             toast.error("Verification failed.");
           }
@@ -53,11 +64,18 @@ const SuccessContent = () => {
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
         <div className="relative">
           <div className="w-24 h-24 border-4 border-cyan-400/20 border-t-cyan-400 rounded-full animate-spin" />
-          <Loader2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-cyan-400 animate-pulse" size={32} />
+          <Loader2
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-cyan-400 animate-pulse"
+            size={32}
+          />
         </div>
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-white uppercase italic tracking-widest">Verifying Payment</h2>
-          <p className="text-gray-500 font-medium">Please wait while we confirm your subscription...</p>
+          <h2 className="text-2xl font-black text-white uppercase italic tracking-widest">
+            Verifying Payment
+          </h2>
+          <p className="text-gray-500 font-medium">
+            Please wait while we confirm your subscription...
+          </p>
         </div>
       </div>
     );
@@ -70,10 +88,12 @@ const SuccessContent = () => {
           <Check size={40} className="rotate-45" />
         </div>
         <div className="space-y-4">
-          <h2 className="text-3xl font-black text-white uppercase italic">Something went wrong</h2>
+          <h2 className="text-3xl font-black text-white uppercase italic">
+            Something went wrong
+          </h2>
           <p className="text-gray-400 max-w-md mx-auto">{error}</p>
         </div>
-        <button 
+        <button
           onClick={() => router.push("/player/subscription")}
           className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all"
         >
@@ -96,9 +116,13 @@ const SuccessContent = () => {
         <div className="space-y-2">
           <h1 className="text-2xl sm:text-5xl md:text-3xl font-black text-white uppercase italic leading-none tracking-tighter">
             Payment{" "}
-             <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent pb-1 inline-block">Successful!</span>
+            <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent pb-1 inline-block">
+              Successful!
+            </span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-400 font-medium">Welcome to the elite league.</p>
+          <p className="text-lg sm:text-xl text-gray-400 font-medium">
+            Welcome to the elite league.
+          </p>
         </div>
 
         {activeSub && (
@@ -106,40 +130,66 @@ const SuccessContent = () => {
             <h3 className="text-xl font-bold text-white border-b border-white/10 pb-4 tracking-wide uppercase italic">
               Subscription Receipt
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              
               {/* Session ID */}
               <div className="col-span-1 sm:col-span-2 bg-white/5 p-4 rounded-xl border border-white/5">
-                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Stripe Session ID</p>
-                <p className="text-white font-medium text-xs sm:text-sm truncate" title={sessionId || ""}>{sessionId}</p>
+                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">
+                  Stripe Session ID
+                </p>
+                <p
+                  className="text-white font-medium text-xs sm:text-sm truncate"
+                  title={sessionId || ""}
+                >
+                  {sessionId}
+                </p>
               </div>
 
               {/* Registration ID */}
               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Registration ID</p>
-                <p className="text-white font-black text-lg">{activeSub.id || "N/A"}</p>
+                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">
+                  Registration ID
+                </p>
+                <p className="text-white font-black text-lg">
+                  {activeSub.id || "N/A"}
+                </p>
               </div>
-              
+
               {/* Plan Name */}
               <div className="bg-gradient-to-r from-cyan-400/10 to-purple-500/10 p-4 rounded-xl border border-cyan-400/20">
-                <p className="text-[10px] text-cyan-400 font-black uppercase tracking-widest mb-1">Plan</p>
-                <p className="text-white font-black text-lg uppercase italic">{activeSub.plan_name}</p>
+                <p className="text-[10px] text-cyan-400 font-black uppercase tracking-widest mb-1">
+                  Plan
+                </p>
+                <p className="text-white font-black text-lg uppercase italic">
+                  {activeSub.plan_name}
+                </p>
               </div>
 
               {/* Billing Interval */}
               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Billing Interval</p>
-                <p className="text-white font-medium text-lg capitalize">{activeSub.billing_cycle === 'MONTHLY' ? 'Monthly' : activeSub.billing_cycle === 'YEARLY' ? 'Yearly' : activeSub.billing_cycle}</p>
+                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">
+                  Billing Interval
+                </p>
+                <p className="text-white font-medium text-lg capitalize">
+                  {activeSub.billing_cycle === "MONTHLY"
+                    ? "Monthly"
+                    : activeSub.billing_cycle === "YEARLY"
+                      ? "Yearly"
+                      : activeSub.billing_cycle}
+                </p>
               </div>
 
               {/* Price */}
               <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Total Paid</p>
-                <p className="text-white font-black text-2xl tracking-tighter">€{activeSub.amount}</p>
+                <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">
+                  Total Paid
+                </p>
+                <p className="text-white font-black text-2xl tracking-tighter">
+                  €{activeSub.amount}
+                </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400 font-medium bg-[#0B0D2C]/50 p-4 rounded-2xl border border-white/5 mt-4">
               <div className="w-2 h-2 rounded-full bg-[#00D4AA] shadow-[0_0_10px_#00D4AA] flex-shrink-0" />
               Your premium features are now permanently active on your profile.
@@ -148,15 +198,18 @@ const SuccessContent = () => {
         )}
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-8 w-full">
-          <button 
+          <button
             onClick={() => router.push("/player")}
             className="w-full sm:flex-1 px-8 py-5 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl text-white font-black uppercase tracking-widest text-xs shadow-[0_10px_30px_rgba(0,212,170,0.3)] hover:scale-105 transition-all flex items-center justify-center gap-2 group active:scale-95"
           >
             Go to Dashboard
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
           </button>
-          
-          <button 
+
+          <button
             onClick={() => router.push("/player/subscription")}
             className="w-full sm:flex-1 px-8 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-black uppercase tracking-widest text-xs hover:bg-white/10 transition-all active:scale-95"
           >
@@ -170,11 +223,13 @@ const SuccessContent = () => {
 
 export default function SubscriptionSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
+        </div>
+      }
+    >
       <SuccessContent />
     </Suspense>
   );
