@@ -15,8 +15,10 @@ import { useAppSelector } from "@/redux/hooks";
 import SectionTitel from "../reuseable/SectionTitel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useGetUpcomingEventsQuery } from "@/redux/features/home/homeApi";
-import { useGetMyRegistrationsQuery } from "@/redux/features/player/eventsDirectoryApi";
+import {
+  useGetEventsQuery,
+  useGetMyRegistrationsQuery,
+} from "@/redux/features/player/eventsDirectoryApi";
 import { format } from "date-fns";
 import { CheckCircle } from "lucide-react";
 
@@ -24,7 +26,7 @@ export default function UpcomingEvent() {
   const router = useRouter();
   const theme = useAppSelector((state) => state.theme);
   const user = useAppSelector((state) => state.auth.user);
-  const { data: eventsData, isLoading } = useGetUpcomingEventsQuery();
+  const { data: eventsData, isLoading } = useGetEventsQuery();
 
   const { data: registrationsData } = useGetMyRegistrationsQuery(undefined, {
     skip: !user || user.role !== "PLAYER",
@@ -36,8 +38,19 @@ export default function UpcomingEvent() {
       (registrationsData as any)?.data ||
       [];
 
+  const eventsList = Array.isArray(eventsData)
+    ? eventsData
+    : eventsData?.results || eventsData?.data || [];
+
+  console.log(
+    "UpcomingEvents eventsData API response:",
+    eventsData,
+    "Derived eventsList:",
+    eventsList,
+  );
+
   // Get active/upcoming events and limit to 2, sorted by created_at descending
-  const upcomingEvents = [...(eventsData?.data || [])]
+  const upcomingEvents = [...eventsList]
     .filter(
       (e: any) =>
         e.status?.toUpperCase() !== "CANCELLED" &&
@@ -81,11 +94,12 @@ export default function UpcomingEvent() {
                   </span>
                   <span className="text-[#06A295] font-medium text-sm">
                     {(() => {
-                      if (!event.date) return "TBD";
-                      const d = new Date(event.date);
+                      const eventDate = event.event_date || event.date;
+                      if (!eventDate) return "TBD";
+                      const d = new Date(eventDate);
                       return !isNaN(d.getTime())
                         ? format(d, "dd MMM yyyy")
-                        : event.date;
+                        : eventDate;
                     })()}
                   </span>
                 </div>
@@ -100,7 +114,21 @@ export default function UpcomingEvent() {
                       className="w-5 h-5 text-cyan-400 flex-shrink-0"
                       style={{ color: theme.colors.primaryCyan }}
                     />
-                    <span className="text-[#06A295]">08:00 AM (TBD)</span>
+                    <span className="text-[#06A295]">
+                      {(() => {
+                        const eventTime = event.event_time || event.time;
+                        if (!eventTime) return "TBD";
+                        // Time is likely HH:MM:SS, parse it to 12 hr
+                        try {
+                          const [hours, minutes] = eventTime.split(":");
+                          const d = new Date();
+                          d.setHours(Number(hours), Number(minutes));
+                          return format(d, "hh:mm a");
+                        } catch (e) {
+                          return eventTime;
+                        }
+                      })()}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -109,7 +137,7 @@ export default function UpcomingEvent() {
                       style={{ color: theme.colors.primaryCyan }}
                     />
                     <span className="text-[#06A295]">
-                      {event.location || "Location TBD"}
+                      {event.venue_name || event.location || "Location TBD"}
                     </span>
                   </div>
 
@@ -119,9 +147,14 @@ export default function UpcomingEvent() {
                       style={{ color: theme.colors.primaryCyan }}
                     />
                     <span className="text-[#06A295]">
-                      {event.fee === "0.00" || !event.fee
-                        ? "Free Entry"
-                        : `$${event.fee}`}
+                      {(() => {
+                        const eventFee = event.registration_fee || event.fee;
+                        return eventFee === "0.00" ||
+                          !eventFee ||
+                          Number(eventFee) === 0
+                          ? "Free Entry"
+                          : `$${eventFee}`;
+                      })()}
                     </span>
                   </div>
                 </div>
@@ -152,64 +185,7 @@ export default function UpcomingEvent() {
                   </div>
                 </div>
 
-                {(() => {
-                  const reg = registrations.find((r: any) => {
-                    const regEventId =
-                      r.event_id ||
-                      (typeof r.event === "object" && r.event !== null
-                        ? r.event.id
-                        : r.event);
-                    return Number(regEventId) === Number(event.id);
-                  });
-                  const isRegistered = !!reg && reg.status !== "CANCELLED";
-                  const isFull =
-                    event.is_full ||
-                    (event.maximum_capacity > 0 &&
-                      event.registered_count >= event.maximum_capacity);
-
-                  return (
-                    <Button
-                      variant="common"
-                      disabled={
-                        (isRegistered || isFull) && user?.role === "PLAYER"
-                      }
-                      onClick={() => {
-                        if (!user) {
-                          router.push("/login");
-                          return;
-                        }
-
-                        const role = user.role?.toUpperCase();
-                        if (role === "PLAYER") {
-                          router.push(`/latest-events/${event.id}`);
-                        } else if (role === "CLUB") {
-                          router.push("/club/eventManagement");
-                        } else if (role === "SCOUT") {
-                          router.push("/scout/events");
-                        } else if (role === "ADMIN") {
-                          router.push("/admin/event-management");
-                        } else {
-                          router.push(`/latest-events/${event.id}`);
-                        }
-                      }}
-                      className={`w-full font-semibold py-3 rounded-md transition-all duration-200 flex items-center justify-center gap-2 ${
-                        isRegistered && user?.role === "PLAYER"
-                          ? "bg-gray-800/80 text-cyan-400 border border-cyan-400/30 cursor-not-allowed"
-                          : isFull && user?.role === "PLAYER"
-                            ? "bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed"
-                            : "text-white"
-                      }`}
-                    >
-                      {isRegistered && user?.role === "PLAYER" ? (
-                        <>Already Registered</>
-                      ) : isFull && user?.role === "PLAYER" ? (
-                        "Completed"
-                      ) : (
-                        "See more details"
-                      )}
-                    </Button>
-                  );
-                })()}
+            
               </div>
             ))}
           </div>

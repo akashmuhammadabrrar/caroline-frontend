@@ -26,6 +26,7 @@ export const eventsApi = baseApi.injectEndpoints({
     getEvent: builder.query<Event, number>({
       query: (id) => `/events/${id}/`,
       transformResponse: (response: GetEventResponse) => response.data,
+      providesTags: ["Events"],
     }),
 
     registerForEvent: builder.mutation<any, any>({
