@@ -98,6 +98,7 @@ const EventCard = ({
               <span className="text-lg font-black text-white">€{parseFloat(event.registration_fee || "0").toFixed(0)}</span>
             </div>
           </div>
+          
           <button
             onClick={() => onViewDetails(event.id)}
             disabled={!isRegistered && (isFull || isPending || isCompleted)}

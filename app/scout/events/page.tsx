@@ -135,6 +135,10 @@ const Page = () => {
               )
             : Array.isArray(registrations) ? registrations.some((reg: any) => reg.event === event.id) : false;
 
+          const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+          const s = (event.status || "").toUpperCase();
+          const isCompletedOrFull = s === "COMPLETED" || isFull;
+
           return (
             <div
               key={event.id}
@@ -272,7 +276,7 @@ const Page = () => {
                       );
                     }
 
-                    if (s === "COMPLETED") {
+                    if (isCompletedOrFull) {
                       return (
                         <button
                           disabled
