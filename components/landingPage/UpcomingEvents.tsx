@@ -25,7 +25,7 @@ export default function UpcomingEvent() {
   const theme = useAppSelector((state) => state.theme);
   const user = useAppSelector((state) => state.auth.user);
   const { data: eventsData, isLoading } = useGetUpcomingEventsQuery();
-  
+
   const { data: registrationsData } = useGetMyRegistrationsQuery(undefined, {
     skip: !user || user.role !== "PLAYER",
   });
@@ -231,7 +231,7 @@ export default function UpcomingEvent() {
                 } else if (role === "SCOUT" || role === "SCOUT_AGENT") {
                   router.push("/scout/events");
                 } else if (role === "ADMIN") {
-                  router.push("/admin/event-management");
+                  router.push("/admin/eventManagement");
                 } else {
                   router.push("/latest-events");
                 }
@@ -243,97 +243,100 @@ export default function UpcomingEvent() {
           </div>
         </div>
 
-     <div id="membership" className="min-h-screen flex items-center justify-center p-4 sm:p-6">
-  <div
-    className="
+        <div
+          id="membership"
+          className="min-h-screen flex items-center justify-center p-4 sm:p-6"
+        >
+          <div
+            className="
     w-full max-w-md 
     bg-gradient-to-br from-[#00E5FF]/20 via-[#00E5FF]/5 to-[#9C27B0]/30 
     p-4 sm:p-6 md:p-8
     border border-indigo-500/20 
     shadow-2xl shadow-indigo-950/40 rounded-xl
   "
-  >
-    <div className="bg-[#171D36]/90 p-4 sm:p-6 md:p-8 rounded-xl">
-      
-      {/* Icon */}
-      <div className="flex justify-center mb-3">
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-lg">
-          ♔
+          >
+            <div className="bg-[#171D36]/90 p-4 sm:p-6 md:p-8 rounded-xl">
+              {/* Icon */}
+              <div className="flex justify-center mb-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-lg">
+                  ♔
+                </div>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent text-center">
+                GO PRO
+              </h2>
+
+              {/* Description */}
+              <p className="text-[#7FB6B6] text-sm sm:text-base text-center mb-6 sm:mb-8 font-bold px-2">
+                Unlock premium features and accelerate your football career with
+                NextGen Pro membership
+              </p>
+
+              {/* Features */}
+              <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10 text-[#7FB6B6] text-xs sm:text-sm">
+                {[
+                  "Exclusive scout network access",
+                  "Refined direct messaging system",
+                  "Exclusive scout & agent network access",
+                  "Newsletter with pre-season training content and priority event access",
+                  "Full access to all events with direct contact options",
+                  "Enhanced player profile creation with photos & videos to get noticed by clubs",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 sm:gap-3">
+                    <span className="text-indigo-400 text-base sm:text-lg font-bold mt-0.5">
+                      ✓
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Price */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3">
+                <div className="flex items-baseline text-[#9CFFF0]">
+                  <span className="text-2xl sm:text-3xl font-black">$</span>
+                  <span className="text-3xl sm:text-5xl font-black tracking-tight">
+                    9.99
+                  </span>
+                  <span className="text-sm sm:text-xl font-bold ml-1 sm:ml-2">
+                    /year
+                  </span>
+                </div>
+
+                <div className="bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] text-white text-[10px] sm:text-xs font-bold px-3 py-2 sm:px-4 sm:py-3 rounded-lg uppercase tracking-wide">
+                  Save 50%
+                </div>
+              </div>
+
+              <p className="text-[#7FB6B6] text-xs sm:text-sm text-center mb-6 sm:mb-8">
+                (introductory offer — usually $19.99/year)
+              </p>
+
+              {/* Button */}
+              <div className="flex justify-center">
+                <Link
+                  href={
+                    user
+                      ? user.role === "PLAYER"
+                        ? "/player"
+                        : user.role === "CLUB_ACADEMY"
+                          ? "/club"
+                          : user.role === "SCOUT_AGENT"
+                            ? "/scout"
+                            : "/admin"
+                      : "/login"
+                  }
+                  className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
+                >
+                  {user ? "Go to Subscription" : "Sign Up"}
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Title */}
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent text-center">
-        GO PRO
-      </h2>
-
-      {/* Description */}
-      <p className="text-[#7FB6B6] text-sm sm:text-base text-center mb-6 sm:mb-8 font-bold px-2">
-        Unlock premium features and accelerate your football career
-        with NextGen Pro membership
-      </p>
-
-      {/* Features */}
-      <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10 text-[#7FB6B6] text-xs sm:text-sm">
-        {[
-          "Exclusive scout network access",
-          "Refined direct messaging system",
-          "Exclusive scout & agent network access",
-          "Newsletter with pre-season training content and priority event access",
-          "Full access to all events with direct contact options",
-          "Enhanced player profile creation with photos & videos to get noticed by clubs",
-        ].map((item, i) => (
-          <li key={i} className="flex items-start gap-2 sm:gap-3">
-            <span className="text-indigo-400 text-base sm:text-lg font-bold mt-0.5">✓</span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-
-      {/* Price */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3">
-        <div className="flex items-baseline text-[#9CFFF0]">
-          <span className="text-2xl sm:text-3xl font-black">$</span>
-          <span className="text-3xl sm:text-5xl font-black tracking-tight">
-            9.99
-          </span>
-          <span className="text-sm sm:text-xl font-bold ml-1 sm:ml-2">/year</span>
-        </div>
-
-        <div className="bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] text-white text-[10px] sm:text-xs font-bold px-3 py-2 sm:px-4 sm:py-3 rounded-lg uppercase tracking-wide">
-          Save 50%
-        </div>
-      </div>
-
-      <p className="text-[#7FB6B6] text-xs sm:text-sm text-center mb-6 sm:mb-8">
-        (introductory offer — usually $19.99/year)
-      </p>
-
-      {/* Button */}
-      <div className="flex justify-center">
-        <Link
-          href={
-            user
-              ? user.role === "PLAYER"
-                ? "/player"
-                : user.role === "CLUB_ACADEMY"
-                ? "/club"
-                : user.role === "SCOUT_AGENT"
-                ? "/scout"
-                : "/admin"
-              : "/login"
-          }
-          className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
-        >
-          {user ? "Go to Subscription" : "Sign Up"}
-        </Link>
-      </div>
-
-      
-
-    </div>
-  </div>
-</div>
       </div>
     </div>
   );
