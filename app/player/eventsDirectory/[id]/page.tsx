@@ -50,6 +50,16 @@ const EventDetailsPage = () => {
 
   const [view, setView] = useState<ViewState>("DETAILS");
 
+  // On mount, check if url query has action=register
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("action") === "register") {
+        setView("REGISTRATION");
+      }
+    }
+  }, []);
+
   const { data: registrationsData } = useGetMyRegistrationsQuery();
   const { data: upcomingData } = useGetUpcomingRegistrationsQuery();
   const { data: pastData } = useGetPastRegistrationsQuery();

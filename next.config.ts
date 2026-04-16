@@ -34,6 +34,10 @@ const nextConfig: NextConfig = {
         hostname: "98.81.136.120",
         port: "9000",
       },
+      {
+        protocol: "https",
+        hostname: "www.dtfdestash.com",
+      },
     ],
   },
 };

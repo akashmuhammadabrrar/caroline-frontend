@@ -330,7 +330,7 @@ const EventDetailsPage = () => {
                 </button>
                 <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Registration is currently closed</p>
               </div>
-            ) : (event.status || "").toUpperCase() === "COMPLETED" ? (
+            ) : (event.status || "").toUpperCase() === "COMPLETED" || event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity) ? (
               <div className="space-y-4 text-center">
                 <button 
                   disabled
@@ -338,7 +338,7 @@ const EventDetailsPage = () => {
                 >
                   <BsCheckCircleFill /> Completed
                 </button>
-                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">This event has already ended</p>
+                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">This event has already ended or capacity is full</p>
               </div>
             ) : (
               <Link
