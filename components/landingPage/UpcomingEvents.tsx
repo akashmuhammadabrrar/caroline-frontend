@@ -325,14 +325,11 @@ export default function UpcomingEvent() {
           }
           className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
         >
-          {user ? "Go to Dashboard" : "Sign Up"}
+          {user ? "Go to Subscription" : "Sign Up"}
         </Link>
       </div>
 
-      {/* Promo */}
-      <p className="text-center mt-4 sm:mt-6 text-[#7FB6B6] hover:text-blue-300 text-xs sm:text-sm cursor-pointer transition-colors">
-        Have a promo code?
-      </p>
+      
 
     </div>
   </div>
