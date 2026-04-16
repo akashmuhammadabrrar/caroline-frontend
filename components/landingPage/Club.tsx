@@ -178,7 +178,7 @@ export default function Club() {
               } else if (role === "SCOUT" || role === "SCOUT_AGENT") {
                 router.push("/scout/playerDiscovery");
               } else if (role === "ADMIN") {
-                router.push("/admin/players");
+                router.push("/admin/clubManagement");
               } else {
                 toast.error("You don't have access to explore players.", {
                   style: {
