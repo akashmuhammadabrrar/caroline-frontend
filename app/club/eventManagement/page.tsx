@@ -116,7 +116,11 @@ export default function EventManagementPage() {
         fee: fee,
         registrations:
           apiEvent.registered_count ?? apiEvent.confirmed_count ?? 0,
-        status: (apiEvent.status === "ACTIVE" ? "Active" : apiEvent.status === "COMPLETED" ? "Completed" : "Pending") as "Active" | "Pending" | "Completed",
+        status: (apiEvent.status === "ACTIVE"
+          ? "Active"
+          : apiEvent.status === "COMPLETED"
+            ? "Completed"
+            : "Pending") as "Active" | "Pending" | "Completed",
         featured: apiEvent.featured ?? apiEvent.is_featured ?? false,
         views: apiEvent.views ?? apiEvent.views_count ?? 0,
         confirmed: apiEvent.confirmed_count ?? 0,
@@ -182,7 +186,7 @@ export default function EventManagementPage() {
   const handleSaveEdit = async (updated: Event) => {
     try {
       const formDataToSend = new FormData();
-      
+
       const eventData = {
         event_name: updated.name,
         event_type: "TRIAL",
@@ -190,7 +194,10 @@ export default function EventManagementPage() {
         start_time: updated.startTime || "10:00:00",
         end_time: updated.endTime || "14:00:00",
         venue_name: updated.location.split(",")[0] || "Venue Name",
-        street_address: updated.streetAddress || updated.location.split(",")[1]?.trim() || "Street Address",
+        street_address:
+          updated.streetAddress ||
+          updated.location.split(",")[1]?.trim() ||
+          "Street Address",
         city: updated.city || "City",
         postal_code: updated.postalCode || "00000",
         country: updated.country || "Country",
@@ -227,7 +234,7 @@ export default function EventManagementPage() {
 
     try {
       const formDataToSend = new FormData();
-      
+
       const eventData = {
         event_name: formData.name,
         event_type: formData.type.toUpperCase(),
@@ -317,9 +324,13 @@ export default function EventManagementPage() {
                       <span
                         className={`
                         px-3 py-1 rounded-full text-xs font-medium
-                        ${ev.status === "Active" ? "bg-green-900/50 text-green-300 border border-green-500/20" : 
-                          ev.status === "Completed" ? "bg-blue-900/50 text-blue-300 border border-blue-500/20" : 
-                          "bg-amber-900/50 text-amber-300 border border-amber-500/20"}
+                        ${
+                          ev.status === "Active"
+                            ? "bg-green-900/50 text-green-300 border border-green-500/20"
+                            : ev.status === "Completed"
+                              ? "bg-blue-900/50 text-blue-300 border border-blue-500/20"
+                              : "bg-amber-900/50 text-amber-300 border border-amber-500/20"
+                        }
                       `}
                       >
                         {ev.status}
@@ -443,9 +454,10 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
   const [form, setForm] = useState(event);
 
   // Fetch full details if in "view" mode to get real participants
-  const { data: details, isLoading: isDetailsLoading } = useGetClubEventDetailsQuery(event.id, {
-    skip: !event.id || isEdit,
-  });
+  const { data: details, isLoading: isDetailsLoading } =
+    useGetClubEventDetailsQuery(event.id, {
+      skip: !event.id || isEdit,
+    });
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -466,37 +478,37 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 lg:p-8 overflow-hidden">
         <div className="bg-[#0B0E1E] border border-[#1E2550] rounded-[24px] w-full max-w-[1280px] max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-300">
           {/* Header */}
-          <div className="px-8 py-6 flex items-center justify-between border-b border-[#1E2550]">
-            <div className="flex items-center gap-5">
+          <div className="px-5 md:px-8 py-5 md:py-6 flex flex-col md:flex-row md:items-center justify-between border-b border-[#1E2550] gap-5">
+            <div className="flex items-start md:items-center gap-4 md:gap-5">
               <button
                 onClick={onClose}
-                className="p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors group"
+                className="p-2 md:p-2.5 bg-white/5 hover:bg-white/10 rounded-full transition-colors group shrink-0"
                 aria-label="Go back"
               >
                 <ChevronLeft className="text-gray-400 group-hover:text-white" />
               </button>
               <div>
-                <h2 className="text-[28px] font-bold text-cyan-400 leading-tight">
+                <h2 className="text-2xl md:text-[28px] font-bold text-cyan-400 leading-tight">
                   Edit Event
                 </h2>
-                <p className="text-gray-400 text-sm mt-0.5">
+                <p className="text-gray-400 text-xs md:text-sm mt-0.5">
                   Update event information
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
               <button
                 onClick={onClose}
-                className="px-8 py-3 bg-transparent border border-[#1E2550] hover:bg-white/5 text-white font-medium rounded-xl transition-all"
+                className="w-full sm:w-auto px-6 md:px-8 py-3 bg-transparent border border-[#1E2550] hover:bg-white/5 text-white font-medium rounded-xl transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-[#0B0E1E] font-bold rounded-xl flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+                className="w-full sm:w-auto px-6 md:px-8 py-3 bg-cyan-400 hover:bg-cyan-500 text-[#0B0E1E] font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)]"
               >
-                <div className="bg-[#0B0E1E]/20 p-1 rounded-md">
+                <div className="bg-[#0B0E1E]/20 p-1 rounded-md hidden sm:block">
                   <Save size={16} />
                 </div>
                 Save Changes
@@ -505,7 +517,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
           </div>
 
           {/* Form Content */}
-          <div className="p-8 grid lg:grid-cols-[1fr_360px] gap-8 overflow-y-auto custom-scrollbar">
+          <div className="p-5 md:p-8 grid lg:grid-cols-[1fr_360px] gap-6 md:gap-8 overflow-y-auto custom-scrollbar">
             {/* Left Column: Form Cards */}
             <div className="space-y-6">
               {/* Event Image */}
@@ -566,7 +578,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                       placeholder="Youth Trial - Summer 2025"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-gray-400 text-sm mb-2.5">
                         Event Type
@@ -607,7 +619,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                       </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                       <label className="block text-gray-400 text-sm mb-2.5">
                         Date
@@ -654,7 +666,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                   Location & Capacity
                 </h3>
                 <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-gray-400 text-sm mb-2.5">
                         Venue Name
@@ -680,7 +692,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                       <label className="block text-gray-400 text-sm mb-2.5">
                         City
@@ -718,7 +730,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-gray-400 text-sm mb-2.5">
                         Capacity
@@ -768,7 +780,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                 <h3 className="text-xl font-bold text-white mb-6">
                   Contact Information
                 </h3>
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-gray-400 text-sm mb-2.5">
                       Contact Email
@@ -812,7 +824,9 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Total Capacity</span>
                     <span className="text-white font-bold">
-                      <span className="text-cyan-400">{form.registrations}</span>
+                      <span className="text-cyan-400">
+                        {form.registrations}
+                      </span>
                       <span className="text-gray-500 mx-1">/</span>
                       {form.capacity}
                     </span>
@@ -959,9 +973,11 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 justify-center
+          <div
+            className="grid grid-cols-2 justify-center
           
-          md:grid-cols-4 gap-4 shrink-0">
+          md:grid-cols-4 gap-4 shrink-0"
+          >
             {/* <QuickStat
               icon={<Eye size={20} />}
               label="Event Views"
@@ -1068,76 +1084,105 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                 {isDetailsLoading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto" />
-                    <p className="text-gray-500 text-xs mt-2">Loading participants...</p>
+                    <p className="text-gray-500 text-xs mt-2">
+                      Loading participants...
+                    </p>
                   </div>
-                ) : (() => {
-                  const rawData = details || event._raw as Record<string, unknown>;
-                  const participants = Array.isArray(rawData?.participants) 
-                    ? rawData.participants 
-                    : Array.isArray(rawData?.registrations) 
-                      ? rawData.registrations 
-                      : (rawData as any)?.data?.participants || [];
+                ) : (
+                  (() => {
+                    const rawData = details && Object.keys(details).length > 0 ? details : (event._raw as Record<string, unknown>);
+                    
+                    let participantsArray = [];
+                    if (Array.isArray(rawData?.participants)) participantsArray = rawData.participants;
+                    else if (Array.isArray(rawData?.registrations)) participantsArray = rawData.registrations;
+                    else if (Array.isArray((rawData as any)?.data?.participants)) participantsArray = (rawData as any).data.participants;
+                    else if (Array.isArray((rawData as any)?.data?.registrations)) participantsArray = (rawData as any).data.registrations;
 
-                  if (participants.length === 0) {
-                    return (
-                      <div className="text-center py-8">
-                        <Users className="mx-auto text-gray-700 mb-2" size={32} />
-                        <p className="text-gray-500 text-sm">No registered participants yet.</p>
-                      </div>
-                    );
-                  }
+                    if (participantsArray.length === 0) {
+                      return (
+                        <div className="text-center py-8">
+                          <Users
+                            className="mx-auto text-gray-700 mb-2"
+                            size={32}
+                          />
+                          <p className="text-gray-500 text-sm">
+                            No registered participants yet.
+                          </p>
+                        </div>
+                      );
+                    }
 
-                  return participants.map((participant: Record<string, unknown>, idx: number) => {
-                    const name = typeof participant.name === "string" ? participant.name : 
-                                 (typeof participant.first_name === "string" ? `${participant.first_name} ${participant.last_name || ""}` : "Unknown Player");
-                    const role = typeof participant.role === "string" ? participant.role : 
-                                 (typeof participant.position === "string" ? participant.position : (participant as any).event_type || "Player");
-                    const age = participant.age ? String(participant.age) : "N/A";
-                    const registeredDate = typeof participant.created_at === "string" ? new Date(participant.created_at).toLocaleDateString() : "Recently";
+                    // Get the last 5 participants
+                    const last5Participants = [...participantsArray].reverse().slice(0, 5);
 
-                    return (
-                      <div
-                        key={idx}
-                        className="bg-[#0B0E1E]/50 border border-[#1E2550] rounded-[20px] p-4 flex items-center justify-between group hover:bg-white/5 transition-all"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
-                            <div className="w-full h-full rounded-full bg-[#0B0E1E] flex items-center justify-center font-bold text-white uppercase">
-                              {name[0] || "?"}
+                    return last5Participants.map(
+                      (participant: any, idx: number) => {
+                        const userObj = participant.user || participant.player || participant.scout || participant;
+                        const name =
+                          typeof userObj.first_name === "string"
+                            ? `${userObj.first_name} ${userObj.last_name || ""}`
+                            : typeof userObj.name === "string"
+                              ? userObj.name
+                              : "Unknown Player";
+                        const role =
+                          typeof userObj.role === "string"
+                            ? userObj.role
+                            : typeof participant.role === "string"
+                              ? participant.role
+                              : typeof userObj.position === "string"
+                                ? userObj.position
+                                : "Player";
+                        const age = participant.age
+                          ? String(participant.age)
+                          : "N/A";
+                        const registeredDate =
+                          typeof participant.created_at === "string"
+                            ? new Date(
+                                participant.created_at,
+                              ).toLocaleDateString()
+                            : "Recently";
+
+                        return (
+                          <div
+                            key={idx}
+                            className="bg-[#0B0E1E]/50 border border-[#1E2550] rounded-[20px] p-4 flex items-center justify-between group hover:bg-white/5 transition-all"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
+                                <div className="w-full h-full rounded-full bg-[#0B0E1E] flex items-center justify-center font-bold text-white uppercase">
+                                  {name[0] || "?"}
+                                </div>
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-white leading-tight">
+                                  {name}
+                                </h4>
+                                <p className="text-xs text-gray-500">
+                                  {role} • {age} years old
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                              <div className="text-right">
+                                <p className="text-[10px] text-gray-500 uppercase tracking-tighter">
+                                  Registered
+                                </p>
+                                <p className="text-xs font-semibold text-white">
+                                  {registeredDate}
+                                </p>
+                              </div>
+
+                              <button className="text-gray-500 hover:text-cyan-400 transition-colors">
+                                <Eye size={18} />
+                              </button>
                             </div>
                           </div>
-                          <div>
-                            <h4 className="font-bold text-white leading-tight">
-                              {name}
-                            </h4>
-                            <p className="text-xs text-gray-500">
-                              {role} • {age} years old
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-6">
-                          <div className="text-right">
-                            <p className="text-[10px] text-gray-500 uppercase tracking-tighter">
-                              Registered
-                            </p>
-                            <p className="text-xs font-semibold text-white">
-                              {registeredDate}
-                            </p>
-                          </div>
-
-                          <button className="text-gray-500 hover:text-cyan-400 transition-colors">
-                            <Eye size={18} />
-                          </button>
-                        </div>
-                      </div>
+                        );
+                      },
                     );
-                  });
-                })()}
+                  })()
+                )}
               </div>
-
-              <button className="w-full mt-8 py-3 bg-white/5 hover:bg-white/10 text-cyan-400 font-bold rounded-xl border border-white/5 transition-all text-sm">
-                Load More Registrants
-              </button>
             </div>
           </div>
         </div>
@@ -1207,6 +1252,7 @@ function CreateEventModal({
   onSave: (data: any) => void;
 }) {
   const [step, setStep] = useState(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: "",
     type: "Trial",
@@ -1232,7 +1278,34 @@ function CreateEventModal({
     banner: null as File | string | null,
   });
 
-  const next = () => setStep((s) => Math.min(4, s + 1));
+  const validateStep = (currentStep: number) => {
+    const newErrors: Record<string, string> = {};
+    if (currentStep === 1) {
+      if (!formData.name.trim()) newErrors.name = "Event name is required";
+      if (!formData.date) newErrors.date = "Event date is required";
+      else if (formData.date < new Date().toISOString().split("T")[0]) newErrors.date = "Event date cannot be in the past";
+      if (!formData.startTime) newErrors.startTime = "Start time is required";
+    }
+    if (currentStep === 2) {
+      if (!formData.location.venue.trim()) newErrors.venue = "Venue name is required";
+      if (!formData.location.address.trim()) newErrors.address = "Street address is required";
+      if (!formData.location.city.trim()) newErrors.city = "City is required";
+      if (!formData.capacity || Number(formData.capacity) <= 0) newErrors.capacity = "Valid capacity is required";
+      if (!formData.fee || isNaN(Number(formData.fee))) newErrors.fee = "Valid registration fee is required";
+    }
+    if (currentStep === 3) {
+      if (!formData.description.trim() || formData.description.length < 10) newErrors.description = "Description is required (min 10 characters)";
+      if (!formData.contactEmail.trim() || !/\S+@\S+\.\S+/.test(formData.contactEmail)) newErrors.contactEmail = "Valid email is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const next = () => {
+    if (validateStep(step)) {
+      setStep((s) => Math.min(4, s + 1));
+    }
+  };
   const prev = () => setStep((s) => Math.max(1, s - 1));
 
   const steps = [
@@ -1311,7 +1384,7 @@ function CreateEventModal({
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-8">
           {step === 1 && (
-            <Step1 onNext={next} data={formData} updateData={setFormData} />
+            <Step1 onNext={next} data={formData} updateData={setFormData} errors={errors} />
           )}
           {step === 2 && (
             <Step2
@@ -1319,6 +1392,7 @@ function CreateEventModal({
               onPrev={prev}
               data={formData}
               updateData={setFormData}
+              errors={errors}
             />
           )}
           {step === 3 && (
@@ -1327,6 +1401,7 @@ function CreateEventModal({
               onPrev={prev}
               data={formData}
               updateData={setFormData}
+              errors={errors}
             />
           )}
           {step === 4 && (
@@ -1370,10 +1445,12 @@ function Step1({
   onNext,
   data,
   updateData,
+  errors,
 }: {
   onNext: () => void;
   data: any;
   updateData: any;
+  errors?: Record<string, string>;
 }) {
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -1394,10 +1471,13 @@ function Step1({
               </label>
               <input
                 value={data.name}
-                onChange={(e) => updateData({ ...data, name: e.target.value })}
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all placeholder:text-gray-700"
+                onChange={(e) => {
+                  updateData({ ...data, name: e.target.value });
+                }}
+                className={`w-full bg-[#0B0E1E] border ${errors?.name ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all placeholder:text-gray-700`}
                 placeholder="e.g., Youth Summer Trial 2025"
               />
+              {errors?.name && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.name}</p>}
             </div>
 
             <div>
@@ -1459,6 +1539,16 @@ function Step1({
 
         {/* Date & Time */}
         <div className="bg-[#121433] border border-[#1E2550] rounded-[24px] p-7">
+          <style>{`
+            .dark-picker::-webkit-calendar-picker-indicator {
+              filter: invert(1);
+              opacity: 0.6;
+              cursor: pointer;
+            }
+            .dark-picker::-webkit-calendar-picker-indicator:hover {
+              opacity: 1;
+            }
+          `}</style>
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400">
               <Clock size={20} className="text-[#04B5A3]" />
@@ -1466,7 +1556,7 @@ function Step1({
             <h3 className="text-xl font-bold text-white">Date & Time</h3>
           </div>
 
-          <div className="grid grid-cols-[1fr_120px_120px] gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className="block text-gray-400 text-sm mb-2.5">
                 Event Date *
@@ -1476,12 +1566,13 @@ function Step1({
                 min={new Date().toISOString().split("T")[0]}
                 value={data.date}
                 onChange={(e) => updateData({ ...data, date: e.target.value })}
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                className={`w-full bg-[#0B0E1E] border ${errors?.date ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all dark-picker`}
                 style={{ colorScheme: "dark" }}
               />
+              {errors?.date && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.date}</p>}
             </div>
             <div>
-              <label className="block text-gray-400 text-sm mb-2.5 text-center">
+              <label className="block text-gray-400 text-sm mb-2.5">
                 Start Time *
               </label>
               <input
@@ -1490,12 +1581,13 @@ function Step1({
                 onChange={(e) =>
                   updateData({ ...data, startTime: e.target.value })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all text-center"
+                className={`w-full bg-[#0B0E1E] border ${errors?.startTime ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all dark-picker`}
                 style={{ colorScheme: "dark" }}
               />
+              {errors?.startTime && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.startTime}</p>}
             </div>
             <div>
-              <label className="block text-gray-400 text-sm mb-2.5 text-center">
+              <label className="block text-gray-400 text-sm mb-2.5">
                 End Time
               </label>
               <input
@@ -1504,7 +1596,7 @@ function Step1({
                 onChange={(e) =>
                   updateData({ ...data, endTime: e.target.value })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all text-center"
+                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all dark-picker"
                 style={{ colorScheme: "dark" }}
               />
             </div>
@@ -1574,11 +1666,13 @@ function Step2({
   onPrev,
   data,
   updateData,
+  errors,
 }: {
   onNext: () => void;
   onPrev: () => void;
   data: any;
   updateData: any;
+  errors?: Record<string, string>;
 }) {
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -1605,9 +1699,10 @@ function Step2({
                     location: { ...data.location, venue: e.target.value },
                   })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all placeholder:text-gray-700"
+                className={`w-full bg-[#0B0E1E] border ${errors?.venue ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all placeholder:text-gray-700`}
                 placeholder="e.g., Campany Training Facilities"
               />
+              {errors?.venue && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.venue}</p>}
             </div>
 
             <div>
@@ -1622,9 +1717,10 @@ function Step2({
                     location: { ...data.location, address: e.target.value },
                   })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all placeholder:text-gray-700"
+                className={`w-full bg-[#0B0E1E] border ${errors?.address ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all placeholder:text-gray-700`}
                 placeholder="123 Stadium Road"
               />
+              {errors?.address && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.address}</p>}
             </div>
 
             <div className="grid grid-cols-3 gap-5">
@@ -1640,9 +1736,10 @@ function Step2({
                       location: { ...data.location, city: e.target.value },
                     })
                   }
-                  className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                  className={`w-full bg-[#0B0E1E] border ${errors?.city ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all`}
                   placeholder="Barcelona"
                 />
+                {errors?.city && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.city}</p>}
               </div>
               <div>
                 <label className="block text-gray-400 text-sm mb-2.5">
@@ -1718,12 +1815,16 @@ function Step2({
                 onChange={(e) =>
                   updateData({ ...data, capacity: e.target.value })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                className={`w-full bg-[#0B0E1E] border ${errors?.capacity ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all`}
                 placeholder="100"
               />
-              <p className="text-[10px] text-gray-600 mt-2">
-                Maximum number of participants
-              </p>
+              {errors?.capacity ? (
+                <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.capacity}</p>
+              ) : (
+                <p className="text-[10px] text-gray-600 mt-2">
+                  Maximum number of participants
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-gray-400 text-sm mb-2.5">
@@ -1733,17 +1834,21 @@ function Step2({
                 <input
                   value={data.fee}
                   onChange={(e) => updateData({ ...data, fee: e.target.value })}
-                  className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-9 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                  className={`w-full bg-[#0B0E1E] border ${errors?.fee ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-9 py-4 text-white focus:outline-none transition-all`}
                   placeholder="50.00"
                 />
                 <DollarSign
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                  className={`absolute left-4 top-1/2 -translate-y-1/2 ${errors?.fee ? "text-rose-500" : "text-gray-500"}`}
                 />
               </div>
-              <p className="text-[10px] text-gray-600 mt-2">
-                Use 0 for free events
-              </p>
+              {errors?.fee ? (
+                <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.fee}</p>
+              ) : (
+                <p className="text-[10px] text-gray-600 mt-2">
+                  Use 0 for free events
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -1805,11 +1910,13 @@ function Step3({
   onPrev,
   data,
   updateData,
+  errors,
 }: {
   onNext: () => void;
   onPrev: () => void;
   data: any;
   updateData: any;
+  errors?: Record<string, string>;
 }) {
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -1834,12 +1941,16 @@ function Step3({
                   updateData({ ...data, description: e.target.value })
                 }
                 rows={5}
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all placeholder:text-gray-700 resize-none"
+                className={`w-full bg-[#0B0E1E] border ${errors?.description ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all placeholder:text-gray-700 resize-none`}
                 placeholder="Provide detailed information about your event, what participants can expect, what they'll learn, the format, coaching staff involved, etc."
               />
-              <p className="text-[10px] text-gray-600 mt-2">
-                Minimum 100 characters recommended
-              </p>
+              {errors?.description ? (
+                <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.description}</p>
+              ) : (
+                <p className="text-[10px] text-gray-600 mt-2">
+                  Minimum 10 characters required
+                </p>
+              )}
             </div>
 
             <div>
@@ -1873,52 +1984,102 @@ function Step3({
           <div className="grid grid-cols-2 gap-5 mb-5">
             <div>
               <label className="block text-gray-400 text-sm mb-2.5 flex items-center gap-2">
-                <Mail size={14} className="text-gray-600" /> Contact Email *
+                <Mail size={14} className={errors?.contactEmail ? "text-rose-500" : "text-gray-600"} /> Contact Email *
               </label>
               <input
                 value={data.contactEmail}
                 onChange={(e) =>
                   updateData({ ...data, contactEmail: e.target.value })
                 }
-                className="w-full bg-[#0B0E1E] border border-[#1E2550] rounded-xl px-4 py-4 text-white focus:outline-none focus:border-cyan-400/50 transition-all"
+                className={`w-full bg-[#0B0E1E] border ${errors?.contactEmail ? "border-rose-500 focus:border-rose-500 bg-rose-500/5" : "border-[#1E2550] focus:border-cyan-400/50"} rounded-xl px-4 py-4 text-white focus:outline-none transition-all`}
                 placeholder="events@club.com"
               />
+              {errors?.contactEmail && <p className="text-rose-500 text-xs mt-1.5 font-medium">{errors.contactEmail}</p>}
             </div>
             <div>
               <label className="block text-gray-400 text-sm mb-2.5 flex items-center gap-2">
                 <Phone size={14} className="text-gray-600" /> Contact Phone
               </label>
               <div className="flex bg-[#0B0E1E] border border-[#1E2550] rounded-xl overflow-hidden focus-within:border-cyan-400/50 transition-all text-white">
-                <div className="relative border-r border-[#1E2550]">
+                <div className="relative border-r border-[#1E2550] shrink-0">
+                  {/* Visual UI Displaying the Flag */}
+                  <div className="flex items-center gap-2 h-full py-4 pl-4 pr-10 text-sm pointer-events-none">
+                    {(() => {
+                      const currentVal = data.contactPhone || "+34 ";
+                      const parts = currentVal.includes(" ")
+                        ? currentVal.split(" ")
+                        : ["+34", ""];
+                      const code = parts[0];
+                      const selected =
+                        countryCodes.find((c) => c.code === code) ||
+                        countryCodes[0];
+                      return (
+                        <>
+                          <img
+                            src={`https://flagcdn.com/w40/${selected.iso}.png`}
+                            alt="Flag"
+                            className="w-5 h-auto rounded-[2px]"
+                          />
+                          <span className="font-medium whitespace-nowrap">
+                            {selected.code}
+                          </span>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Hidden Native Select */}
                   <select
-                    className="w-[90px] h-full bg-transparent pl-4 pr-6 py-4 outline-none appearance-none cursor-pointer text-sm"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-sm"
                     onChange={(e) => {
                       const currentVal = data.contactPhone || "";
-                      const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["", currentVal];
-                      const num = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
-                      updateData({ ...data, contactPhone: `${e.target.value} ${num}` });
+                      const parts = currentVal.includes(" ")
+                        ? currentVal.split(" ")
+                        : ["", currentVal];
+                      const num =
+                        parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+                      updateData({
+                        ...data,
+                        contactPhone: `${e.target.value} ${num}`,
+                      });
                     }}
                     value={(data.contactPhone || "+34 ").split(" ")[0]}
                   >
                     {countryCodes.map((c) => (
-                      <option key={c.code} value={c.code} className="bg-[#0B0E1E]">
-                        {c.code}
+                      <option
+                        key={c.code}
+                        value={c.code}
+                        className="bg-[#0B0E1E] text-white"
+                      >
+                        {c.label}
                       </option>
                     ))}
                   </select>
-                  <ChevronRight size={14} className="absolute right-2 top-1/2 -translate-y-1/2 rotate-90 text-gray-500 pointer-events-none" />
+                  <ChevronRight
+                    size={14}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-gray-500 pointer-events-none"
+                  />
                 </div>
                 <input
                   value={(() => {
                     const currentVal = data.contactPhone || "+34 ";
-                    const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["", currentVal];
-                    return parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+                    const parts = currentVal.includes(" ")
+                      ? currentVal.split(" ")
+                      : ["", currentVal];
+                    return parts.length > 1
+                      ? parts.slice(1).join(" ")
+                      : parts[0];
                   })()}
                   onChange={(e) => {
                     const currentVal = data.contactPhone || "+34 ";
-                    const parts = currentVal.includes(" ") ? currentVal.split(" ") : ["+34", ""];
+                    const parts = currentVal.includes(" ")
+                      ? currentVal.split(" ")
+                      : ["+34", ""];
                     const code = parts[0];
-                    updateData({ ...data, contactPhone: `${code} ${e.target.value}` });
+                    updateData({
+                      ...data,
+                      contactPhone: `${code} ${e.target.value}`,
+                    });
                   }}
                   className="w-full bg-transparent px-4 py-4 focus:outline-none"
                   placeholder="XXX XXX XXX"
