@@ -37,25 +37,34 @@ const Page = () => {
     const events = data?.results;
     if (!events) return [];
 
-    return [...events].filter((e: any) => {
-      const s = (e.status || "").toUpperCase();
-      // Show ACTIVE, PENDING, COMPLETED. Exclude CANCELLED.
-      return (s === "ACTIVE" || s === "PENDING" || s === "COMPLETED" || !s) && s !== "CANCELLED";
-    }).sort((a: any, b: any) => {
-      const aReg = registrations?.results
-        ? registrations.results.some((r: any) => r.event === a.id)
-        : Array.isArray(registrations) ? registrations.some((r: any) => r.event === a.id) : false;
-      const bReg = registrations?.results
-        ? registrations.results.some((r: any) => r.event === b.id)
-        : Array.isArray(registrations) ? registrations.some((r: any) => r.event === b.id) : false;
-      if (aReg !== bReg) {
-        return aReg ? 1 : -1; // Unregistered (false) comes first
-      }
-      const timeA = new Date(a.created_at || a.event_date || 0).getTime();
-      const timeB = new Date(b.created_at || b.event_date || 0).getTime();
-      if (timeA === timeB) return b.id - a.id;
-      return timeB - timeA;
-    });
+    return [...events]
+      .filter((e: any) => {
+        const s = (e.status || "").toUpperCase();
+        // Show ACTIVE, PENDING, COMPLETED. Exclude CANCELLED.
+        return (
+          (s === "ACTIVE" || s === "PENDING" || s === "COMPLETED" || !s) &&
+          s !== "CANCELLED"
+        );
+      })
+      .sort((a: any, b: any) => {
+        const aReg = registrations?.results
+          ? registrations.results.some((r: any) => r.event === a.id)
+          : Array.isArray(registrations)
+            ? registrations.some((r: any) => r.event === a.id)
+            : false;
+        const bReg = registrations?.results
+          ? registrations.results.some((r: any) => r.event === b.id)
+          : Array.isArray(registrations)
+            ? registrations.some((r: any) => r.event === b.id)
+            : false;
+        if (aReg !== bReg) {
+          return aReg ? 1 : -1; // Unregistered (false) comes first
+        }
+        const timeA = new Date(a.created_at || a.event_date || 0).getTime();
+        const timeB = new Date(b.created_at || b.event_date || 0).getTime();
+        if (timeA === timeB) return b.id - a.id;
+        return timeB - timeA;
+      });
   }, [data, registrations]);
 
   const eventTypes = useMemo(() => {
@@ -130,12 +139,15 @@ const Page = () => {
       <div className="grid xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 w-full">
         {sortedEvents.map((event) => {
           const isRegistered = registrations?.results
-            ? registrations.results.some(
-                (reg: any) => reg.event === event.id,
-              )
-            : Array.isArray(registrations) ? registrations.some((reg: any) => reg.event === event.id) : false;
+            ? registrations.results.some((reg: any) => reg.event === event.id)
+            : Array.isArray(registrations)
+              ? registrations.some((reg: any) => reg.event === event.id)
+              : false;
 
-          const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+          const isFull =
+            event.is_full === true ||
+            ((event.maximum_capacity ?? 0) > 0 &&
+              (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
           const s = (event.status || "").toUpperCase();
           const isCompletedOrFull = s === "COMPLETED" || isFull;
 
@@ -209,7 +221,9 @@ const Page = () => {
                       {formatDate(event.event_date)}
                     </p>
                     <p className="text-white text-sm font-semibold">
-                      {event.start_time ? event.start_time.substring(0, 5) : "—"}
+                      {event.start_time
+                        ? event.start_time.substring(0, 5)
+                        : "—"}
                     </p>
                   </div>
                   <div className="text-right">
@@ -228,11 +242,15 @@ const Page = () => {
                 <div className="mb-6">
                   <div className="">
                     <span className="text-[#00E5FF] font-black text-xl">
-                      {event.registered_count || 0}
+                      {Math.max(
+                        event.registered_count || 0,
+                        Array.isArray((event as any).participants)
+                          ? (event as any).participants.length
+                          : 0,
+                        isRegistered,
+                      )}
                     </span>
-                    <span className="text-gray-500 text-sm mx-1">
-                      /
-                    </span>
+                    <span className="text-gray-500 text-sm mx-1">/</span>
                     <span className="text-white font-bold text-lg">
                       {event.maximum_capacity || 0}
                     </span>
@@ -276,14 +294,31 @@ const Page = () => {
                       );
                     }
 
-                    if (isCompletedOrFull) {
+                    const isFullCheck =
+                      event.is_full === true ||
+                      ((event.maximum_capacity ?? 0) > 0 &&
+                        (event.registered_count ?? 0) >=
+                          (event.maximum_capacity ?? 0));
+
+                    if (s === "COMPLETED") {
                       return (
-                        <button
-                          disabled
-                          className="flex-1 bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center text-sm font-semibold py-2.5 rounded-lg text-center cursor-not-allowed"
+                        <Link
+                          href={`/scout/events/${event.id}`}
+                          className="flex-1 bg-[#12143A] border border-blue-500/20 text-blue-500 flex items-center justify-center text-sm font-semibold py-2.5 rounded-lg text-center hover:bg-blue-500/10 transition-colors"
                         >
-                          Completed
-                        </button>
+                          Completed | View Details
+                        </Link>
+                      );
+                    }
+
+                    if (isFullCheck) {
+                      return (
+                        <Link
+                          href={`/scout/events/${event.id}`}
+                          className="flex-1 bg-[#12143A] border border-rose-500/20 text-rose-500 flex items-center justify-center text-sm font-semibold py-2.5 rounded-lg text-center hover:bg-rose-500/10 transition-colors"
+                        >
+                          Full | View Details
+                        </Link>
                       );
                     }
 
@@ -296,17 +331,9 @@ const Page = () => {
                       </Link>
                     );
                   })()}
-                {!isRegistered && (
-                   <Link
-                    href={`/scout/events/${event.id}`}
-                    className="flex-1 border border-[#04B5A3] text-[#04B5A3] hover:bg-[#04B5A3]/10 flex items-center justify-center text-sm font-semibold py-2.5 rounded-lg text-center transition-colors"
-                  >
-                    View Details
-                  </Link>
-                )}
+                </div>
               </div>
             </div>
-          </div>
           );
         })}
       </div>
