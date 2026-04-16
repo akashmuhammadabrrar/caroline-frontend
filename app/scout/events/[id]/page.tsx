@@ -208,7 +208,12 @@ const EventDetailsPage = () => {
                   </p>
                   <div className="flex items-end gap-2">
                     <span className="text-[#00E5FF] font-black text-2xl leading-none">
-                      {event.registered_count || 0}
+                      {Math.max(
+                        event.registered_count || 0,
+                        event.confirmed_count || 0,
+                        Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
+                        isRegistered ? 1 : 0
+                      )}
                     </span>
                     <span className="text-gray-500 font-bold">/</span>
                     <span className="text-white font-bold text-lg leading-none">
@@ -330,7 +335,7 @@ const EventDetailsPage = () => {
                 </button>
                 <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Registration is currently closed</p>
               </div>
-            ) : (event.status || "").toUpperCase() === "COMPLETED" || event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity) ? (
+            ) : (event.status || "").toUpperCase() === "COMPLETED" ? (
               <div className="space-y-4 text-center">
                 <button 
                   disabled
@@ -338,7 +343,17 @@ const EventDetailsPage = () => {
                 >
                   <BsCheckCircleFill /> Completed
                 </button>
-                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">This event has already ended or capacity is full</p>
+                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">This event has already ended</p>
+              </div>
+            ) : event.is_full || (event.maximum_capacity > 0 && event.registered_count >= event.maximum_capacity) ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full bg-rose-500/10 text-rose-500 border border-rose-500/20 font-black py-4 rounded-xl text-center flex items-center justify-center gap-2 cursor-not-allowed uppercase tracking-wider"
+                >
+                  Registration Full
+                </button>
+                <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Event capacity reached</p>
               </div>
             ) : (
               <Link
@@ -352,7 +367,12 @@ const EventDetailsPage = () => {
             {!isRegistered && event.status !== "PENDING" && event.status !== "COMPLETED" && (
               <p className="flex items-center justify-center gap-2 text-white/30 text-[10px] uppercase tracking-widest font-bold mt-4">
                 <FaUserFriends />
-                {event.maximum_capacity - event.registered_count} spots remaining
+                {Math.max(0, (event.maximum_capacity || 0) - Math.max(
+                  event.registered_count || 0,
+                  event.confirmed_count || 0,
+                  Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
+                  isRegistered ? 1 : 0
+                ))} spots remaining
               </p>
             )}
 

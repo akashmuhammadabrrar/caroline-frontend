@@ -289,20 +289,34 @@ const EventDetailsView = ({
                <div className="flex justify-between items-end">
                  <div>
                    <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Total Capacity</p>
-                   <p className="text-2xl font-black text-white">
-                     <span className="text-[#04B5A3]">{event.registered_count || 0}</span>
-                     <span className="text-gray-500 mx-2">/</span>
-                     {event.maximum_capacity || 0}
-                   </p>
+                    <p className="text-2xl font-black text-white">
+                      <span className="text-[#04B5A3]">
+                        {Math.max(
+                          event.registered_count || 0,
+                         
+                          Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
+                  
+                        )}
+                      </span>
+                      <span className="text-gray-500 mx-2">/</span>
+                      {event.maximum_capacity || 0}
+                    </p>
                  </div>
-                 <div className="text-right">
-                   <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Spots Left</p>
-                   <p className="text-xl font-bold text-cyan-400">{(event.maximum_capacity ?? 0) - (event.registered_count ?? 0)}</p>
-                 </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-gray-500 uppercase font-black mb-1">Spots Left</p>
+                    <p className="text-xl font-bold text-cyan-400">
+                      {Math.max(0, (event.maximum_capacity ?? 0) - Math.max(
+                        event?.registered_count || 0,
+                     
+                        Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
+                
+                      ))}
+                    </p>
+                  </div>
                </div>
-               <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden border border-[#1E2550]">
-                 <div className="h-full bg-linear-to-r from-[#04B5A3] to-cyan-400 transition-all duration-1000" style={{ width: `${Math.min((((event.registered_count ?? 0) / (event.maximum_capacity || 1)) * 100), 100)}%` }}></div>
-               </div>
+                <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden border border-[#1E2550]">
+                  <div className="h-full bg-linear-to-r from-[#04B5A3] to-cyan-400 transition-all duration-1000" style={{ width: `${Math.min(((((Math.max(event.registered_count || 0 , Array.isArray((event as any).participants) ? (event as any).participants.length : 0, isRegistered ? 1 : 0)) / (event.maximum_capacity || 1)) * 100)), 100)}%` }}></div>
+                </div>
                <p className="text-[10px] text-[#04B5A3] font-bold uppercase tracking-widest text-center">
                  {((event.maximum_capacity ?? 0) - (event.registered_count ?? 0)) <= 5 ? "Hurry! Limited spots remaining" : "Registration Open"}
                </p>
@@ -349,7 +363,7 @@ const EventDetailsView = ({
                 </button>
                 <p className="text-[10px] text-gray-500 font-bold uppercase">Registration is currently closed</p>
               </div>
-            ) : ((event.status || "").toUpperCase() === "COMPLETED" || isFull) ? (
+            ) : ((event.status || "").toUpperCase() === "COMPLETED") ? (
               <div className="space-y-4 text-center">
                 <button 
                   disabled
@@ -358,7 +372,17 @@ const EventDetailsView = ({
                   <Check size={20} />
                   Completed
                 </button>
-                <p className="text-[10px] text-gray-500 font-bold uppercase">{isFull ? "Event capacity reached" : "This event has already ended"}</p>
+                <p className="text-[10px] text-gray-500 font-bold uppercase">This event has already ended</p>
+              </div>
+            ) : isFull ? (
+              <div className="space-y-4 text-center">
+                <button 
+                  disabled
+                  className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-rose-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-rose-500/20 flex items-center justify-center gap-2"
+                >
+                  Registration Full
+                </button>
+                <p className="text-[10px] text-gray-500 font-bold uppercase">Event capacity reached</p>
               </div>
             ) : (
               <button 
