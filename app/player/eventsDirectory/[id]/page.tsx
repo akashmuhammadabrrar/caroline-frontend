@@ -23,6 +23,8 @@ import {
   useGetRegistrationStatusQuery,
   useValidatePromoMutation,
   useGetMyRegistrationsQuery,
+  useGetUpcomingRegistrationsQuery,
+  useGetPastRegistrationsQuery,
   type EventDataApi,
   type MyRegistration,
 } from "../../../../redux/features/player/eventsDirectoryApi";
@@ -49,23 +51,35 @@ const EventDetailsPage = () => {
   const [view, setView] = useState<ViewState>("DETAILS");
 
   const { data: registrationsData } = useGetMyRegistrationsQuery();
-  console.log('register data ',registrationsData);
-  const registrationsArray: MyRegistration[] = React.useMemo(() => {
-    if (!registrationsData) return [];
-    if (Array.isArray(registrationsData)) return registrationsData;
-    if ('results' in registrationsData && Array.isArray(registrationsData.results)) return registrationsData.results;
-    if ('data' in registrationsData && Array.isArray(registrationsData.data)) return registrationsData.data;
-    return [];
-  }, [registrationsData]);
+  const { data: upcomingData } = useGetUpcomingRegistrationsQuery();
+  const { data: pastData } = useGetPastRegistrationsQuery();
+
+  const allRegistrations: MyRegistration[] = React.useMemo(() => {
+    const list: MyRegistration[] = [];
+    const addToList = (data: any) => {
+      if (!data) return;
+      if (Array.isArray(data)) list.push(...data);
+      else if ('results' in data && Array.isArray(data.results)) list.push(...data.results);
+      else if ('data' in data && Array.isArray(data.data)) list.push(...data.data);
+    };
+    addToList(registrationsData);
+    addToList(upcomingData);
+    addToList(pastData);
+    return list;
+  }, [registrationsData, upcomingData, pastData]);
   
-  const reg = registrationsArray.find((r) => {
+  const reg = allRegistrations.find((r) => {
     const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event);
     return Number(regEventId) === Number(id);
   });
   
-  const status = (reg?.status || reg?.registration_status || "").toUpperCase();
-  const isRegistered = !!reg;
-  const localRegistrationId = String(reg?.registration_id || reg?.id || "");
+  // Also check local storage as an immediate UI fallback
+  const existingLocals = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("playerRegistrations") || "{}") : {};
+  const localRegisteredId = existingLocals[String(id)];
+
+  const isRegistered = !!reg || !!localRegisteredId;
+  const status = (reg?.status || reg?.registration_status || (localRegisteredId ? "COMPLETED" : "")).toUpperCase();
+  const localRegistrationId = String(reg?.registration_id || reg?.id || localRegisteredId || "");
 
   const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
     skip: !id,
@@ -432,6 +446,10 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
       }
     } else if (step === 4) {
       try {
+        if (registrationId) {
+          localStorage.setItem("current_event_registration_id", registrationId);
+        }
+        
         const res = await checkout({ 
           registration_id: registrationId!,
         }).unwrap();
