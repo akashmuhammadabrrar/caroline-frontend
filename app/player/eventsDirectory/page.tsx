@@ -1,23 +1,24 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { 
-  Search, 
-  MapPin, 
-  Calendar, 
-  User,
+import {
+  Calendar,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
-  CheckCircle,
   Clock,
+  MapPin,
+  Search,
+  User,
 } from "lucide-react";
+import { useAppSelector } from "@/redux/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { 
+import {
   useGetEventsQuery,
   useGetMyRegistrationsQuery,
-  useGetUpcomingRegistrationsQuery,
   useGetPastRegistrationsQuery,
+  useGetUpcomingRegistrationsQuery,
   type EventDataApi,
   type MyRegistration,
 } from "../../../redux/features/player/eventsDirectoryApi";
@@ -88,7 +89,15 @@ const EventCard = ({
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-gray-500 uppercase font-black">Capacity</span>
               <span className="text-sm font-bold text-white">
-                <span className="text-[#04B5A3]">{event.registered_count || 0}</span>
+                <span className="text-[#04B5A3]">
+                  {Math.max(
+                    event.registered_count || 0,
+                    Array.isArray((event as any).participants)
+                      ? (event as any).participants.length
+                      : 0,
+        
+                  )}
+                </span>
                 <span className="text-gray-500 mx-1">/</span>
                 {event.maximum_capacity || 0}
               </span>
@@ -101,7 +110,7 @@ const EventCard = ({
           
           <button
             onClick={() => onViewDetails(event.id)}
-            disabled={!isRegistered && (isFull || isPending || isCompleted)}
+            disabled={isRegistered || (!isRegistered && (isFull || isPending || isCompleted))}
             className={`px-8 py-3 rounded-xl font-bold transition-all border flex items-center justify-center ${
               isRegistered
                 ? "bg-[#0B0E1E] text-[#04B5A3] border-[#04B5A3] hover:bg-[#04B5A3]/5"
@@ -115,11 +124,13 @@ const EventCard = ({
             }`}
           >
             {isRegistered 
-              ? "View Details" 
+              ? "Already Registered" 
               : isPending 
               ? "Pending Status" 
-              : (isCompleted || isFull)
+              : isCompleted
               ? "Completed"
+              : isFull
+              ? "Registration Full"
               : "Register Now"}
           </button>
         </div>
@@ -131,6 +142,7 @@ const EventCard = ({
 // ── Main page ─────────────────────────────────────────────────────────────────
 const EventsDirectoryPage = () => {
   const router = useRouter();
+  const currentUser = useAppSelector((state: any) => state.auth?.user);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All Types");
@@ -142,6 +154,7 @@ const EventsDirectoryPage = () => {
   console.log('all events ',eventsData);
   const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
   const { data: pastData, isLoading: isPastLoading } = useGetPastRegistrationsQuery();
+  const { data: myRegistrationsData } = useGetMyRegistrationsQuery();
 
   const isLoading = isEventsLoading || isUpcomingLoading || isPastLoading;
 
@@ -173,6 +186,12 @@ const EventsDirectoryPage = () => {
     if (Array.isArray(pastData)) return pastData;
     return (pastData as any).results || (pastData as any).data || [];
   }, [pastData]);
+
+  const myRegistrationsArray: MyRegistration[] = useMemo(() => {
+    if (!myRegistrationsData) return [];
+    if (Array.isArray(myRegistrationsData)) return myRegistrationsData;
+    return (myRegistrationsData as any).results || (myRegistrationsData as any).data || [];
+  }, [myRegistrationsData]);
 
   const filteredItems = useMemo(() => {
     if (activeTab === "BROWSE") {
@@ -276,17 +295,20 @@ const EventsDirectoryPage = () => {
                 : (event.status || "")
               ).toUpperCase();
 
-              // Correctly check if registered by looking in both upcoming and past registrations
               const checkIsRegistered = (regArray: MyRegistration[]) => {
                 return regArray.some(u => {
-                  const regEventId = u.event_id || (typeof u.event === 'object' && u.event !== null ? (u.event as any).id : u.event);
+                  const regEventId = u.event_id || (typeof u.event === 'object' && u.event !== null ? (u.event as any).id : u.event) || u.event_details?.id;
                   return Number(regEventId) === Number(event.id);
                 });
               };
 
-              const isRegistered = isRegistration || checkIsRegistered(upcomingArray) || checkIsRegistered(pastArray);
+              const isRegistered = isRegistration || checkIsRegistered(upcomingArray) || checkIsRegistered(pastArray) || checkIsRegistered(myRegistrationsArray);
               
-              const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+              const totalReg = Math.max(
+                event.registered_count || 0,
+                Array.isArray((event as any).participants) ? (event as any).participants.length : 0
+              );
+              const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && totalReg >= (event.maximum_capacity ?? 0));
               
               return (
                 <EventCard 

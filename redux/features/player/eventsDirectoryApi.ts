@@ -80,6 +80,7 @@ export interface MyRegistration {
   status?: string;
   registration_status?: string;
   created_at?: string;
+  email?: string;
 }
 
 export interface MyRegistrationsResponse {

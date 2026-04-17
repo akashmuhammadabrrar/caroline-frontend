@@ -1,36 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { 
-  MapPin, 
-  Calendar, 
-  Check, 
-  ArrowLeft, 
+import DarkPhoneInput from "@/components/reuseable/DarkPhoneInput";
+import {
+  ArrowLeft,
   ArrowRight,
+  Calendar,
+  Check,
+  Clock,
+  CreditCard,
   Info,
   Mail,
+  MapPin,
   Phone,
-  User,
-  CreditCard,
-  Clock
+  User
 } from "lucide-react";
-import { 
-  useGetEventDetailsQuery, 
+import { useAppSelector } from "@/redux/hooks";
+import { useParams, useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import {
+  useCheckoutMutation,
   useCreateRegistrationMutation,
-  useCheckoutMutation, 
-  useVerifyPaymentMutation,
-  useGetRegistrationStatusQuery,
-  useValidatePromoMutation,
+  useGetEventDetailsQuery,
   useGetMyRegistrationsQuery,
-  useGetUpcomingRegistrationsQuery,
   useGetPastRegistrationsQuery,
+  useGetRegistrationStatusQuery,
+  useGetUpcomingRegistrationsQuery,
+  useValidatePromoMutation,
+  useVerifyPaymentMutation,
   type EventDataApi,
   type MyRegistration,
 } from "../../../../redux/features/player/eventsDirectoryApi";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import DarkPhoneInput from "@/components/reuseable/DarkPhoneInput";
 
 interface RegistrationStatusData {
   registration_status?: string;
@@ -47,6 +48,7 @@ const EventDetailsPage = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const currentUser = useAppSelector((state: any) => state.auth?.user);
 
   const [view, setView] = useState<ViewState>("DETAILS");
 
@@ -78,9 +80,19 @@ const EventDetailsPage = () => {
     return list;
   }, [registrationsData, upcomingData, pastData]);
   
+  const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
+    skip: !id,
+  });
+
+  console.log('eventResponse', eventResponse);
+
+  const event = (eventResponse && 'data' in eventResponse && eventResponse.data) ? eventResponse.data : (eventResponse as EventDataApi);
+
   const reg = allRegistrations.find((r) => {
-    const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event);
-    return Number(regEventId) === Number(id);
+    if (r.email && currentUser?.email && r.email !== currentUser.email) return false;
+    const nameMatch = (r as any).event_name && event?.event_name && (r as any).event_name === event.event_name;
+    const regEventId = r.event_id || (typeof r.event === 'object' && r.event !== null && 'id' in r.event ? r.event.id : r.event) || r.event_details?.id;
+    return nameMatch || (regEventId && Number(regEventId) === Number(id));
   });
   
   // Also check local storage as an immediate UI fallback
@@ -90,11 +102,6 @@ const EventDetailsPage = () => {
   const isRegistered = !!reg || !!localRegisteredId;
   const status = (reg?.status || reg?.registration_status || (localRegisteredId ? "COMPLETED" : "")).toUpperCase();
   const localRegistrationId = String(reg?.registration_id || reg?.id || localRegisteredId || "");
-
-  const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
-    skip: !id,
-  });
-  const event = (eventResponse && 'data' in eventResponse && eventResponse.data) ? eventResponse.data : (eventResponse as EventDataApi);
 
   // Fetch real-time registration status ONLY if we have a stored registration_id
   const { data: registrationStatus } = useGetRegistrationStatusQuery(localRegistrationId!, {
@@ -175,7 +182,11 @@ const EventDetailsView = ({
     regData?.status ||
     null;
 
-  const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && (event.registered_count ?? 0) >= (event.maximum_capacity ?? 0));
+  const totalRegistered = Math.max(
+    event.registered_count || 0,
+    Array.isArray((event as any).participants) ? (event as any).participants.length : 0
+  );
+  const isFull = event.is_full === true || ((event.maximum_capacity ?? 0) > 0 && totalRegistered >= (event.maximum_capacity ?? 0));
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -293,9 +304,7 @@ const EventDetailsView = ({
                       <span className="text-[#04B5A3]">
                         {Math.max(
                           event.registered_count || 0,
-                         
-                          Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
-                  
+                          Array.isArray((event as any).participants) ? (event as any).participants.length : 0
                         )}
                       </span>
                       <span className="text-gray-500 mx-2">/</span>
@@ -307,15 +316,13 @@ const EventDetailsView = ({
                     <p className="text-xl font-bold text-cyan-400">
                       {Math.max(0, (event.maximum_capacity ?? 0) - Math.max(
                         event?.registered_count || 0,
-                     
-                        Array.isArray((event as any).participants) ? (event as any).participants.length : 0,
-                
+                        Array.isArray((event as any).participants) ? (event as any).participants.length : 0
                       ))}
                     </p>
                   </div>
                </div>
                 <div className="h-2 w-full bg-[#0B0E1E] rounded-full overflow-hidden border border-[#1E2550]">
-                  <div className="h-full bg-linear-to-r from-[#04B5A3] to-cyan-400 transition-all duration-1000" style={{ width: `${Math.min(((((Math.max(event.registered_count || 0 , Array.isArray((event as any).participants) ? (event as any).participants.length : 0, isRegistered ? 1 : 0)) / (event.maximum_capacity || 1)) * 100)), 100)}%` }}></div>
+                  <div className="h-full bg-linear-to-r from-[#04B5A3] to-cyan-400 transition-all duration-1000" style={{ width: `${Math.min(((((Math.max(event.registered_count || 0 , Array.isArray((event as any).participants) ? (event as any).participants.length : 0)) / (event.maximum_capacity || 1)) * 100)), 100)}%` }}></div>
                 </div>
                <p className="text-[10px] text-[#04B5A3] font-bold uppercase tracking-widest text-center">
                  {((event.maximum_capacity ?? 0) - (event.registered_count ?? 0)) <= 5 ? "Hurry! Limited spots remaining" : "Registration Open"}
@@ -349,7 +356,7 @@ const EventDetailsView = ({
                     disabled
                     className="w-full py-4 rounded-2xl bg-[#0B0E1E] text-emerald-500 border border-emerald-500/20 font-bold cursor-not-allowed uppercase tracking-widest text-sm flex items-center justify-center gap-2"
                   >
-                    <Check size={16} /> Registered
+                    <Check size={16} /> Already Registered
                   </button>
                </div>
             ) : (event.status || "").toUpperCase() === "PENDING" ? (
@@ -378,9 +385,10 @@ const EventDetailsView = ({
               <div className="space-y-4 text-center">
                 <button 
                   disabled
-                  className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-rose-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-rose-500/20 flex items-center justify-center gap-2"
+                  className="w-full py-5 rounded-2xl bg-[#0B0E1E] text-blue-500 font-black text-lg cursor-not-allowed uppercase tracking-widest border border-blue-500/20 flex items-center justify-center gap-2"
                 >
-                  Registration Full
+                  <Check size={20} />
+                  Completed
                 </button>
                 <p className="text-[10px] text-gray-500 font-bold uppercase">Event capacity reached</p>
               </div>
