@@ -22,10 +22,10 @@ import toast from "react-hot-toast";
 import {
   useCheckoutMutation,
   useCreateRegistrationMutation,
-  useGetEventDetailsQuery,
+  useGetPlayerEventDetailsQuery,
   useGetMyRegistrationsQuery,
   useGetPastRegistrationsQuery,
-  useGetRegistrationStatusQuery,
+  useGetPlayerRegistrationStatusQuery,
   useGetUpcomingRegistrationsQuery,
   useValidatePromoMutation,
   useVerifyPaymentMutation,
@@ -80,7 +80,7 @@ const EventDetailsPage = () => {
     return list;
   }, [registrationsData, upcomingData, pastData]);
   
-  const { data: eventResponse, isLoading: isDetailsLoading } = useGetEventDetailsQuery(id, {
+  const { data: eventResponse, isLoading: isDetailsLoading } = useGetPlayerEventDetailsQuery(id, {
     skip: !id,
   });
 
@@ -104,7 +104,7 @@ const EventDetailsPage = () => {
   const localRegistrationId = String(reg?.registration_id || reg?.id || localRegisteredId || "");
 
   // Fetch real-time registration status ONLY if we have a stored registration_id
-  const { data: registrationStatus } = useGetRegistrationStatusQuery(localRegistrationId!, {
+  const { data: registrationStatus } = useGetPlayerRegistrationStatusQuery(localRegistrationId!, {
     skip: !localRegistrationId,
     pollingInterval: 30000,
   });

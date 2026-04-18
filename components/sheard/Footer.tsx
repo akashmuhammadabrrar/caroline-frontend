@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,6 +18,12 @@ import { useGetPublicSettingsQuery } from "@/redux/features/home/homeApi";
 const Footer = () => {
   const auth = useAppSelector((state) => state.auth);
   const { data: settings } = useGetPublicSettingsQuery();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAuthenticated = !!auth?.user;
   const role = auth?.user?.role;
 
@@ -54,7 +62,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/membership"
+                  href="/#membership"
                   className="hover:text-[var(--primary-cyan)] transition"
                 >
                   Membership
@@ -66,10 +74,10 @@ const Footer = () => {
           {/* Resources / Dashboard Links */}
           <div>
             <h3 className="text-white font-semibold mb-4">
-              {isAuthenticated ? "Dashboard Links" : "Resources Links"}
+              {mounted && isAuthenticated ? "Dashboard Links" : "Resources Links"}
             </h3>
             <ul className="space-y-3 text-sm">
-              {!isAuthenticated && (
+              {mounted && !isAuthenticated && (
                 <>
                   <li>
                     <Link href="#" className="hover:text-[var(--primary-cyan)] transition">
@@ -82,14 +90,34 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="hover:text-[var(--primary-cyan)] transition">
+                    <Link href="/latest-events" className="hover:text-[var(--primary-cyan)] transition">
                       Events
                     </Link>
                   </li>
                 </>
               )}
 
-              {role === "PLAYER" && (
+              {!mounted && (
+                <>
+                  <li>
+                    <Link href="#" className="hover:text-[var(--primary-cyan)] transition">
+                      Player Directory
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="hover:text-[var(--primary-cyan)] transition">
+                      Agents & Scouts Directory
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/latest-events" className="hover:text-[var(--primary-cyan)] transition">
+                      Events
+                    </Link>
+                  </li>
+                </>
+              )}
+
+              {mounted && role === "PLAYER" && (
                 <>
                   <li><Link href="/player" className="hover:text-[var(--primary-cyan)] transition">Player Dashboard</Link></li>
                   <li><Link href="/player/profileAndEdit" className="hover:text-[var(--primary-cyan)] transition">My Profile</Link></li>
@@ -98,7 +126,7 @@ const Footer = () => {
                 </>
               )}
 
-              {role === "SCOUT_AGENT" && (
+              {mounted && role === "SCOUT_AGENT" && (
                 <>
                   <li><Link href="/scout" className="hover:text-[var(--primary-cyan)] transition">Scout Dashboard</Link></li>
                   <li><Link href="/scout/playerDiscovery" className="hover:text-[var(--primary-cyan)] transition">Player Discovery</Link></li>
@@ -107,7 +135,7 @@ const Footer = () => {
                 </>
               )}
 
-              {role === "CLUB_ACADEMY" && (
+              {mounted && role === "CLUB_ACADEMY" && (
                 <>
                   <li><Link href="/club" className="hover:text-[var(--primary-cyan)] transition">Club Dashboard</Link></li>
                   <li><Link href="/club/eventManagement" className="hover:text-[var(--primary-cyan)] transition">Manage Events</Link></li>
@@ -115,7 +143,7 @@ const Footer = () => {
                 </>
               )}
 
-              {role === "ADMIN" && (
+              {mounted && role === "ADMIN" && (
                 <>
                   <li><Link href="/admin" className="hover:text-[var(--primary-cyan)] transition">Admin Dashboard</Link></li>
                   <li><Link href="/admin/users" className="hover:text-[var(--primary-cyan)] transition">Manage Users</Link></li>

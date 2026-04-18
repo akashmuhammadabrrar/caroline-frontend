@@ -106,7 +106,7 @@ const Banner = () => {
               alt={settings.platformName || "Logo"}
               width={180}
               height={180}
-              style={{ width: "auto" }}
+              style={{ width: "auto", height: "auto", maxHeight: "180px" }}
               className="drop-shadow-2xl h-[120px] md:h-[180px] object-contain mb-4"
               priority
               unoptimized
@@ -180,19 +180,19 @@ const Banner = () => {
           ref={btnRef}
           className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full max-w-lg mx-auto"
         >
-         {
-          !user && activeHero.primary_button_url && activeHero.primary_button_text && (
-            <Link
-              href={activeHero.primary_button_url}
-              className="group relative w-full sm:w-auto overflow-hidden px-10 py-4 bg-white text-black font-black rounded-xl text-base uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)]"
-            >
-              <span className="relative z-10">
-                {activeHero.primary_button_text}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-            </Link>
-          )
-         }
+          {
+            !user && activeHero.primary_button_url && activeHero.primary_button_text && (
+              <Link
+                href={activeHero.primary_button_url}
+                className="group relative w-full sm:w-auto overflow-hidden px-10 py-4 bg-white text-black font-black rounded-xl text-base uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)]"
+              >
+                <span className="relative z-10">
+                  {activeHero.primary_button_text}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              </Link>
+            )
+          }
 
           {/* {!user && activeHero.secondary_button_url && activeHero.secondary_button_text && (
             <Link

@@ -29,6 +29,11 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notifMenuOpen, setNotifMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [notifModalOpen, setNotifModalOpen] = useState(false);
 
   const auth = useAppSelector((state) => state.auth);
@@ -96,11 +101,13 @@ const Navbar = () => {
       <div className="container mx-auto px-4 lg:px-6 relative bg-white/10 backdrop-blur-md rounded-xl border border-white/5 shadow-lg">
         <div className="flex items-center justify-between h-20 lg:h-24">
           {/* Logo - Left */}
-          <BrandedLogo 
-            variant="stacked" 
-            size="sm" 
-            hideNameOnMobile={true} 
-            className="hover:scale-105 transition-transform duration-200" 
+          <BrandedLogo
+            variant="stacked"
+            width={106}
+            height={63}
+            hideNameOnMobile={true}
+            hideFallback={true}
+            className="hover:scale-105 transition-transform duration-200"
           />
 
           {/* Desktop Nav Links - Center */}
@@ -129,7 +136,22 @@ const Navbar = () => {
 
           {/* Desktop Right Section */}
           <div className="hidden lg:flex items-center gap-4">
-            {auth.user ? (
+            {(!mounted || !auth.user) ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/login"
+                  className="px-6 py-2.5 text-sm font-bold text-gray-300 hover:text-white transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-6 py-2.5 text-sm font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            ) : (
               <>
                 {/* Notification Bell */}
                 <div ref={notifMenuRef} className="relative">
@@ -154,8 +176,8 @@ const Navbar = () => {
                   </button>
 
                   {notifMenuOpen && (
-                    <NotificationDropdown 
-                      onClose={() => setNotifMenuOpen(false)} 
+                    <NotificationDropdown
+                      onClose={() => setNotifMenuOpen(false)}
                       onOpenModal={() => {
                         setNotifMenuOpen(false);
                         setNotifModalOpen(true);
@@ -164,9 +186,9 @@ const Navbar = () => {
                   )}
                 </div>
 
-                <NotificationModal 
-                  isOpen={notifModalOpen} 
-                  onClose={() => setNotifModalOpen(false)} 
+                <NotificationModal
+                  isOpen={notifModalOpen}
+                  onClose={() => setNotifModalOpen(false)}
                 />
 
                 {/* User Menu */}
@@ -208,8 +230,8 @@ const Navbar = () => {
                   <div
                     role="menu"
                     className={`absolute right-0 mt-3 w-44 rounded-xl bg-[#161C39]/95 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition origin-top-right z-[60] overflow-hidden ${userMenuOpen
-                        ? "opacity-100 scale-100 pointer-events-auto"
-                        : "opacity-0 scale-95 pointer-events-none"
+                      ? "opacity-100 scale-100 pointer-events-auto"
+                      : "opacity-0 scale-95 pointer-events-none"
                       }`}
                   >
                     <Link
@@ -231,19 +253,6 @@ const Navbar = () => {
                     </button>
                   </div>
                 </div>
-              </>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="login" className="px-6">
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/register">
-                  <Button variant="login" className="px-6">
-                    Sign up
-                  </Button>
-                </Link>
               </>
             )}
           </div>

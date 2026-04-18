@@ -16,17 +16,23 @@ import SectionTitel from "../reuseable/SectionTitel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  useGetEventsQuery,
+  useGetPlayerEventsQuery,
   useGetMyRegistrationsQuery,
 } from "@/redux/features/player/eventsDirectoryApi";
 import { format } from "date-fns";
 import { CheckCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
-export default function UpcomingEvent() {
+export default function UpcomingEventsSection() {
   const router = useRouter();
   const theme = useAppSelector((state) => state.theme);
   const user = useAppSelector((state) => state.auth.user);
-  const { data: eventsData, isLoading } = useGetEventsQuery();
+  const { data: eventsData, isLoading } = useGetPlayerEventsQuery();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { data: registrationsData } = useGetMyRegistrationsQuery(undefined, {
     skip: !user || user.role !== "PLAYER",
@@ -293,22 +299,29 @@ export default function UpcomingEvent() {
 
               {/* Button */}
               <div className="flex justify-center">
-                <Link
-                  href={
-                    user
-                      ? user.role === "PLAYER"
+                {(!mounted || !user) ? (
+                  <Link
+                    href="/login"
+                    className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
+                  >
+                    Sign Up
+                  </Link>
+                ) : (
+                  <Link
+                    href={
+                      user.role === "PLAYER"
                         ? "/player"
                         : user.role === "CLUB_ACADEMY"
                           ? "/club"
                           : user.role === "SCOUT_AGENT"
                             ? "/scout"
                             : "/admin"
-                      : "/login"
-                  }
-                  className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
-                >
-                  {user ? "Go to Subscription" : "Sign Up"}
-                </Link>
+                    }
+                    className="w-full sm:w-auto text-center bg-[#00F6FF] text-black px-6 sm:px-8 py-3 text-sm sm:text-base font-bold rounded-full hover:bg-cyan-400 transition-colors shadow-[0_0_20px_rgba(0,246,255,0.3)]"
+                  >
+                    Go to Subscription
+                  </Link>
+                )}
               </div>
             </div>
           </div>

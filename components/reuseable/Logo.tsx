@@ -14,7 +14,8 @@ const Logo = () => {
         height={40}
         priority
         unoptimized
-        style={{ width: "auto", height: "auto", maxHeight: "40px" }}
+        style={{ width: "auto", height: "auto" }}
+        className="max-h-[40px] object-contain"
       />
     </div>
   );

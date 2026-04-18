@@ -8,6 +8,7 @@ const AddSection = () => {
         src="/images/add-banner.png"
         alt="Add for player"
         fill
+        priority
         className="object-cover"
       />
     </div>

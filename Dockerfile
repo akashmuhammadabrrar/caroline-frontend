@@ -2,9 +2,9 @@ FROM oven/bun:1.1.29-alpine AS deps
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package.json bun.lockb* ./
 
-RUN bun install
+RUN bun install --frozen-lockfile
 
 
 FROM node:24-alpine AS builder

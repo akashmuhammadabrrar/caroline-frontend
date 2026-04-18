@@ -95,12 +95,13 @@ export interface PromoValidateResponse {
 }
 
 export const eventsDirectoryApi = baseApi.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
-    getEvents: builder.query<EventsResponse | EventDataApi[], void>({
+    getPlayerEvents: builder.query<EventsResponse | EventDataApi[], void>({
       query: () => "/players/events/",
       providesTags: ["Events"],
     }),
-    getEventDetails: builder.query<EventDetailsResponse | EventDataApi, string | number>({
+    getPlayerEventDetails: builder.query<EventDetailsResponse | EventDataApi, string | number>({
       query: (id) => `/players/events/${id}/`,
       providesTags: (result, error, id) => [{ type: "Events", id }, "Events"],
     }),
@@ -151,7 +152,7 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Events"],
     }),
-    getRegistrationStatus: builder.query<
+    getPlayerRegistrationStatus: builder.query<
       RegistrationStatusResponse,
       { player_name?: string; contact_email?: string } | string | number
     >({
@@ -190,12 +191,12 @@ export const eventsDirectoryApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetEventsQuery,
-  useGetEventDetailsQuery,
+  useGetPlayerEventsQuery,
+  useGetPlayerEventDetailsQuery,
   useCreateRegistrationMutation,
   useCheckoutMutation,
   useVerifyPaymentMutation,
-  useGetRegistrationStatusQuery,
+  useGetPlayerRegistrationStatusQuery,
   useGetMyRegistrationsQuery,
   useGetUpcomingRegistrationsQuery,
   useGetPastRegistrationsQuery,

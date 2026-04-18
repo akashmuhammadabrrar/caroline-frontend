@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
-  useGetEventsQuery,
+  useGetPlayerEventsQuery,
   useGetMyRegistrationsQuery,
   useGetPastRegistrationsQuery,
   useGetUpcomingRegistrationsQuery,
@@ -150,7 +150,7 @@ const EventsDirectoryPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const { data: eventsData, isLoading: isEventsLoading } = useGetEventsQuery();
+  const { data: eventsData, isLoading: isEventsLoading } = useGetPlayerEventsQuery();
   console.log('all events ',eventsData);
   const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
   const { data: pastData, isLoading: isPastLoading } = useGetPastRegistrationsQuery();

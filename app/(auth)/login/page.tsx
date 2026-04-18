@@ -92,6 +92,7 @@ const LoginPage = () => {
             width={200}
             height={200}
             alt="Logo"
+            priority
           />
           <h1 className="text-2xl md:text-3xl font-bold text-white">
             Welcome Back

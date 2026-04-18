@@ -5,7 +5,7 @@ import HowItWorks from "@/components/landingPage/HowItWorks";
 import Navbar from "@/components/sheard/Navbar";
 import Footer from "@/components/sheard/Footer";
 import LatestNews from "@/components/landingPage/LatestNews";
-import UpcomingEvent from "@/components/landingPage/UpcomingEvents";
+import UpcomingEventsSection from "@/components/landingPage/UpcomingEvents";
 import AddSection from "@/components/landingPage/AddSection";
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
         <HowItWorks />
         <Feature />
         <LatestNews />
-        <UpcomingEvent />
+        <UpcomingEventsSection />
         <AddSection />
       </main>
       <Footer />
