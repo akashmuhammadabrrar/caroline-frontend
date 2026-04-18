@@ -205,6 +205,7 @@ export default function HomePageSettings() {
                                 alt="Hero" 
                                 width={96} 
                                 height={64} 
+                                style={{ width: "auto", height: "auto" }}
                                 className="w-full h-full object-cover"
                                 unoptimized
                               />

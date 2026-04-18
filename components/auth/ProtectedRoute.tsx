@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/features/auth/authSlice";
@@ -16,8 +16,15 @@ const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
   const { user, accessToken } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     // Check if user is logged in
     if (!accessToken || !user) {
       router.replace("/login");
@@ -30,15 +37,14 @@ const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
       dispatch(logout());
       router.replace("/login");
     }
-  }, [user, accessToken, allowedRole, router, dispatch]);
+  }, [mounted, user, accessToken, allowedRole, router, dispatch]);
 
-  // If role matches, render children
-  if (user && user.role === allowedRole) {
-    return <>{children}</>;
+  // Support absolute hydration stability by returning null until mounted
+  if (!mounted || !user || user.role !== allowedRole) {
+    return null;
   }
 
-  // Otherwise, return null or a loading state while redirecting
-  return null;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

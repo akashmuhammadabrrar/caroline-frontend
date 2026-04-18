@@ -7,16 +7,16 @@ const Logo = () => {
 
   return (
     <div>
-      <Image
-        src={settings?.platformLogo || "/images/logo.png"}
-        alt={settings?.platformName || "NextGen Pros Logo"}
-        width={140}
-        height={40}
-        priority
-        unoptimized
-        style={{ width: "auto", height: "auto" }}
-        className="max-h-[40px] object-contain"
-      />
+      <div className="relative w-[140px] h-[40px]">
+        <Image
+          src={settings?.platformLogo || "/images/logo.png"}
+          alt={settings?.platformName || "NextGen Pros Logo"}
+          fill
+          priority
+          unoptimized
+          className="object-contain"
+        />
+      </div>
     </div>
   );
 };

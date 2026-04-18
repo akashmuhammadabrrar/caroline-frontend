@@ -84,13 +84,11 @@ const BrandedLogo: React.FC<BrandedLogoProps> = ({
   return (
     <Link href="/" className={`flex items-center gap-2.5 ${className}`}>
       {logoSrc && (
-        <div style={{ height: finalHeight, width: finalWidth, display: 'flex', alignItems: 'center' }}>
+        <div className="relative" style={{ height: finalHeight, width: finalWidth }}>
           <Image
             src={logoSrc}
             alt={settings?.platformName || "Logo"}
-            width={finalWidth}
-            height={finalHeight}
-            style={{ width: "auto", height: "auto", maxHeight: finalHeight }}
+            fill
             className="object-contain opacity-95 hover:opacity-100 transition-opacity"
             priority
             unoptimized

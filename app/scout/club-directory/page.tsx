@@ -107,6 +107,7 @@ const ClubDirectoryPage = () => {
                   width={60}
                   height={60}
                   sizes="60px"
+                  style={{ width: "auto", height: "auto" }}
                   className="rounded-full object-cover"
                 />
               ) : (

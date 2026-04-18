@@ -152,6 +152,11 @@ const ScoutSideBar: React.FC = () => {
   const [openGroups, setOpenGroups] =
     useState<Record<string, boolean>>(initialOpenGroups);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Keep the matching group open when route changes
   useEffect(() => {
     setOpenGroups((prev) => {
@@ -183,6 +188,14 @@ const ScoutSideBar: React.FC = () => {
     localStorage.removeItem("user");
     router.replace("/auth/login");
   };
+
+  if (!mounted) {
+    return (
+      <aside className="fixed top-0 left-0 h-full w-58.75 border-2 border-[#00E5FF1A] bg-[#12143A] z-50 lg:translate-x-0 -translate-x-full">
+        {/* Skeleton for SSR */}
+      </aside>
+    );
+  }
 
   return (
     <>

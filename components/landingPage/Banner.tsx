@@ -94,29 +94,30 @@ const Banner = () => {
           }
         />
         {/* Dynamic Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/40 to-black/80" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center max-w-5xl">
         <div className="flex flex-col items-center mb-8">
           {settings?.platformLogo ? (
-            <Image
-              src={settings.platformLogo}
-              alt={settings.platformName || "Logo"}
-              width={180}
-              height={180}
-              style={{ width: "auto", height: "auto", maxHeight: "180px" }}
-              className="drop-shadow-2xl h-[120px] md:h-[180px] object-contain mb-4"
-              priority
-              unoptimized
-            />
+            <div className="relative h-[120px] md:h-[180px] w-[180px] mb-4">
+              <Image
+                src={settings.platformLogo}
+                alt={settings.platformName || "Logo"}
+                fill
+                className="drop-shadow-2xl object-contain"
+                priority
+                unoptimized
+              />
+            </div>
           ) : (
             <Image
               src="/images/banner-log.png"
               alt="NextGen Pros Logo"
               width={180}
               height={180}
+              style={{ width: "auto", height: "auto" }}
               className="drop-shadow-2xl mb-4"
               priority
             />
@@ -189,7 +190,7 @@ const Banner = () => {
                 <span className="relative z-10">
                   {activeHero.primary_button_text}
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </Link>
             )
           }
@@ -206,7 +207,7 @@ const Banner = () => {
       </div>
 
       {/* Modern gradient at bottom to blend with next section */}
-      <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-[#050B14] to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-48 bg-linear-to-t from-[#050B14] to-transparent pointer-events-none" />
 
       {/* Decorative Light Leak */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-white/5 blur-[150px] rounded-full pointer-events-none" />

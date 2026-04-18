@@ -7,12 +7,17 @@ import { NotificationProvider } from "./NotificationProvider";
 import { Toaster } from "react-hot-toast";
 
 export const AppProviders = ({ children }: { children: React.ReactNode }) => {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <ReduxProviderWrapper>
       <DynamicConfigProvider>
         <NotificationProvider>
           {children}
-          <Toaster position="top-right" />
+          {mounted && <Toaster position="top-right" />}
         </NotificationProvider>
       </DynamicConfigProvider>
     </ReduxProviderWrapper>
