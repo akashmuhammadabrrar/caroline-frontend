@@ -33,7 +33,7 @@ export const PlayerCard = ({ player, onViewProfile }: PlayerCardProps) => {
   const handleStarClick = async () => {
     const wasStarred = starred;
     setStarred(!wasStarred);
-    console.log({ wasStarred });
+// console.log({ wasStarred });
 
     try {
       if (wasStarred && shortlistId) {
@@ -74,8 +74,8 @@ export const PlayerCard = ({ player, onViewProfile }: PlayerCardProps) => {
 
   if (!player) return <h1>No player found!</h1>;
 
-  console.log();
-  console.log();
+// console.log();
+// console.log();
 
   return (
     <div className="bg-[#12143A] border border-[#2DD4BF]/30 rounded-xl p-4 transition-all duration-200 hover:shadow-[0_0_20px_rgba(45,212,191,0.06)] flex flex-col">

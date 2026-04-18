@@ -63,7 +63,7 @@ export default function PlayerDiscoveryPage() {
   const { data, isLoading, isFetching } =
     useGetDiscoveryPlayersQuery(activeFilters);
 
-  console.log("player discover data", data);
+// console.log("player discover data", data);
 
   const players = data?.results ?? [];
   const hasMore = !!data?.next;

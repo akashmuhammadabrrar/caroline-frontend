@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function ProfilePage() {
   const { data, isLoading, isError } = useGetMyProfileQuery();
-  console.log('player data' , data)
+// console.log('player data' , data)
   const [isEditing, setIsEditing] = useState(false);
 
   if (isLoading) {

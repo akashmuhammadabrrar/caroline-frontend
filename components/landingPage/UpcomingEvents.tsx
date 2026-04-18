@@ -48,12 +48,14 @@ export default function UpcomingEventsSection() {
     ? eventsData
     : eventsData?.results || eventsData?.data || [];
 
-  console.log(
+  /*
+// console.log(
     "UpcomingEvents eventsData API response:",
     eventsData,
     "Derived eventsList:",
     eventsList,
   );
+  */
 
   // Get active/upcoming events and limit to 2, sorted by created_at descending
   const upcomingEvents = [...eventsList]

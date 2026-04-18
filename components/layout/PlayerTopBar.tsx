@@ -17,7 +17,7 @@ const PlayerTopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
-  console.log("user data", user);
+// console.log("user data", user);
   const router = useRouter();
 
   useEffect(() => {

@@ -16,7 +16,7 @@ export default function LatestNews() {
 
   const { data: newsData, isLoading } = useGetLatestNewsQuery();
   
-  console.log(newsData, "newsData");
+// console.log(newsData, "newsData");
 
   const newsItems = useMemo(() => {
     const items = [...(newsData?.articles || newsData?.data || [])];

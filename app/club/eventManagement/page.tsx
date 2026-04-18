@@ -71,7 +71,7 @@ type Event = {
 
 export default function EventManagementPage() {
   const { data: apiEvents, isLoading } = useGetClubEventsQuery(undefined);
-  console.log("create event data ", apiEvents);
+// console.log("create event data ", apiEvents);
   const [createEvent] = useClubCreateEventMutation();
   const [updateEvent] = useClubUpdateEventMutation();
   const [deleteEventApi] = useClubDeleteEventMutation();

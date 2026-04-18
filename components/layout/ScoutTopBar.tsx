@@ -17,7 +17,7 @@ const ScoutTopBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
 
-  console.log(user);
+// console.log(user);
   const router = useRouter();
 
   useEffect(() => {

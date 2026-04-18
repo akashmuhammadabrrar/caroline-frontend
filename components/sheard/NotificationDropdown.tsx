@@ -127,7 +127,7 @@ const NotificationDropdown = ({
                 onClick={async (e) => {
                   e.stopPropagation();
                   try {
-                    console.log("Deleting notification ID:", notif.id);
+// console.log("Deleting notification ID:", notif.id);
                     await deleteNotification(notif.id as number).unwrap();
                     toast.success("Notification deleted");
                   } catch (err) {

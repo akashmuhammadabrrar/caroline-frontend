@@ -126,7 +126,7 @@ const SubscriptionContent = () => {
 
   const handleSubscribeClick = async (plan: Plan) => {
     setSelectedPlan(plan);
-    console.log('Initiating checkout for plan:', plan);
+// console.log('Initiating checkout for plan:', plan);
     toast.loading("Preparing secure checkout...", { id: "checkoutLoading" });
 
     try {
@@ -286,10 +286,10 @@ const SubscriptionContent = () => {
         ...(isPromoApplied && promoCode ? { promo_code: promoCode } : {}),
       };
 
-      console.log("Sending checkout payload:", payload);
+// console.log("Sending checkout payload:", payload);
 
       const res = await createCheckout(payload).unwrap();
-      console.log("Checkout API Response:", res);
+// console.log("Checkout API Response:", res);
 
       const checkoutUrl = res.checkout_url || res.data?.checkout_url;
 

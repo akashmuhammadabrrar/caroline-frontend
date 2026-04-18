@@ -151,7 +151,7 @@ const EventsDirectoryPage = () => {
   const itemsPerPage = 4;
 
   const { data: eventsData, isLoading: isEventsLoading } = useGetPlayerEventsQuery();
-  console.log('all events ',eventsData);
+// console.log('all events ',eventsData);
   const { data: upcomingData, isLoading: isUpcomingLoading } = useGetUpcomingRegistrationsQuery();
   const { data: pastData, isLoading: isPastLoading } = useGetPastRegistrationsQuery();
   const { data: myRegistrationsData } = useGetMyRegistrationsQuery();

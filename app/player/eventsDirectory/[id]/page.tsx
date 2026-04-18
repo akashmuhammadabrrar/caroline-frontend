@@ -84,7 +84,7 @@ const EventDetailsPage = () => {
     skip: !id,
   });
 
-  console.log('eventResponse', eventResponse);
+// console.log('eventResponse', eventResponse);
 
   const event = (eventResponse && 'data' in eventResponse && eventResponse.data) ? eventResponse.data : (eventResponse as EventDataApi);
 

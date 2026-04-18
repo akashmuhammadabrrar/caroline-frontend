@@ -18,7 +18,7 @@ export default function Club() {
 
   const theme = useAppSelector((state) => state.theme);
   const { data: featuredClubs = [], isLoading } = useGetFeaturedClubsQuery();
-  console.log(featuredClubs, "feature club data");
+// console.log(featuredClubs, "feature club data");
 
   useEffect(() => {
     setMounted(true);
