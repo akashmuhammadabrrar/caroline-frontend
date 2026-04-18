@@ -4,7 +4,7 @@ services:
     container_name: caroline-admin
     profiles:
       - prod
-    image: softvence/caroline-admin:0.0.1
+    image: softvence/caroline-admin:akash
     build:
       context: .
       dockerfile: Dockerfile
