@@ -13,7 +13,7 @@ export default function NotFound() {
            <AlertTriangle className="w-12 h-12 text-cyan-400 animate-pulse" />
         </div>
         
-        <h2 className='text-8xl font-bold mb-2 tracking-tighter bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 text-transparent bg-clip-text'>
+        <h2 className='text-8xl font-bold mb-2 tracking-tighter bg-linear-to-br from-cyan-400 via-purple-500 to-pink-500 text-transparent bg-clip-text'>
           404
         </h2>
         <h3 className='text-2xl font-display font-semibold text-white mb-4'>Page Not Found</h3>
@@ -23,7 +23,7 @@ export default function NotFound() {
         
         <Link 
           href="/" 
-          className='flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]'
+          className='flex items-center gap-3 px-8 py-4 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]'
         >
           <Home size={20} />
           <span>Return Home</span>

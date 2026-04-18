@@ -269,7 +269,7 @@ export default function ProfileEdit({ profile, onCancel }: Props) {
              {coverPreview ? (
                 <div className="absolute inset-0 bg-cover bg-center transition-opacity" style={{ backgroundImage: `url(${coverPreview})` }} />
              ) : (
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0D122B] to-[#1E2548]" />
+                <div className="absolute inset-0 bg-linear-to-r from-[#0D122B] to-[#1E2548]" />
              )}
              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-2 bg-[#121730] px-4 py-3 rounded-xl text-white font-medium border border-[#1E2548] shadow-xl text-center">

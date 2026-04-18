@@ -58,7 +58,7 @@ const ClubDashboard: React.FC = () => {
       <div className="mx-auto space-y-8">
         {/* Welcome Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h1 className="inline-block text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#00e5ff] to-[#9C27B0] bg-clip-text text-transparent">
+          <h1 className="inline-block text-2xl md:text-3xl font-bold bg-linear-to-r from-[#00e5ff] to-[#9C27B0] bg-clip-text text-transparent">
             Welcome Back
           </h1>
           <div className="text-sm text-slate-400">
@@ -289,7 +289,7 @@ function EventCard({
         </div>
         <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full transition-all duration-1000 ease-out"
+            className="h-full bg-linear-to-r from-cyan-600 to-blue-600 rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${percent}%` }}
           />
         </div>
@@ -329,7 +329,7 @@ function MessageItem({
         hover:bg-slate-800/70
       `}
     >
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
+      <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-lg font-bold flex-shrink-0">
         {sender[0]}
       </div>
 

@@ -207,7 +207,7 @@ const ScoutSideBar: React.FC = () => {
                     onClick={handleClose}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                       active
-                        ? "bg-gradient-to-r from-[#9C27B033] to-[#00E5FF33] text-white"
+                        ? "bg-linear-to-r from-[#9C27B033] to-[#00E5FF33] text-white"
                         : "text-white/70 hover:bg-white/5 hover:text-white"
                     }`}
                   >

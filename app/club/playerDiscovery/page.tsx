@@ -168,7 +168,7 @@ const PlayerDiscoveryPage = () => {
       <div className="   mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl font-extrabold bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent tracking-tight">
             Player Discovery
           </h1>
           <div className="flex items-center gap-3">
@@ -294,7 +294,7 @@ const PlayerDiscoveryPage = () => {
                 {/* Player Card Header */}
                 <div className="flex items-center gap-5 mb-8">
                   <div className="relative w-20 h-20 shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#04B5A3] to-[#9C27B0] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-linear-to-br from-[#04B5A3] to-[#9C27B0] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity"></div>
                     <div className="relative w-full h-full rounded-full border-2 border-[#1E2550] overflow-hidden group-hover:border-[#04B5A3]/50 transition-colors">
                       <Image
                         src={player.image}
@@ -439,7 +439,7 @@ const PlayerDiscoveryPage = () => {
                 <button
                   onClick={handleSendMessage}
                   disabled={!messageText.trim() || isSendingMessage}
-                  className="flex-[2] h-14 rounded-xl bg-gradient-to-r from-[#04B5A3] to-[#039d8f] text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_8px_20px_-5px_rgba(4,181,163,0.3)] flex items-center justify-center gap-2"
+                  className="flex-[2] h-14 rounded-xl bg-linear-to-r from-[#04B5A3] to-[#039d8f] text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_8px_20px_-5px_rgba(4,181,163,0.3)] flex items-center justify-center gap-2"
                 >
                   {isSendingMessage ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

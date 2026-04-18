@@ -120,7 +120,7 @@ const Toggle = ({
   <button
     type="button"
     onClick={onChange}
-    className={`relative w-10 h-5.5 rounded-full transition-all duration-300 flex-shrink-0 ${checked ? "bg-gradient-to-r from-[#00D9FF] to-[#00B4D8] shadow-[0_0_10px_rgba(0,217,255,0.4)]" : "bg-[#1A2160]"}`}
+    className={`relative w-10 h-5.5 rounded-full transition-all duration-300 flex-shrink-0 ${checked ? "bg-linear-to-r from-[#00D9FF] to-[#00B4D8] shadow-[0_0_10px_rgba(0,217,255,0.4)]" : "bg-[#1A2160]"}`}
   >
     <span
       className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-lg transition-transform duration-300 transform ${checked ? "translate-x-5" : "translate-x-0.5"}`}

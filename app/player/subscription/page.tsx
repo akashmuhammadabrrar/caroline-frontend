@@ -164,7 +164,7 @@ const SubscriptionContent = () => {
   }) => (
     <div className="space-y-12 w-full relative z-10 mt-6 mb-12">
       <div className="text-center space-y-4 py-8">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight px-4 tracking-tighter">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-black bg-linear-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent italic leading-tight px-4 tracking-tighter">
           {title}
         </h2>
         <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium px-4">
@@ -188,7 +188,7 @@ const SubscriptionContent = () => {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 blur-[80px] rounded-full pointer-events-none" />
               )}
               
-              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-b from-white/[0.02] to-transparent pointer-events-none" />
               
               <div className="relative z-10 text-center mb-8">
                 <div className="inline-block relative">
@@ -196,7 +196,7 @@ const SubscriptionContent = () => {
                     {planName}
                   </h3>
                   {isPopular && (
-                    <span className="absolute xl:lg:-top-7 md:-top-7 -top-5 -right-6 text-[9px] sm:text-[10px] bg-gradient-to-r from-cyan-400 to-purple-500 text-white px-2 py-1 rounded-full font-black uppercase tracking-widest rotate-6 shadow-lg whitespace-nowrap">
+                    <span className="absolute xl:lg:-top-7 md:-top-7 -top-5 -right-6 text-[9px] sm:text-[10px] bg-linear-to-r from-cyan-400 to-purple-500 text-white px-2 py-1 rounded-full font-black uppercase tracking-widest rotate-6 shadow-lg whitespace-nowrap">
                       🔥 Most Popular
                     </span>
                   )}
@@ -239,7 +239,7 @@ const SubscriptionContent = () => {
                 disabled={isCreatingCheckout}
                 className="relative z-10 w-full py-4 sm:py-5 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest text-xs sm:text-sm hover:border-cyan-400/50 transition-all active:scale-95 group/btn overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-r from-cyan-400 via-purple-500 to-pink-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   Get Started <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                 </span>
@@ -362,7 +362,7 @@ const SubscriptionContent = () => {
   return (
     <div className="p-4 sm:p-8  mx-auto space-y-6 animate-in fade-in duration-500">
       {/* Page Title */}
-      <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-6">
+      <h1 className="text-2xl font-bold bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-6">
         Subscription Management
       </h1>
 
@@ -682,7 +682,7 @@ const SubscriptionContent = () => {
               <button
                 onClick={handleConfirmSubscribe}
                 disabled={isCreatingCheckout}
-                className="py-4 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-black hover:opacity-90 transition-all shadow-lg text-xs uppercase tracking-widest active:scale-95 flex justify-center items-center gap-2"
+                className="py-4 rounded-xl bg-linear-to-r from-cyan-400 to-purple-500 text-white font-black hover:opacity-90 transition-all shadow-lg text-xs uppercase tracking-widest active:scale-95 flex justify-center items-center gap-2"
               >
                 {isCreatingCheckout ? "Redirecting..." : "Checkout"}
               </button>

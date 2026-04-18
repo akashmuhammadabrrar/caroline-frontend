@@ -281,7 +281,7 @@ export default function EventManagementPage() {
       <div className=" mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
             Event Management
           </h1>
           <button
@@ -895,7 +895,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
               alt=""
               className="absolute inset-0 w-full h-full object-cover opacity-40"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#121433] via-[#121433]/60 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#121433] via-[#121433]/60 to-transparent" />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 mt-auto">
               <div>
@@ -1148,7 +1148,7 @@ function EventModal({ event, mode, onClose, onSave, setMode }: ModalProps) {
                             className="bg-[#0B0E1E]/50 border border-[#1E2550] rounded-[20px] p-4 flex items-center justify-between group hover:bg-white/5 transition-all"
                           >
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
+                              <div className="w-12 h-12 rounded-full bg-linear-to-br from-cyan-400 to-purple-500 p-0.5">
                                 <div className="w-full h-full rounded-full bg-[#0B0E1E] flex items-center justify-center font-bold text-white uppercase">
                                   {name[0] || "?"}
                                 </div>
@@ -1328,7 +1328,7 @@ function CreateEventModal({
               <ArrowLeft className="text-gray-400 group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
             </button>
             <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold bg-linear-to-r from-white to-gray-400 bg-clip-text text-transparent">
                 Create New Event
               </h2>
               <p className="text-gray-500 text-sm font-medium mt-1">
@@ -1345,7 +1345,7 @@ function CreateEventModal({
             <div className="absolute top-1/2 left-0 w-full h-1 bg-[#1E2550] -translate-y-1/2 rounded-full z-0" />
             {/* Active Progress Line */}
             <div
-              className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 -translate-y-1/2 rounded-full transition-all duration-500 z-0"
+              className="absolute top-1/2 left-0 h-1 bg-linear-to-r from-cyan-400 to-purple-500 -translate-y-1/2 rounded-full transition-all duration-500 z-0"
               style={{ width: `${((step - 1) / 3) * 100}%` }}
             />
 
@@ -1360,7 +1360,7 @@ function CreateEventModal({
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${
                       isActive
-                        ? "bg-gradient-to-br from-cyan-400 to-purple-500 text-[#0B0E1E] border-transparent scale-110 shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                        ? "bg-linear-to-br from-cyan-400 to-purple-500 text-[#0B0E1E] border-transparent scale-110 shadow-[0_0_20px_rgba(34,211,238,0.3)]"
                         : isCompleted
                           ? "bg-cyan-400 text-[#0B0E1E] border-transparent"
                           : "bg-[#0B0E1E] text-gray-500 border-[#1E2550]"
@@ -1606,7 +1606,7 @@ function Step1({
 
       <div className="space-y-6">
         {/* Quick Tips */}
-        <div className="bg-gradient-to-br from-[#121433] to-[#1a1f4d] border border-[#1E2550] rounded-[24px] p-7">
+        <div className="bg-linear-to-br from-[#121433] to-[#1a1f4d] border border-[#1E2550] rounded-[24px] p-7">
           <div className="w-12 h-12 bg-cyan-400/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-6">
             <Info size={24} className="text-[#04B5A3]" />
           </div>
@@ -1856,7 +1856,7 @@ function Step2({
 
       <div className="space-y-6">
         {/* Location Tips */}
-        <div className="bg-gradient-to-br from-[#121433] to-[#1a1f4d] border border-[#1E2550] rounded-[24px] p-7">
+        <div className="bg-linear-to-br from-[#121433] to-[#1a1f4d] border border-[#1E2550] rounded-[24px] p-7">
           <div className="w-12 h-12 bg-cyan-400/10 rounded-2xl flex items-center justify-center text-cyan-400 mb-6">
             <MapPin size={24} />
           </div>
@@ -2183,7 +2183,7 @@ function Step3({
 
       <div className="space-y-6">
         {/* Featured Event Upsell */}
-        <div className="bg-gradient-to-br from-purple-600/20 to-cyan-400/20 border border-purple-500/30 rounded-[24px] p-7 relative overflow-hidden group">
+        <div className="bg-linear-to-br from-purple-600/20 to-cyan-400/20 border border-purple-500/30 rounded-[24px] p-7 relative overflow-hidden group">
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center text-white shadow-lg">
@@ -2279,7 +2279,7 @@ function Step4({
           alt="Event Banner"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E1E] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0B0E1E] via-transparent to-transparent" />
         <div className="absolute bottom-8 left-8 right-8">
           <h3 className="text-3xl font-black text-white mb-3">
             {data.name || "Event Name Placeholder"}

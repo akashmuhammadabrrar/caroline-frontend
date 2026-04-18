@@ -64,7 +64,7 @@ export default function LatestEventsPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent inline-block">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent inline-block">
             LATEST EVENTS
           </h1>
           <p className="text-gray-400 max-w-2xl">
@@ -152,7 +152,7 @@ export default function LatestEventsPage() {
                       onClick={() => setPage(page)}
                       className={`w-10 h-10 flex items-center justify-center rounded-lg border text-sm font-bold transition-all ${
                         currentPage === page
-                          ? "bg-gradient-to-r from-cyan-500 to-blue-500 border-transparent text-white shadow-lg shadow-cyan-500/20"
+                          ? "bg-linear-to-r from-cyan-500 to-blue-500 border-transparent text-white shadow-lg shadow-cyan-500/20"
                           : "border-[#1E2554] bg-[#0B0D2C] text-gray-400 hover:text-white hover:border-cyan-400/50"
                       }`}
                     >

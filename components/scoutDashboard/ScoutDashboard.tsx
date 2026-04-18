@@ -101,7 +101,7 @@ const ScoutDashboard: React.FC = () => {
       <div className="px-6 pt-6 pb-2">
         <h1 className="text-2xl font-bold">
           Welcome Back,{" "}
-          <span className="bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
             {scoutName}!
           </span>
         </h1>

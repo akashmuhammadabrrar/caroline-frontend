@@ -390,7 +390,7 @@ const PlayerRegisterForm = () => {
                 <button
                   type="button"
                   onClick={handleNextStep}
-                  className="w-full py-4 bg-gradient-to-r from-[#00E5FF] to-[#00A3FF] text-white font-bold rounded-2xl shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:shadow-[0_0_30px_rgba(0,229,255,0.5)] hover:scale-[1.01] transition-all duration-300 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-linear-to-r from-[#00E5FF] to-[#00A3FF] text-white font-bold rounded-2xl shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:shadow-[0_0_30px_rgba(0,229,255,0.5)] hover:scale-[1.01] transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   <User size={18} />
                   Create Account
@@ -418,7 +418,7 @@ const PlayerRegisterForm = () => {
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex flex-col items-center mb-4">
-                  <div className="p-4 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full shadow-lg shadow-cyan-500/20 mb-4">
+                  <div className="p-4 bg-linear-to-br from-cyan-500 to-blue-600 rounded-full shadow-lg shadow-cyan-500/20 mb-4">
                     <User size={32} className="text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">
@@ -523,7 +523,7 @@ const PlayerRegisterForm = () => {
             {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex flex-col items-center mb-4">
-                  <div className="p-4 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full shadow-lg shadow-purple-500/20 mb-4">
+                  <div className="p-4 bg-linear-to-br from-purple-500 to-indigo-600 rounded-full shadow-lg shadow-purple-500/20 mb-4">
                     <Trophy size={32} className="text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">
@@ -686,7 +686,7 @@ const PlayerRegisterForm = () => {
             {step === 3 && isMinor && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex flex-col items-center mb-4">
-                  <div className="p-4 bg-gradient-to-br from-cyan-500 to-indigo-600 rounded-full shadow-lg shadow-cyan-500/20 mb-4">
+                  <div className="p-4 bg-linear-to-br from-cyan-500 to-indigo-600 rounded-full shadow-lg shadow-cyan-500/20 mb-4">
                     <User size={32} className="text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">
@@ -872,7 +872,7 @@ const PlayerRegisterForm = () => {
             {step === 4 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="flex flex-col items-center mb-4">
-                  <div className="p-4 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full shadow-lg shadow-cyan-400/20 mb-4">
+                  <div className="p-4 bg-linear-to-br from-cyan-400 to-blue-600 rounded-full shadow-lg shadow-cyan-400/20 mb-4">
                     <Shield size={32} className="text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-2">
@@ -993,7 +993,7 @@ const PlayerRegisterForm = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-[2] py-4 bg-gradient-to-r from-emerald-500 to-green-600 border border-emerald-400/20 rounded-2xl text-white font-bold hover:from-emerald-400 hover:to-green-500 transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                    className="flex-[2] py-4 bg-linear-to-r from-emerald-500 to-green-600 border border-emerald-400/20 rounded-2xl text-white font-bold hover:from-emerald-400 hover:to-green-500 transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                   >
                     {isLoading ? (
                       "Processing..."

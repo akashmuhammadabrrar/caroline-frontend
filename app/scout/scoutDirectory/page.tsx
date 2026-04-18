@@ -162,7 +162,7 @@ export default function ScoutDirectoryPage() {
     <div className="min-h-screen bg-[#0B0D2C] text-white font-sans ">
       {/* Title */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
           Scout Directory
         </h1>
       </div>
@@ -433,7 +433,7 @@ export default function ScoutDirectoryPage() {
                 <button
                   onClick={handleSendMessage}
                   disabled={!messageText.trim() || isSendingMessage}
-                  className="flex-[2] h-14 rounded-xl bg-gradient-to-r from-[#04B5A3] to-[#039d8f] text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_8px_20px_-5px_rgba(4,181,163,0.3)] flex items-center justify-center gap-2"
+                  className="flex-[2] h-14 rounded-xl bg-linear-to-r from-[#04B5A3] to-[#039d8f] text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_8px_20px_-5px_rgba(4,181,163,0.3)] flex items-center justify-center gap-2"
                 >
                   {isSendingMessage ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

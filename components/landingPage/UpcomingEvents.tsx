@@ -218,7 +218,7 @@ export default function UpcomingEventsSection() {
                   router.push("/latest-events");
                 }
               }}
-              className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
+              className="px-10 py-3 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
             >
               View All Events <ArrowRight size={18} />
             </button>
@@ -232,7 +232,7 @@ export default function UpcomingEventsSection() {
           <div
             className="
     w-full max-w-md 
-    bg-gradient-to-br from-[#00E5FF]/20 via-[#00E5FF]/5 to-[#9C27B0]/30 
+    bg-linear-to-br from-[#00E5FF]/20 via-[#00E5FF]/5 to-[#9C27B0]/30 
     p-4 sm:p-6 md:p-8
     border border-indigo-500/20 
     shadow-2xl shadow-indigo-950/40 rounded-xl
@@ -241,13 +241,13 @@ export default function UpcomingEventsSection() {
             <div className="bg-[#171D36]/90 p-4 sm:p-6 md:p-8 rounded-xl">
               {/* Icon */}
               <div className="flex justify-center mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-lg">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-lg">
                   ♔
                 </div>
               </div>
 
               {/* Title */}
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent text-center">
                 GO PRO
               </h2>
 
@@ -288,7 +288,7 @@ export default function UpcomingEventsSection() {
                   </span>
                 </div>
 
-                <div className="bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] text-white text-[10px] sm:text-xs font-bold px-3 py-2 sm:px-4 sm:py-3 rounded-lg uppercase tracking-wide">
+                <div className="bg-linear-to-r from-[#00E5FF] to-[#9C27B0] text-white text-[10px] sm:text-xs font-bold px-3 py-2 sm:px-4 sm:py-3 rounded-lg uppercase tracking-wide">
                   Save 50%
                 </div>
               </div>

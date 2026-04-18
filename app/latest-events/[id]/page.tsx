@@ -213,7 +213,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                     ? "bg-[#0B0E1E] text-cyan-400 border border-cyan-400/30 cursor-not-allowed shadow-inner" 
                     : isFull 
                     ? "bg-gray-800/50 text-gray-500 border border-gray-700/50 cursor-not-allowed"
-                    : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-cyan-500/20"
+                    : "bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-cyan-500/20"
                 }`}
               >
                 {isRegistered ? (

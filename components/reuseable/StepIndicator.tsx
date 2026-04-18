@@ -33,7 +33,7 @@ const StepIndicator = ({ step, isMinor }: Props) => {
       
       <div className="relative h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
         <div 
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-cyan-500 to-cyan-300 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+          className="absolute top-0 left-0 h-full bg-linear-to-r from-cyan-500 to-cyan-300 transition-all duration-700 ease-out shadow-[0_0_10px_rgba(6,182,212,0.5)]"
           style={{ width: `${percentage}%` }}
         />
       </div>

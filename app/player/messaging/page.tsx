@@ -416,7 +416,7 @@ const MessagingContent = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] w-full overflow-hidden relative bg-[#0E1129] p-4 md:p-6 font-inter text-white">
-      <h1 className="text-3xl md:text-4xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent px-2">
+      <h1 className="text-3xl md:text-4xl font-extrabold mb-6 tracking-tight bg-linear-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent px-2">
         Messaging
       </h1>
 
@@ -465,7 +465,7 @@ const MessagingContent = () => {
                     className={cn(
                       "flex items-center gap-4 px-4 py-4 cursor-pointer transition-all duration-300 rounded-xl relative overflow-hidden",
                       selectedConvId === conv.id
-                        ? "bg-gradient-to-r from-[#2A3560]/80 to-transparent border-l-4 border-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.05)]"
+                        ? "bg-linear-to-r from-[#2A3560]/80 to-transparent border-l-4 border-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.05)]"
                         : "hover:bg-white/5 border-l-4 border-transparent",
                     )}
                   >
@@ -499,7 +499,7 @@ const MessagingContent = () => {
                         </AvatarFallback>
                       </Avatar>
                       {conv.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-full text-[10px] font-bold text-white border-2 border-[#161C39] shadow-[0_0_10px_rgba(192,38,211,0.5)]">
+                        <div className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-linear-to-br from-fuchsia-500 to-purple-600 rounded-full text-[10px] font-bold text-white border-2 border-[#161C39] shadow-[0_0_10px_rgba(192,38,211,0.5)]">
                           {conv.unread_count}
                         </div>
                       )}
@@ -650,7 +650,7 @@ const MessagingContent = () => {
                             className={cn(
                               "max-w-[70%] px-5 py-3.5 leading-relaxed text-[15px]",
                               isOwn
-                                ? "bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white rounded-[20px] rounded-tr-[4px] shadow-[0_4px_15px_rgba(147,51,234,0.15)]"
+                                ? "bg-linear-to-r from-fuchsia-600 to-purple-600 text-white rounded-[20px] rounded-tr-[4px] shadow-[0_4px_15px_rgba(147,51,234,0.15)]"
                                 : "bg-[#1F2752] text-white/90 rounded-[20px] rounded-tl-[4px] border border-white/5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]",
                             )}
                           >
@@ -718,7 +718,7 @@ const MessagingContent = () => {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-6">
               <div className="h-32 w-32 rounded-full bg-[#1A2049]/50 border-2 border-[#2A3560]/30 flex items-center justify-center shadow-inner relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-teal-400/5 to-transparent animate-pulse" />
+                <div className="absolute inset-0 bg-linear-to-tr from-teal-400/5 to-transparent animate-pulse" />
                 <MessageSquare className="h-12 w-12 text-teal-400/30" />
               </div>
               <div className="text-center">

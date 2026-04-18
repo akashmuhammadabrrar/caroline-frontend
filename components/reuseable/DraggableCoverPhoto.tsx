@@ -35,7 +35,7 @@ export default function DraggableCoverPhoto({
   initialY = 50,
   height = 260,
   editable = true,
-  fallbackClassName = "bg-gradient-to-br from-[#121433] to-[#1a1f4e]",
+  fallbackClassName = "bg-linear-to-br from-[#121433] to-[#1a1f4e]",
   children,
 }: DraggableCoverPhotoProps) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -160,7 +160,7 @@ export default function DraggableCoverPhoto({
       )}
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
 
       {/* Children (profile info strip, buttons etc.) */}
       {!isRepositioning && children}

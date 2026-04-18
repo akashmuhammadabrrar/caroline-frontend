@@ -75,7 +75,7 @@ export default function LatestNews() {
                         />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#12143A] via-[#12143A]/80 to-transparent z-1" />
+                    <div className="absolute inset-0 bg-linear-to-br from-[#12143A] via-[#12143A]/80 to-transparent z-1" />
 
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-6">
@@ -120,7 +120,7 @@ export default function LatestNews() {
           <div className="flex justify-center">
             <button
               onClick={handleViewAllNews}
-                     className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
+                     className="px-10 py-3 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
             >
               View All News <ArrowRight size={18}/>
             </button>

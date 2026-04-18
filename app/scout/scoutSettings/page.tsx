@@ -81,7 +81,7 @@ const [notif, setNotif] = React.useState<NotificationSettings>({
         {/* Top bar with title + Edit button */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="inline-block text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#00e5ff] to-[#9C27B0] bg-clip-text text-transparent">
+            <h1 className="inline-block text-2xl md:text-3xl font-bold bg-linear-to-r from-[#00e5ff] to-[#9C27B0] bg-clip-text text-transparent">
               Settings
             </h1>
             <p className="text-slate-400 mt-1">
@@ -103,7 +103,7 @@ const [notif, setNotif] = React.useState<NotificationSettings>({
               onClick={() => setActiveTab("security")}
               className={`pb-4 px-1 relative flex gap-2 items-center ${
                 activeTab === "security"
-                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 bg-gradient-to-r from-[#00e5ff57] to-[#9b27b06d] p-3 after:bg-teal-500"
+                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 bg-linear-to-r from-[#00e5ff57] to-[#9b27b06d] p-3 after:bg-teal-500"
                   : "text-slate-400 hover:text-slate-300"
               }`}
             >
@@ -113,7 +113,7 @@ const [notif, setNotif] = React.useState<NotificationSettings>({
               onClick={() => setActiveTab("notifications")}
               className={`pb-4 flex items-center gap-2 px-1 relative ${
                 activeTab === "notifications"
-                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 bg-gradient-to-r from-[#00e5ff57] to-[#9b27b06d] p-3 after:bg-teal-500"
+                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 bg-linear-to-r from-[#00e5ff57] to-[#9b27b06d] p-3 after:bg-teal-500"
                   : "text-slate-400 hover:text-slate-300"
               }`}
             >
@@ -123,7 +123,7 @@ const [notif, setNotif] = React.useState<NotificationSettings>({
               onClick={() => setActiveTab("preferences")}
               className={`pb-4 flex items-center gap-2 px-1 relative ${
                 activeTab === "preferences"
-                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-teal-500 bg-gradient-to-r from-[#00e5ff57] to-[#9b27b06d] p-3"
+                  ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-teal-500 bg-linear-to-r from-[#00e5ff57] to-[#9b27b06d] p-3"
                   : "text-slate-400 hover:text-slate-300"
               }`}
             >

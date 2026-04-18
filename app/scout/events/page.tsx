@@ -114,7 +114,7 @@ const Page = () => {
 
   return (
     <div className=" px-4">
-      <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+      <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
         Events
       </h1>
 
@@ -169,7 +169,7 @@ const Page = () => {
                 </div>
 
                 {/* Gradient overlay for readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#12143A] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#12143A] via-transparent to-transparent" />
 
                 {/* Tags */}
                 <div className="absolute top-3 left-3 flex gap-2">

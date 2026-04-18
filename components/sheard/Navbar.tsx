@@ -40,7 +40,6 @@ const Navbar = () => {
   const { unreadCount } = useNotifications();
   const dispatch = useAppDispatch();
   const pathname = usePathname();
-  const { data: settings } = useGetPublicSettingsQuery();
 
   const navRef = useRef<HTMLElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -204,13 +203,17 @@ const Navbar = () => {
                     className="flex items-center gap-3 pr-4 p-1 rounded-full bg-[#050B14]/40 hover:bg-[#050B14]/60 backdrop-blur-md border border-white/10 transition-all group"
                   >
                     {auth.user.profile_image ? (
-                      <img
-                        src={auth.user.profile_image}
-                        alt="Profile"
-                        className="w-9 h-9 rounded-full object-cover border border-[#00E5FF]/30"
-                      />
+                      <div className="relative w-9 h-9">
+                        <Image
+                          src={auth.user.profile_image}
+                          alt="Profile"
+                          fill
+                          className="rounded-full object-cover border border-[#00E5FF]/30"
+                          unoptimized
+                        />
+                      </div>
                     ) : (
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00E5FF] to-[#9C27B0] flex items-center justify-center text-[11px] font-bold text-white shadow-inner">
+                      <div className="w-9 h-9 rounded-full bg-linear-to-br from-[#00E5FF] to-[#9C27B0] flex items-center justify-center text-[11px] font-bold text-white shadow-inner">
                         {auth.user.first_name?.[0]}
                         {auth.user.last_name?.[0]}
                       </div>
@@ -291,13 +294,17 @@ const Navbar = () => {
                   <>
                     <div className="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 mb-2">
                       {auth.user.profile_image ? (
-                        <img
-                          src={auth.user.profile_image}
-                          alt="Profile"
-                          className="w-12 h-12 rounded-full object-cover border border-[#00E5FF]/30"
-                        />
+                        <div className="relative w-12 h-12">
+                          <Image
+                            src={auth.user.profile_image}
+                            alt="Profile"
+                            fill
+                            className="rounded-full object-cover border border-[#00E5FF]/30"
+                            unoptimized
+                          />
+                        </div>
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00E5FF] to-[#9C27B0] flex items-center justify-center text-lg font-bold shadow-inner text-white">
+                        <div className="w-12 h-12 rounded-full bg-linear-to-br from-[#00E5FF] to-[#9C27B0] flex items-center justify-center text-lg font-bold shadow-inner text-white">
                           {auth.user.first_name?.[0]}
                           {auth.user.last_name?.[0]}
                         </div>

@@ -95,7 +95,7 @@ export default function ProfileView({ profile, onEdit }: Props) {
       {/* ── HERO SECTION ── */}
       <div className="bg-[#121730] rounded-2xl overflow-hidden shadow-2xl relative">
         {/* Cover Image */}
-        <div className="h-56 md:h-72 w-full relative bg-gradient-to-r from-[#0D122B] to-[#1E2548]">
+        <div className="h-56 md:h-72 w-full relative bg-linear-to-r from-[#0D122B] to-[#1E2548]">
           {profile.cover_image && (
             <div 
               className="absolute inset-0 bg-cover bg-center" 
@@ -252,7 +252,7 @@ export default function ProfileView({ profile, onEdit }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0A0D1F] to-transparent z-20">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-[#0A0D1F] to-transparent z-20">
                     <h4 className="text-white text-sm font-medium">{v.title}</h4>
                     <p className="text-[#8B97B5] text-xs mt-1">{v.description || "Video Highlight"}</p>
                   </div>
@@ -355,7 +355,7 @@ export default function ProfileView({ profile, onEdit }: Props) {
             </h2>
 
             {(boostStatus?.status === "Active" || profile?.is_boosted) && (
-              <div className="mb-6 bg-gradient-to-r from-[#00E5FF]/10 to-[#B026FF]/10 border border-[#00E5FF]/30 p-3 rounded-xl flex items-center gap-3">
+              <div className="mb-6 bg-linear-to-r from-[#00E5FF]/10 to-[#B026FF]/10 border border-[#00E5FF]/30 p-3 rounded-xl flex items-center gap-3">
                  <div className="w-8 h-8 rounded-full bg-[#0A0D1F] flex items-center justify-center shadow-[0_0_10px_rgba(0,229,255,0.2)]">
                     <Zap size={14} className="text-[#00E5FF]" />
                  </div>

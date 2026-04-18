@@ -419,7 +419,7 @@ const MessagingContent = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] w-full overflow-hidden relative bg-[#0E1129] p-4 md:p-6 font-inter text-white">
-      <h1 className="text-3xl md:text-4xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent px-2 font-inter">
+      <h1 className="text-3xl md:text-4xl font-extrabold mb-6 tracking-tight bg-linear-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent px-2 font-inter">
         Messaging
       </h1>
 
@@ -489,7 +489,7 @@ const MessagingContent = () => {
                     className={cn(
                       "flex items-center gap-4 px-4 py-4 cursor-pointer transition-all rounded-xl relative group overflow-hidden mb-1",
                       selectedConvId === conv.id
-                        ? "bg-gradient-to-r from-[#2A3560]/80 to-transparent border-l-4 border-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.05)]"
+                        ? "bg-linear-to-r from-[#2A3560]/80 to-transparent border-l-4 border-teal-400 shadow-[0_0_20px_rgba(45,212,191,0.05)]"
                         : "hover:bg-white/5 border-l-4 border-transparent",
                     )}
                   >
@@ -523,7 +523,7 @@ const MessagingContent = () => {
                         </AvatarFallback>
                       </Avatar>
                       {conv.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-gradient-to-br from-fuchsia-500 to-purple-600 rounded-full text-[10px] font-bold text-white border-2 border-[#161C39] shadow-[0_0_10px_rgba(192,38,211,0.5)]">
+                        <div className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-linear-to-br from-fuchsia-500 to-purple-600 rounded-full text-[10px] font-bold text-white border-2 border-[#161C39] shadow-[0_0_10px_rgba(192,38,211,0.5)]">
                           {conv.unread_count}
                         </div>
                       )}
@@ -691,7 +691,7 @@ const MessagingContent = () => {
                             className={cn(
                               "max-w-[70%] px-5 py-3.5 leading-relaxed text-[15px]",
                               isOwn
-                                ? "bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white rounded-[20px] rounded-tr-[4px] shadow-[0_4px_15px_rgba(147,51,234,0.15)]"
+                                ? "bg-linear-to-r from-fuchsia-600 to-purple-600 text-white rounded-[20px] rounded-tr-[4px] shadow-[0_4px_15px_rgba(147,51,234,0.15)]"
                                 : "bg-[#1F2752] text-white/90 rounded-[20px] rounded-tl-[4px] border border-white/5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]",
                             )}
                           >
@@ -761,11 +761,11 @@ const MessagingContent = () => {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-12 bg-transparent relative overflow-hidden h-full">
               <div className="relative z-10 flex flex-col items-center space-y-8 max-w-md text-center opacity-60">
-                <div className="w-40 h-40 rounded-[50px] bg-gradient-to-tr from-[#1A2049] to-[#2A3560] flex items-center justify-center border-2 border-white/5 shadow-2xl transition-transform duration-700 hover:scale-105">
+                <div className="w-40 h-40 rounded-[50px] bg-linear-to-tr from-[#1A2049] to-[#2A3560] flex items-center justify-center border-2 border-white/5 shadow-2xl transition-transform duration-700 hover:scale-105">
                   <MessageSquare className="h-16 w-16 text-teal-400/20" />
                 </div>
                 <div className="space-y-3">
-                  <h2 className="text-2xl font-black text-white uppercase tracking-widest bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent">
+                  <h2 className="text-2xl font-black text-white uppercase tracking-widest bg-linear-to-b from-white to-white/40 bg-clip-text text-transparent">
                     Transmission Ready
                   </h2>
                   <p className="text-sm text-white/40 font-bold leading-relaxed px-8">

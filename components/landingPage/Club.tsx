@@ -193,7 +193,7 @@ export default function Club() {
                 });
               }
             }}
-           className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3">
+           className="px-10 py-3 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3">
             View All {activeTab === "clubs" ? "Clubs" : "Academies"}{" "}
             <ArrowRight size={18} />
           </button>

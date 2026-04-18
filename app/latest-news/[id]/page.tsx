@@ -91,10 +91,10 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
               unoptimized
             />
             {/* Gradient Overlay for Text Visibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#12143A] via-[#12143A]/60 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#12143A] via-[#12143A]/60 to-transparent" />
             
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-16 pb-8 sm:pb-12">
-              <span className="bg-gradient-to-r from-cyan-400 to-purple-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full inline-block mb-4 sm:mb-6 shadow-xl">
+              <span className="bg-linear-to-r from-cyan-400 to-purple-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full inline-block mb-4 sm:mb-6 shadow-xl">
                 {article.category}
               </span>
               
@@ -104,7 +104,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
               
               <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 sm:gap-6 lg:gap-8 text-xs sm:text-sm text-slate-300 font-bold uppercase tracking-widest">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 p-[2px] shadow-lg">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-linear-to-r from-purple-500 to-cyan-400 p-[2px] shadow-lg">
                     <div className="w-full h-full rounded-full bg-[#12143A] flex items-center justify-center text-white text-[10px] sm:text-xs font-black">
                       {article.author ? article.author.charAt(0).toUpperCase() : "A"}
                     </div>
@@ -133,7 +133,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
             {/* Excerpt emphasis */}
             {article.excerpt && (
               <div className="relative mb-10 sm:mb-16">
-                <div className="absolute -left-4 sm:-left-6 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full" />
+                <div className="absolute -left-4 sm:-left-6 top-0 bottom-0 w-1 sm:w-1.5 bg-linear-to-b from-cyan-400 to-purple-500 rounded-full" />
                 <p className="text-xl sm:text-2xl md:text-3xl font-medium text-white leading-relaxed italic pl-4 sm:pl-6">
                   &ldquo;{article.excerpt}&rdquo;
                 </p>

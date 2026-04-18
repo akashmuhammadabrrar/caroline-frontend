@@ -913,7 +913,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="min-h-screen bg-[#0B0D2C] text-white p-6 md:p-12 font-sans overflow-x-hidden">
       <div className="w-full mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold tracking-tight mb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
           Settings
         </h1>
         <p className="text-gray-500 text-lg">Manage your platform</p>

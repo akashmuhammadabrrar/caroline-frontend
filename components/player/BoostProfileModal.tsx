@@ -198,7 +198,7 @@ export default function BoostProfileModal({
               </button>
             )}
             <div>
-              <h2 className="text-2xl font-black bg-gradient-to-r from-[#00E5FF] to-[#B026FF] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-black bg-linear-to-r from-[#00E5FF] to-[#B026FF] bg-clip-text text-transparent">
                 Boost Your Profile
               </h2>
               <p className="text-[#8B97B5] text-sm">
@@ -474,7 +474,7 @@ export default function BoostProfileModal({
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-full max-w-md py-4 rounded-xl bg-gradient-to-r from-[#04B5A3] to-[#039d8f] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-[0_12px_24px_-8px_rgba(4,181,163,0.4)]"
+                  className="w-full max-w-md py-4 rounded-xl bg-linear-to-r from-[#04B5A3] to-[#039d8f] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-[0_12px_24px_-8px_rgba(4,181,163,0.4)]"
                 >
                   Done
                 </button>
@@ -490,7 +490,7 @@ export default function BoostProfileModal({
                 <div className="bg-[#11163C] border border-[#1E2554] rounded-2xl p-6 text-center shadow-lg relative overflow-hidden">
                   <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#00E5FF]/20 blur-3xl rounded-full"></div>
 
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00E5FF] to-[#B026FF] flex items-center justify-center mx-auto mb-4 border-4 border-[#080B1A] shadow-[0_0_20px_rgba(0,229,255,0.4)]">
+                  <div className="w-16 h-16 rounded-full bg-linear-to-br from-[#00E5FF] to-[#B026FF] flex items-center justify-center mx-auto mb-4 border-4 border-[#080B1A] shadow-[0_0_20px_rgba(0,229,255,0.4)]">
                     <Zap size={28} className="text-white" />
                   </div>
 
@@ -569,7 +569,7 @@ export default function BoostProfileModal({
                   </h3>
 
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#00E5FF] to-[#B026FF] flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.3)]">
+                    <div className="w-12 h-12 rounded-lg bg-linear-to-br from-[#00E5FF] to-[#B026FF] flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.3)]">
                       <Zap size={20} className="text-white" />
                     </div>
                     <div>

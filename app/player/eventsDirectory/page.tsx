@@ -227,7 +227,7 @@ const EventsDirectoryPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-8">
+      <h1 className="text-3xl font-bold bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-8">
         Events Directory
       </h1>
 

@@ -47,7 +47,7 @@ const HowItWorks = () => {
               <div className="relative p-8 md:p-10 rounded-2xl bg-[var(--bg-card,#0A1424)] h-full">
                 {/* Gradient Border using pseudo-element */}
                 <div
-                  className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                  className="absolute inset-0 rounded-2xl p-[2px] bg-linear-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
                     background: `linear-gradient(135deg, ${theme.colors.primaryCyan}, ${theme.colors.primaryMagenta})`,
                     WebkitMask:

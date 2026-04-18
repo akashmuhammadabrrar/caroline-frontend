@@ -79,7 +79,7 @@ export default function LatestNewsPage() {
           </Link>
           
           <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
-            LATEST <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">NEWS</span>
+            LATEST <span className="bg-linear-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">NEWS</span>
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
             Stay updated with training tips, nutrition advice, and gear reviews. Our blog shares the latest insights to help you excel in your professional journey.

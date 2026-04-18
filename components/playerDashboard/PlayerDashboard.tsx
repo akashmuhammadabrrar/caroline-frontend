@@ -60,7 +60,7 @@ const Avatar = ({ name, logo }: { name: string; logo?: string }) => {
   }
 
   return (
-    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#B026FF] to-[#00E5FF] flex items-center justify-center text-white font-bold text-sm border border-[#1E2554]">
+    <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#B026FF] to-[#00E5FF] flex items-center justify-center text-white font-bold text-sm border border-[#1E2554]">
       {initials}
     </div>
   );
@@ -130,7 +130,7 @@ export default function PlayerDashboard() {
     <div className="min-h-screen bg-[#080D28] text-white p-6 font-sans">
       <div className=" mx-auto space-y-6">
         {/* Welcome */}
-        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
           Welcome Back, {profile?.first_name || "Athlete"}
         </h1>
         {/* Profile Completeness */}

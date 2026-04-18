@@ -82,7 +82,7 @@ export default function PlayerDiscoveryPage() {
       {/* Title */}
       <div className="mb-6">
         {" "}
-        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
           {" "}
           Player Discovery{" "}
         </h1>{" "}

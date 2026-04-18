@@ -216,7 +216,7 @@ const ClubSettingsPage = () => {
     <div className="min-h-screen bg-[#070B24] text-white p-6 md:p-10 font-sans pb-20">
       <div className=" w-full mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-gradient-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-6 inline-block pb-2 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent">
             Settings
           </h1>
           <p className="text-[#5B6397] text-sm mt-1">
@@ -241,7 +241,7 @@ const ClubSettingsPage = () => {
               onClick={() => setActiveTab(id)}
               className={`flex items-center gap-2 px-6 py-3 text-sm font-bold transition-colors ${
                 activeTab === id
-                  ? "text-white bg-gradient-to-r from-[#00E5FF33] to-[#9C27B033] border-b-2 border-[#00E5FF]"
+                  ? "text-white bg-linear-to-r from-[#00E5FF33] to-[#9C27B033] border-b-2 border-[#00E5FF]"
                   : "text-[#5B6397] hover:text-[#8891BB]"
               }`}
             >

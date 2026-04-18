@@ -84,7 +84,7 @@ function ProfileEditForm({
           type="submit"
           disabled={saving || !formState.isDirty}
           onClick={handleSubmit(onSubmit)}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#7B2FFF] to-[#00D9FF] rounded-lg font-semibold disabled:opacity-60"
+          className="px-6 py-2.5 bg-linear-to-r from-[#7B2FFF] to-[#00D9FF] rounded-lg font-semibold disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>
