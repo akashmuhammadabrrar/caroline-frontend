@@ -22,16 +22,18 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
+  const state = api.getState() as RootState;
+  const hadToken = !!state.auth?.accessToken;
+
   let result = await baseQuery(args, api, extraOptions);
 
-  if (result.error && result.error.status === 401) {
-    // Force logout
+  if (result.error && result.error.status === 401 && hadToken) {
+    // Only clear credentials if the user actually had a token (session expired).
+    // This prevents 401s from public API endpoints from logging out anonymous
+    // visitors or clearing valid sessions.
+    // NOTE: No redirect here — ProtectedRoute handles redirecting to /login
+    // for protected pages. The public landing page must stay accessible.
     api.dispatch(logout());
-
-    // Optional: Redirect to login page
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
   }
   return result;
 };
