@@ -59,16 +59,10 @@ const HowItWorks = () => {
                 />
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  {/* Step Number with Staggered Position */}
+                <div className="relative z-10 flex flex-col items-center text-center h-full justify-center">
+                  {/* Step Number */}
                   <div
-                    className={`font-display text-7xl md:text-8xl font-black mb-4 ${
-                      index === 0
-                        ? "self-center -mt-4 ml-[-0.5rem]"
-                        : index === 1
-                          ? "self-center"
-                          : "self-center -mt-2 mr-[-0.5rem]"
-                    }`}
+                    className="font-display text-7xl md:text-8xl font-black mb-6 leading-none self-center"
                     style={{ color: "#09585E" }}
                   >
                     {step.number}
@@ -92,12 +86,12 @@ const HowItWorks = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-4">
                     {step.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+                  <p className="text-gray-400 text-sm md:text-base leading-relaxed mt-auto px-2">
                     {step.description}
                   </p>
                 </div>
