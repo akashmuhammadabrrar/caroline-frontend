@@ -323,8 +323,8 @@ const EventsDirectoryPage = () => {
             })}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
+          {/* Pagination this is a new line */} 
+ 	  {totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 pt-10">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}

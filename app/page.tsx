@@ -1,3 +1,6 @@
+'use client'
+
+
 import Banner from "@/components/landingPage/Banner";
 import Club from "@/components/landingPage/Club";
 import Feature from "@/components/landingPage/Feature";
@@ -8,22 +11,27 @@ import LatestNews from "@/components/landingPage/LatestNews";
 import UpcomingEventsSection from "@/components/landingPage/UpcomingEvents";
 import AddSection from "@/components/landingPage/AddSection";
 import AdBanner from "@/components/landingPage/AdBanner";
+import { useAppSelector } from "@/redux/hooks";
+import FAQSection from "@/components/landingPage/FAQSection";
 
 export default function Home() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <>
       <Navbar />
       <main className="w-full font-sans">
         <Banner />
         <Club />
-        <HowItWorks />
+        {/* ✅ Only show when user is NOT logged in */}
+        {!user && <HowItWorks />}
         <Feature />
         <div className="container mx-auto px-4 md:px-0">
-          <AdBanner/>
+          <AdBanner />
         </div>
         <LatestNews />
         <UpcomingEventsSection />
         <AddSection />
+        <FAQSection/>
       </main>
       <Footer />
     </>
