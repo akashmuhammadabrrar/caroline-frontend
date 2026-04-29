@@ -14,7 +14,7 @@ const AdBanner = () => {
           5 FISH
         </h2>
         <div className="text-white text-xs sm:text-sm font-medium leading-tight">
-          You'll Want to<br />Try Next
+          You&apos;ll Want to<br />Try Next
         </div>
       </div>
 

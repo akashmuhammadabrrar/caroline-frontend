@@ -87,7 +87,7 @@ export default function UpcomingEventsSection() {
           </div>
         ) : upcomingEvents.length === 0 ? (
           <div className="text-center text-gray-400 h-48 flex flex-col justify-center items-center mb-12 border border-[#12143A] rounded-2xl bg-[#090C22]">
-            <p>No upcoming events at the moment. Please check back later.</p>
+            <p>Please login show for upcomming events</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-8 mb-12">
