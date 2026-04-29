@@ -25,7 +25,7 @@ const baseQueryWithReauth: BaseQueryFn<
   const state = api.getState() as RootState;
   const hadToken = !!state.auth?.accessToken;
 
-  let result = await baseQuery(args, api, extraOptions);
+  const result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401 && hadToken) {
     // Only clear credentials if the user actually had a token (session expired).
@@ -61,7 +61,10 @@ export const baseApi = createApi({
     "Chat",
     "Notification",
     "Promo",
-    "Config"
+    "Config",
+    "Ads",
+    "Faq",
+    "Testimonials"
   ],
   endpoints: () => ({}),
 });

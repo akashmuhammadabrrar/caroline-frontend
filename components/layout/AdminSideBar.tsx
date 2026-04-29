@@ -28,7 +28,6 @@ import { useDispatch } from "react-redux";
 
 import { logout } from "@/redux/features/auth/authSlice";
 import BrandedLogo from "../reuseable/BrandedLogo";
-import Logo from "../reuseable/Logo";
 
 import { useAppSelector } from "@/redux/hooks";
 import { RootState } from "@/redux/store";
@@ -127,7 +126,16 @@ const ScoutSideBar: React.FC = () => {
       href: "/admin/contentManagement",
     },
 
-    { icon: Settings, label: " Settings", href: "/admin/adminSettings" },
+    {
+      icon: Settings,
+      label: "Site Settings",
+      children: [
+        { icon: FileText, label: "Ads Management", href: "/admin/siteSettings/ads" },
+        { icon: FileText, label: "FAQ Management", href: "/admin/siteSettings/faq" },
+        { icon: FileText, label: "Testimonials", href: "/admin/siteSettings/testimonials" },
+        { icon: Settings, label: "Admin Settings", href: "/admin/adminSettings" },
+      ],
+    },
   ], []);
 
   // ✅ stable key for groups even without href
