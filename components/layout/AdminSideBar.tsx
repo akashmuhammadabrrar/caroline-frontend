@@ -131,6 +131,7 @@ const ScoutSideBar: React.FC = () => {
       label: "Site Settings",
       children: [
         { icon: FileText, label: "Ads Management", href: "/admin/siteSettings/ads" },
+        { icon: FileText, label: "Special Ads", href: "/admin/siteSettings/special-ads" },
         { icon: FileText, label: "FAQ Management", href: "/admin/siteSettings/faq" },
         { icon: FileText, label: "Testimonials", href: "/admin/siteSettings/testimonials" },
         { icon: Settings, label: "Admin Settings", href: "/admin/adminSettings" },
