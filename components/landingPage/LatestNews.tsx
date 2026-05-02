@@ -4,24 +4,19 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import Image from "next/image";
 import SectionTitel from "@/components/reuseable/SectionTitel";
-import { useAppSelector } from "@/redux/hooks";
-import { Lock, Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
-import { format, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import AdBanner from "./AdBanner";
+import { NewsArticle } from "@/types/home";
 
 export default function LatestNews() {
-  const theme = useAppSelector((state) => state.theme);
-  const user = useAppSelector((state) => state.auth.user);
   const router = useRouter();
-
   const { data: newsData, isLoading } = useGetLatestNewsQuery();
-
-  console.log(newsData, "newsData");
 
   const newsItems = useMemo(() => {
     const items = [...(newsData?.articles || newsData?.data || [])];
-    return items.sort((a: any, b: any) => {
+    return items.sort((a, b) => {
       const dateA = a.date_published ? parseISO(a.date_published).getTime() : 0;
       const dateB = b.date_published ? parseISO(b.date_published).getTime() : 0;
       return dateB - dateA;
@@ -59,7 +54,7 @@ export default function LatestNews() {
             <div className="bg-white p-3 md:p-4 rounded-3xl w-full max-w-3xl mx-auto shadow-2xl">
               <div className="flex flex-col gap-3 md:gap-4">
                 {/* Top News */}
-                {newsItems.length > 0 && (
+                {newsItems[0] && (
                   <div
                     key={newsItems[0].unique_id || newsItems[0].id}
                     onClick={() => handleStoryDetails(newsItems[0].unique_id)}
@@ -72,7 +67,7 @@ export default function LatestNews() {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       unoptimized
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-5 md:p-6 w-full md:w-[90%]">
                       <h2 className="text-white text-xl md:text-[26px] font-extrabold leading-tight drop-shadow-md">
                         {newsItems[0].title}
@@ -84,7 +79,7 @@ export default function LatestNews() {
                 {/* Bottom row */}
                 {newsItems.length > 1 && (
                   <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    {newsItems.slice(1, 3).map((item: any) => (
+                    {newsItems.slice(1, 3).map((item: NewsArticle) => (
                       <div
                         key={item.unique_id || item.id}
                         onClick={() => handleStoryDetails(item.unique_id)}
@@ -99,7 +94,7 @@ export default function LatestNews() {
                             unoptimized
                           />
                           {item.category && (
-                            <div className="absolute top-3 left-3 bg-gradient-to-r from-fuchsia-600 to-pink-500 text-white text-[9px] md:text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest z-10 shadow-sm">
+                            <div className="absolute top-3 left-3 bg-linear-to-r from-fuchsia-600 to-pink-500 text-white text-[9px] md:text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest z-10 shadow-sm">
                               {item.category}
                             </div>
                           )}
@@ -122,7 +117,7 @@ export default function LatestNews() {
           <div className="flex justify-center">
             <button
               onClick={handleViewAllNews}
-              className="px-10 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
+              className="px-10 py-3 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
             >
               View All News <ArrowRight size={18} />
             </button>
@@ -130,9 +125,9 @@ export default function LatestNews() {
         </div>
       </div>
 
-      <div>
-        <AdBanner/>
-      </div>
+       <div className="container mx-auto px-4 md:px-0">
+          <AdBanner position="BOTTOM" />
+        </div>
     </div>
   );
 }

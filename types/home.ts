@@ -18,3 +18,22 @@ export interface HeroResponse {
     success: boolean;
     data: HeroData[];
 }
+
+export interface NewsArticle {
+    id: number;
+    unique_id: string;
+    title: string;
+    content: string;
+    image_url?: string;
+    category?: string;
+    date_published: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface NewsResponse {
+    success: boolean;
+    articles?: NewsArticle[];
+    data?: NewsArticle[];
+}

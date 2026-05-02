@@ -1,5 +1,5 @@
 import { baseApi } from "@/redux/api/baseApi";
-import { HeroResponse } from "@/types/home";
+import { HeroResponse, NewsArticle, NewsResponse } from "@/types/home";
 
 export interface PublicSettings {
   platformName: string;
@@ -25,11 +25,11 @@ export const homeApi = baseApi.injectEndpoints({
       query: () => "/admin-dashboard/home/upcoming-events/",
       providesTags: ["Events"],
     }),
-    getLatestNews: builder.query<any, void>({
+    getLatestNews: builder.query<NewsResponse, void>({
       query: () => "/news/",
       providesTags: ["Dashboard"],
     }),
-    getNewsById: builder.query<any, string>({
+    getNewsById: builder.query<{ success: boolean; data: NewsArticle }, string>({
       query: (id) => `/news/${id}/`,
       providesTags: ["Dashboard"],
     }),
