@@ -5,7 +5,6 @@ import {
   Plus, 
   Pencil, 
   Trash2, 
-  Eye, 
   Upload, 
   X, 
   Loader2, 
@@ -93,15 +92,16 @@ function AdModal({ ad, onClose }: AdModalProps) {
         toast.success('Advertisement created successfully');
       }
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string; errors?: Record<string, string[]> } };
       // Improved error display to show specific field errors if available
-      if (err?.data?.errors) {
-        const errorMessages = Object.entries(err.data.errors)
-          .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+      if (error?.data?.errors) {
+        const errorMessages = Object.entries(error.data.errors)
+          .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
           .join(' | ');
         toast.error(errorMessages);
       } else {
-        toast.error(err?.data?.message || 'Something went wrong');
+        toast.error(error?.data?.message || 'Something went wrong');
       }
     }
   };
@@ -178,7 +178,7 @@ function AdModal({ ad, onClose }: AdModalProps) {
                 <label className={labelClass}>Position</label>
                 <select 
                   value={position} 
-                  onChange={e => setPosition(e.target.value as any)} 
+                  onChange={e => setPosition(e.target.value as "TOP" | "BOTTOM")} 
                   className={inputClass}
                 >
                   <option value="TOP">Top</option>
@@ -189,7 +189,7 @@ function AdModal({ ad, onClose }: AdModalProps) {
                 <label className={labelClass}>Status</label>
                 <select 
                   value={status} 
-                  onChange={e => setStatus(e.target.value as any)} 
+                  onChange={e => setStatus(e.target.value as "ACTIVE" | "INACTIVE")} 
                   className={inputClass}
                 >
                   <option value="ACTIVE">Active</option>
@@ -235,7 +235,7 @@ function DeleteModal({ title, onConfirm, onClose, isDeleting }: {
         </div>
         <h3 className="text-xl font-bold text-white mb-2">Delete Advertisement?</h3>
         <p className="text-gray-400 text-sm mb-6">
-          Are you sure you want to delete <span className="text-white font-semibold">"{title}"</span>? This action cannot be undone.
+          Are you sure you want to delete <span className="text-white font-semibold">&quot;{title}&quot;</span>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button 
@@ -261,7 +261,7 @@ function DeleteModal({ title, onConfirm, onClose, isDeleting }: {
 // ─── Admin Special Ads Page ────────────────────────────────────────────────
 
 export default function SpecialAdsPage() {
-  const { data, isLoading, isError, refetch } = useGetAdminSpecialAdsQuery();
+  const { data, isLoading } = useGetAdminSpecialAdsQuery();
   const [deleteAd, { isLoading: isDeleting }] = useDeleteSpecialAdMutation();
   const [selectedAd, setSelectedAd] = useState<SpecialAd | undefined>(undefined);
   const [showModal, setShowModal] = useState(false);
@@ -276,8 +276,9 @@ export default function SpecialAdsPage() {
       await deleteAd(adToDelete.ad_id).unwrap();
       toast.success('Advertisement deleted');
       setAdToDelete(null);
-    } catch (err: any) {
-      toast.error(err?.data?.message || 'Failed to delete');
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || 'Failed to delete');
     }
   };
 

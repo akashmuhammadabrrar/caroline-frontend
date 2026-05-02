@@ -28,7 +28,7 @@ const EventDetailsPage = () => {
     useGetScoutRegistrationsQuery();
 
   const isRegistered = registrations?.results
-    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ?  
       registrations.results.some((reg: any) => reg.event === Number(eventId))
     : registrations?.some((reg: any) => reg.event === Number(eventId));
 

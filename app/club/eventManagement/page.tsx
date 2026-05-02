@@ -104,7 +104,7 @@ export default function EventManagementPage() {
       const venue = apiEvent.venue_name || "Venue TBA";
       const addr = apiEvent.venue_address ? `, ${apiEvent.venue_address}` : "";
 
-      let rawFee = apiEvent.registration_fee?.toString() || "0.00";
+      const rawFee = apiEvent.registration_fee?.toString() || "0.00";
       const fee = rawFee.startsWith("€") ? rawFee : `€${rawFee}`;
 
       return {

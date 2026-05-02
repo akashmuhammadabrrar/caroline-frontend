@@ -5,7 +5,6 @@ import {
   Plus, 
   Pencil, 
   Trash2, 
-  Eye, 
   Upload, 
   X, 
   Loader2, 
@@ -93,15 +92,16 @@ function AdModal({ ad, onClose }: AdModalProps) {
         toast.success('Advertisement created successfully');
       }
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string; errors?: Record<string, string[]> } };
       // Improved error display to show specific field errors if available
-      if (err?.data?.errors) {
-        const errorMessages = Object.entries(err.data.errors)
-          .map(([field, msgs]) => `${field}: ${(msgs as string[]).join(', ')}`)
+      if (error?.data?.errors) {
+        const errorMessages = Object.entries(error.data.errors)
+          .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
           .join(' | ');
         toast.error(errorMessages);
       } else {
-        toast.error(err?.data?.message || 'Something went wrong');
+        toast.error(error?.data?.message || 'Something went wrong');
       }
     }
   };
@@ -178,7 +178,7 @@ function AdModal({ ad, onClose }: AdModalProps) {
                 <label className={labelClass}>Position</label>
                 <select 
                   value={position} 
-                  onChange={e => setPosition(e.target.value as any)} 
+                  onChange={e => setPosition(e.target.value as "TOP" | "BOTTOM")} 
                   className={inputClass}
                 >
                   <option value="TOP">Top</option>
@@ -189,7 +189,7 @@ function AdModal({ ad, onClose }: AdModalProps) {
                 <label className={labelClass}>Status</label>
                 <select 
                   value={status} 
-                  onChange={e => setStatus(e.target.value as any)} 
+                  onChange={e => setStatus(e.target.value as "ACTIVE" | "INACTIVE")} 
                   className={inputClass}
                 >
                   <option value="ACTIVE">Active</option>
@@ -225,7 +225,7 @@ function AdModal({ ad, onClose }: AdModalProps) {
 // ─── Admin Special Ads Page ────────────────────────────────────────────────
 
 export default function SpecialAdsPage() {
-  const { data, isLoading, isError, refetch } = useGetAdminSpecialAdsQuery();
+  const { data, isLoading } = useGetAdminSpecialAdsQuery();
   const [deleteAd, { isLoading: isDeleting }] = useDeleteSpecialAdMutation();
   const [selectedAd, setSelectedAd] = useState<SpecialAd | undefined>(undefined);
   const [showModal, setShowModal] = useState(false);
@@ -237,8 +237,9 @@ export default function SpecialAdsPage() {
       try {
         await deleteAd(id).unwrap();
         toast.success('Advertisement deleted');
-      } catch (err: any) {
-        toast.error(err?.data?.message || 'Failed to delete');
+      } catch (err: unknown) {
+        const error = err as { data?: { message?: string } };
+        toast.error(error?.data?.message || 'Failed to delete');
       }
     }
   };
