@@ -31,6 +31,9 @@ export default function Home() {
         <LatestNews />
         <UpcomingEventsSection />
         <AddSection />
+        {/* <div className="container mx-auto px-4 md:px-0">
+          <AdBanner position="BOTTOM" />
+        </div> */}
         <FAQSection/>
       </main>
       <Footer />

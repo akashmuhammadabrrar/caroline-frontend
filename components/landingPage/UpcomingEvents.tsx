@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Lock,
   Clock,
   MapPin,
   Users,
@@ -10,18 +9,14 @@ import {
   Loader2,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "../ui/button";
 import { useAppSelector } from "@/redux/hooks";
 import SectionTitel from "../reuseable/SectionTitel";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  useGetPlayerEventsQuery,
-  useGetMyRegistrationsQuery,
-} from "@/redux/features/player/eventsDirectoryApi";
-import { format } from "date-fns";
-import { CheckCircle } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useGetPlayerEventsQuery } from "@/redux/features/player/eventsDirectoryApi";
+import { format, isValid,} from "date-fns";
+import React, { useState, useEffect, useMemo } from "react";
+import { EventDataApi } from "@/redux/features/player/eventsDirectoryApi";
 
 export default function UpcomingEventsSection() {
   const router = useRouter();
@@ -34,42 +29,77 @@ export default function UpcomingEventsSection() {
     setMounted(true);
   }, []);
 
-  const { data: registrationsData } = useGetMyRegistrationsQuery(undefined, {
-    skip: !user || user.role !== "PLAYER",
-  });
+  const eventsList = useMemo(() => {
+    if (!eventsData) return [];
+    return Array.isArray(eventsData)
+      ? eventsData
+      : eventsData.results || eventsData.data || [];
+  }, [eventsData]);
 
-  const registrations = Array.isArray(registrationsData)
-    ? registrationsData
-    : (registrationsData as any)?.results ||
-      (registrationsData as any)?.data ||
-      [];
+  const upcomingEvents = useMemo(() => {
+    return [...eventsList]
+      .filter(
+        (e) =>
+          e.status?.toUpperCase() !== "CANCELLED" &&
+          e.status?.toUpperCase() !== "COMPLETED",
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.created_at || 0).getTime() -
+          new Date(a.created_at || 0).getTime(),
+      )
+      .slice(0, 2);
+  }, [eventsList]);
 
-  const eventsList = Array.isArray(eventsData)
-    ? eventsData
-    : eventsData?.results || eventsData?.data || [];
+  const formatEventDate = (dateStr?: string) => {
+    if (!dateStr) return "TBD";
+    const d = new Date(dateStr);
+    return isValid(d) ? format(d, "dd MMM yyyy") : dateStr;
+  };
 
-  /*
-// console.log(
-    "UpcomingEvents eventsData API response:",
-    eventsData,
-    "Derived eventsList:",
-    eventsList,
-  );
-  */
+  const formatEventTime = (timeStr?: string) => {
+    if (!timeStr) return "TBD";
+    try {
+      const [hours, minutes] = timeStr.split(":");
+      const d = new Date();
+      d.setHours(Number(hours), Number(minutes));
+      return format(d, "hh:mm a");
+    } catch (error) {
+      return timeStr;
+    }
+  };
 
-  // Get active/upcoming events and limit to 2, sorted by created_at descending
-  const upcomingEvents = [...eventsList]
-    .filter(
-      (e: any) =>
-        e.status?.toUpperCase() !== "CANCELLED" &&
-        e.status?.toUpperCase() !== "COMPLETED",
-    )
-    .sort(
-      (a: any, b: any) =>
-        new Date(b.created_at || 0).getTime() -
-        new Date(a.created_at || 0).getTime(),
-    )
-    .slice(0, 2);
+  const formatFee = (fee?: string) => {
+    return fee === "0.00" || !fee || Number(fee) === 0
+      ? "Free Entry"
+      : `$${fee}`;
+  };
+
+  const handleViewAllEvents = () => {
+    if (!user) {
+      router.push("/latest-events");
+      return;
+    }
+    const role = user.role?.toUpperCase();
+    switch (role) {
+      case "PLAYER":
+        router.push("/player/eventsDirectory");
+        break;
+      case "CLUB":
+      case "CLUB_ACADEMY":
+        router.push("/club/eventManagement");
+        break;
+      case "SCOUT":
+      case "SCOUT_AGENT":
+        router.push("/scout/events");
+        break;
+      case "ADMIN":
+        router.push("/admin/eventManagement");
+        break;
+      default:
+        router.push("/latest-events");
+    }
+  };
 
   return (
     <div className="py-16 bg-[var(--bg-dark,#07142b)] text-white">
@@ -87,28 +117,21 @@ export default function UpcomingEventsSection() {
           </div>
         ) : upcomingEvents.length === 0 ? (
           <div className="text-center text-gray-400 h-48 flex flex-col justify-center items-center mb-12 border border-[#12143A] rounded-2xl bg-[#090C22]">
-            <p>Please login show for upcomming events</p>
+            <p>Please login to show upcoming events</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {upcomingEvents.map((event: any) => (
+            {upcomingEvents.map((event: EventDataApi) => (
               <div
                 key={event.id}
-                className="rounded-2xl p-8 bg-[var(--bg-card,#12143A)]"
+                className="rounded-2xl p-8 bg-[var(--bg-card,#12143A)] shadow-lg hover:shadow-cyan-900/10 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-[#06A295] font-semibold text-sm uppercase tracking-wider">
                     {event.status || "Upcoming"}
                   </span>
                   <span className="text-[#06A295] font-medium text-sm">
-                    {(() => {
-                      const eventDate = event.event_date || event.date;
-                      if (!eventDate) return "TBD";
-                      const d = new Date(eventDate);
-                      return !isNaN(d.getTime())
-                        ? format(d, "dd MMM yyyy")
-                        : eventDate;
-                    })()}
+                    {formatEventDate(event.event_date)}
                   </span>
                 </div>
 
@@ -123,19 +146,7 @@ export default function UpcomingEventsSection() {
                       style={{ color: theme.colors.primaryCyan }}
                     />
                     <span className="text-[#06A295]">
-                      {(() => {
-                        const eventTime = event.event_time || event.time;
-                        if (!eventTime) return "TBD";
-                        // Time is likely HH:MM:SS, parse it to 12 hr
-                        try {
-                          const [hours, minutes] = eventTime.split(":");
-                          const d = new Date();
-                          d.setHours(Number(hours), Number(minutes));
-                          return format(d, "hh:mm a");
-                        } catch (e) {
-                          return eventTime;
-                        }
-                      })()}
+                      {formatEventTime(event.event_time)}
                     </span>
                   </div>
 
@@ -145,7 +156,7 @@ export default function UpcomingEventsSection() {
                       style={{ color: theme.colors.primaryCyan }}
                     />
                     <span className="text-[#06A295]">
-                      {event.venue_name || event.location || "Location TBD"}
+                      {event.venue_name || event.venue_address || "Location TBD"}
                     </span>
                   </div>
 
@@ -155,14 +166,7 @@ export default function UpcomingEventsSection() {
                       style={{ color: theme.colors.primaryCyan }}
                     />
                     <span className="text-[#06A295]">
-                      {(() => {
-                        const eventFee = event.registration_fee || event.fee;
-                        return eventFee === "0.00" ||
-                          !eventFee ||
-                          Number(eventFee) === 0
-                          ? "Free Entry"
-                          : `$${eventFee}`;
-                      })()}
+                      {formatFee(event.registration_fee)}
                     </span>
                   </div>
                 </div>
@@ -192,8 +196,6 @@ export default function UpcomingEventsSection() {
                     </div>
                   </div>
                 </div>
-
-            
               </div>
             ))}
           </div>
@@ -202,24 +204,7 @@ export default function UpcomingEventsSection() {
         <div className="flex justify-center">
           <div className="flex justify-center mt-10">
             <button
-              onClick={() => {
-                if (!user) {
-                  router.push("/latest-events");
-                  return;
-                }
-                const role = user.role?.toUpperCase();
-                if (role === "PLAYER") {
-                  router.push("/player/eventsDirectory");
-                } else if (role === "CLUB" || role === "CLUB_ACADEMY") {
-                  router.push("/club/eventManagement");
-                } else if (role === "SCOUT" || role === "SCOUT_AGENT") {
-                  router.push("/scout/events");
-                } else if (role === "ADMIN") {
-                  router.push("/admin/eventManagement");
-                } else {
-                  router.push("/latest-events");
-                }
-              }}
+              onClick={handleViewAllEvents}
               className="px-10 py-3 bg-linear-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3"
             >
               View All Events <ArrowRight size={18} />
@@ -229,37 +214,33 @@ export default function UpcomingEventsSection() {
 
         <div
           id="membership"
-          className="min-h-screen flex items-center justify-center p-4 sm:p-6"
+          className="mt-20 flex items-center justify-center p-4 sm:p-6"
         >
           <div
             className="
-    w-full max-w-md 
-    bg-linear-to-br from-[#00E5FF]/20 via-[#00E5FF]/5 to-[#9C27B0]/30 
-    p-4 sm:p-6 md:p-8
-    border border-indigo-500/20 
-    shadow-2xl shadow-indigo-950/40 rounded-xl
-  "
+            w-full max-w-md 
+            bg-linear-to-br from-[#00E5FF]/20 via-[#00E5FF]/5 to-[#9C27B0]/30 
+            p-4 sm:p-6 md:p-8
+            border border-indigo-500/20 
+            shadow-2xl shadow-indigo-950/40 rounded-xl
+          "
           >
             <div className="bg-[#171D36]/90 p-4 sm:p-6 md:p-8 rounded-xl">
-              {/* Icon */}
               <div className="flex justify-center mb-3">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl sm:text-2xl font-black text-white shadow-lg">
                   ♔
                 </div>
               </div>
 
-              {/* Title */}
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 bg-linear-to-r from-[#00E5FF] to-[#9C27B0] bg-clip-text text-transparent text-center">
                 GO PRO
               </h2>
 
-              {/* Description */}
               <p className="text-[#7FB6B6] text-sm sm:text-base text-center mb-6 sm:mb-8 font-bold px-2">
                 Unlock premium features and accelerate your football career with
                 NextGen Pro membership
               </p>
 
-              {/* Features */}
               <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10 text-[#7FB6B6] text-xs sm:text-sm">
                 {[
                   "Exclusive scout network access",
@@ -278,7 +259,6 @@ export default function UpcomingEventsSection() {
                 ))}
               </ul>
 
-              {/* Price */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3">
                 <div className="flex items-baseline text-[#9CFFF0]">
                   <span className="text-2xl sm:text-3xl font-black">$</span>
@@ -299,7 +279,6 @@ export default function UpcomingEventsSection() {
                 (introductory offer — usually $19.99/year)
               </p>
 
-              {/* Button */}
               <div className="flex justify-center">
                 {(!mounted || !user) ? (
                   <Link
