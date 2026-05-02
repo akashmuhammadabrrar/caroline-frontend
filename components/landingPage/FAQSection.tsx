@@ -27,7 +27,7 @@ const FAQSection = () => {
             Frequently Asked <span className="text-primary">Questions</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about our services. Can't find the answer you're looking for? Feel free to contact our support team.
+            Everything you need to know about our services. Can&apos;t find the answer you&apos;re looking for? Feel free to contact our support team.
           </p>
         </div>
 

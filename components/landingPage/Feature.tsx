@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAppSelector } from "@/redux/hooks";
-import { Lock, Loader2, ArrowRight } from "lucide-react";
+import {  Loader2, ArrowRight } from "lucide-react";
 import { useGetFeaturedPlayersQuery } from "@/redux/features/admin/adminSettingsApi";
 import { getFlagEmoji } from "@/lib/utils/flagUtils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import Link from "next/link";
+
 
 const Feature = () => {
   const router = useRouter();

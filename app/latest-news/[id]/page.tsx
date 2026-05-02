@@ -3,7 +3,7 @@
 import { use, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Loader2, ArrowLeft, Clock, Share2, Eye } from "lucide-react";
 import { useGetNewsByIdQuery } from "@/redux/features/home/homeApi";
 import Navbar from "@/components/sheard/Navbar";
@@ -12,7 +12,11 @@ import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import DOMPurify from "isomorphic-dompurify";
-import { parseISO } from "date-fns";
+import { 
+  formatNewsCategory, 
+  formatNewsExcerpt, 
+  formatNewsImage 
+} from "@/utils/news";
 
 export default function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
@@ -82,7 +86,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
           {/* Cover Image */}
           <div className="relative w-full min-h-[300px] h-[50vh] sm:min-h-[400px] sm:h-[500px] md:h-[600px]">
             <Image
-              src={article.image_url || "/images/event-banner.jpg"}
+              src={formatNewsImage(article.image_url)}
               alt={article.title}
               fill
               priority
@@ -95,7 +99,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
             
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-16 pb-8 sm:pb-12">
               <span className="bg-linear-to-r from-cyan-400 to-purple-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] px-4 sm:px-5 py-1.5 sm:py-2 rounded-full inline-block mb-4 sm:mb-6 shadow-xl">
-                {article.category}
+                {formatNewsCategory(article.category)}
               </span>
               
               <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] mb-6 sm:mb-8 max-w-4xl">
@@ -131,7 +135,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
 
             
             {/* Excerpt emphasis */}
-            {article.excerpt && (
+            {article.excerpt && !article.excerpt.startsWith("http") && (
               <div className="relative mb-10 sm:mb-16">
                 <div className="absolute -left-4 sm:-left-6 top-0 bottom-0 w-1 sm:w-1.5 bg-linear-to-b from-cyan-400 to-purple-500 rounded-full" />
                 <p className="text-xl sm:text-2xl md:text-3xl font-medium text-white leading-relaxed italic pl-4 sm:pl-6">
@@ -147,7 +151,7 @@ export default function ArticlePage({ params }: { params: Promise<{ id: string }
                 prose-headings:text-white prose-headings:font-black prose-headings:tracking-tight
                 prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline
                 prose-img:rounded-xl sm:prose-img:rounded-[2rem] prose-img:border prose-img:border-[#1E2554] prose-img:shadow-2xl"
-              style={{ color: (article as any).content_color || (article as any).body_color || "white" }}
+              style={{ color: article.content_color || article.body_color || "white" }}
               dangerouslySetInnerHTML={createMarkup(article.content)}
             />
             
