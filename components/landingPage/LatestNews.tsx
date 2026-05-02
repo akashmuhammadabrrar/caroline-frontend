@@ -9,6 +9,10 @@ import { useGetLatestNewsQuery } from "@/redux/features/home/homeApi";
 import { parseISO } from "date-fns";
 import AdBanner from "./AdBanner";
 import { NewsArticle } from "@/types/home";
+import { 
+  formatNewsCategory, 
+  formatNewsImage 
+} from "@/utils/news";
 
 export default function LatestNews() {
   const router = useRouter();
@@ -61,7 +65,7 @@ export default function LatestNews() {
                     className="relative w-full h-[250px] md:h-[350px] rounded-[1.25rem] overflow-hidden cursor-pointer group"
                   >
                     <Image
-                      src={newsItems[0].image_url || "/images/event-card.jpg"}
+                      src={formatNewsImage(newsItems[0].image_url)}
                       alt={newsItems[0].title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -87,7 +91,7 @@ export default function LatestNews() {
                       >
                         <div className="relative w-full h-[130px] md:h-[180px] rounded-[1.25rem] overflow-hidden mb-3">
                           <Image
-                            src={item.image_url || "/images/event-card.jpg"}
+                            src={formatNewsImage(item.image_url)}
                             alt={item.title}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -95,7 +99,7 @@ export default function LatestNews() {
                           />
                           {item.category && (
                             <div className="absolute top-3 left-3 bg-linear-to-r from-fuchsia-600 to-pink-500 text-white text-[9px] md:text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest z-10 shadow-sm">
-                              {item.category}
+                              {formatNewsCategory(item.category)}
                             </div>
                           )}
                         </div>
