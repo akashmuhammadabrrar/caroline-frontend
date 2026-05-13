@@ -1,21 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { 
   ChevronRight, 
   ChevronLeft, 
   Info, 
   MapPin, 
   Clock, 
-  Users, 
   ListOrdered, 
   FileText, 
   Image as ImageIcon, 
   Plus, 
   Trash2,
-  Calendar,
   DollarSign,
-  Globe,
   Loader2,
   CheckCircle2
 } from "lucide-react";
@@ -35,91 +33,86 @@ const steps = [
   { id: 6, title: "Media & Status", icon: ImageIcon },
 ];
 
-const EditEventPage = () => {
-  const router = useRouter();
-  const params = useParams();
-  const eventId = Number(params.id);
-
-  const [currentStep, setCurrentStep] = useState(1);
-  const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
-  
-  // Fetch existing event details
-  const { data: response, isLoading: isFetching } = useGetEventDetailsQuery(eventId, {
-    skip: !eventId,
-  });
-
-  const [formData, setFormData] = useState({
-    event_name: "",
-    event_type: "TOURNAMENT",
-    event_date: "",
-    start_time: "",
-    end_time: "",
-    venue_name: "",
-    street_address: "",
-    city: "",
-    postal_code: "",
-    country: "",
-    minimum_age: 14,
-    maximum_age: 18,
-    registration_fee: "",
-    maximum_capacity: 100,
-    description: "",
-    contact_email: "",
-    contact_phone: "",
-    website: "",
-    event_media: "",
-    status: "ACTIVE",
-    is_featured: false,
-    schedules: [
-      { activity_title: "", description: "", start_time: "", end_time: "", order: 1 }
-    ],
-    event_requirements: [
-      { requirement_title: "", requirement_description: "", is_mandatory: true, order: 1 }
-    ]
-  });
-
-  // Pre-fill form when data is loaded
-  useEffect(() => {
-    if (response?.data) {
-      const e = response.data;
-      setFormData({
-        event_name: e.event_name || "",
-        event_type: e.event_type || "TOURNAMENT",
-        event_date: e.event_date || "",
-        start_time: e.start_time || "",
-        end_time: e.end_time || "",
-        venue_name: e.venue_name || "",
-        street_address: e.street_address || "",
-        city: e.city || "",
-        postal_code: e.postal_code || "",
-        country: e.country || "",
-        minimum_age: e.minimum_age || 14,
-        maximum_age: e.maximum_age || 18,
-        registration_fee: e.registration_fee || "",
-        maximum_capacity: e.maximum_capacity || 100,
-        description: e.description || "",
-        contact_email: e.contact_email || "",
-        contact_phone: e.contact_phone || "",
-        website: e.website || "",
-        event_media: e.event_media || "",
-        status: e.status || "ACTIVE",
-        is_featured: e.is_featured || false,
-        schedules: e.schedules && e.schedules.length > 0 ? e.schedules.map((s: any) => ({
+// Maps the API response to the shape used by the form
+const mapToFormData = (e: any) => ({
+  event_name: e.event_name || "",
+  event_type: e.event_type || "TOURNAMENT",
+  event_date: e.event_date || "",
+  start_time: e.start_time || "",
+  end_time: e.end_time || "",
+  venue_name: e.venue_name || "",
+  street_address: e.street_address || "",
+  city: e.city || "",
+  postal_code: e.postal_code || "",
+  country: e.country || "",
+  minimum_age: e.minimum_age || 14,
+  maximum_age: e.maximum_age || 18,
+  registration_fee: e.registration_fee || "",
+  maximum_capacity: e.maximum_capacity || 100,
+  description: e.description || "",
+  contact_email: e.contact_email || "",
+  contact_phone: e.contact_phone || "",
+  website: e.website || "",
+  event_media: e.event_media || "",
+  status: e.status || "ACTIVE",
+  is_featured: e.is_featured || false,
+  schedules:
+    e.schedules && e.schedules.length > 0
+      ? e.schedules.map((s: any) => ({
           activity_title: s.activity_title || "",
           description: s.description || "",
           start_time: s.start_time || "",
           end_time: s.end_time || "",
-          order: s.order || 1
-        })) : [{ activity_title: "", description: "", start_time: "", end_time: "", order: 1 }],
-        event_requirements: e.requirements && e.requirements.length > 0 ? e.requirements.map((r: any) => ({
+          order: s.order || 1,
+        }))
+      : [{ activity_title: "", description: "", start_time: "", end_time: "", order: 1 }],
+  event_requirements:
+    e.requirements && e.requirements.length > 0
+      ? e.requirements.map((r: any) => ({
           requirement_title: r.requirement_title || "",
           requirement_description: r.requirement_description || "",
           is_mandatory: r.is_mandatory || false,
-          order: r.order || 1
-        })) : [{ requirement_title: "", requirement_description: "", is_mandatory: true, order: 1 }]
-      });
-    }
-  }, [response]);
+          order: r.order || 1,
+        }))
+      : [{ requirement_title: "", requirement_description: "", is_mandatory: true, order: 1 }],
+});
+
+// ─── Wrapper: only responsible for fetching data ────────────────────────────
+const EditEventPage = () => {
+  const params = useParams();
+  const eventId = Number(params.id);
+
+  const { data: response, isLoading: isFetching } = useGetEventDetailsQuery(eventId, {
+    skip: !eventId,
+  });
+
+  if (isFetching) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <Loader2 className="animate-spin text-[#00E5FF]" size={48} />
+      </div>
+    );
+  }
+
+  if (!response?.data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <p className="text-slate-400">Event not found.</p>
+      </div>
+    );
+  }
+
+  return <EditEventForm eventId={eventId} initialData={response.data} />;
+};
+
+// ─── Form: receives pre-fetched data, initialises state once (no useEffect) ─
+const EditEventForm = ({ eventId, initialData }: { eventId: number; initialData: any }) => {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
+
+  // Lazy initializer: runs exactly once when the form mounts — no effect needed
+  const [formData, setFormData] = useState(() => mapToFormData(initialData));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -147,7 +140,7 @@ const EditEventPage = () => {
   const removeSchedule = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      schedules: prev.schedules.filter((_, i) => i !== index)
+      schedules: prev.schedules.filter((_: unknown, i: number) => i !== index)
     }));
   };
 
@@ -175,7 +168,7 @@ const EditEventPage = () => {
   const removeRequirement = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      event_requirements: prev.event_requirements.filter((_, i) => i !== index)
+      event_requirements: prev.event_requirements.filter((_: unknown, i: number) => i !== index)
     }));
   };
 
@@ -193,14 +186,6 @@ const EditEventPage = () => {
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
-
-  if (isFetching) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent">
-        <Loader2 className="animate-spin text-[#00E5FF]" size={48} />
-      </div>
-    );
-  }
 
   const renderStep = () => {
     switch (currentStep) {
@@ -226,9 +211,11 @@ const EditEventPage = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-xl bg-[#0D1B2A] border border-[#162d45] text-white outline-none focus:border-[#00E5FF]/50 transition-all"
                 >
-                  <option value="TOURNAMENT">Tournament</option>
-                  <option value="SCOUTING">Scouting</option>
-                  <option value="TRIAL">Trial</option>
+                  <option value="TRIAL">TRIAL</option>
+                  <option value="SHOWCASE">SHOWCASE</option>
+                  <option value="TRAINING">TRAINING</option>
+                  <option value="TOURNAMENT">TOURNAMENT</option>
+                  <option value="WORKSHOP">WORKSHOP</option>
                 </select>
               </div>
               <div className="space-y-2">
@@ -416,7 +403,7 @@ const EditEventPage = () => {
             </div>
             
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-              {formData.schedules.map((schedule, index) => (
+              {formData.schedules.map((schedule: { activity_title: string; description: string; start_time: string; end_time: string; order: number }, index: number) => (
                 <div key={index} className="p-6 rounded-2xl bg-white/2 border border-[#162d45] relative group">
                   <button 
                     onClick={() => removeSchedule(index)}
@@ -488,7 +475,7 @@ const EditEventPage = () => {
             </div>
 
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-              {formData.event_requirements.map((req, index) => (
+              {formData.event_requirements.map((req: { requirement_title: string; requirement_description: string; is_mandatory: boolean; order: number }, index: number) => (
                 <div key={index} className="p-6 rounded-2xl bg-white/2 border border-[#162d45] relative group">
                   <button 
                     onClick={() => removeRequirement(index)}
