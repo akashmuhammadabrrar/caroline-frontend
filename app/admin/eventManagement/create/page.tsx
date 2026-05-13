@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -165,9 +166,11 @@ const CreateEventPage = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-xl bg-[#0D1B2A] border border-[#162d45] text-white outline-none focus:border-[#00E5FF]/50 transition-all"
                 >
-                  <option value="TOURNAMENT">Tournament</option>
-                  <option value="SCOUTING">Scouting</option>
-                  <option value="TRIAL">Trial</option>
+                  <option value="TRIAL">TRIAL</option>
+                  <option value="SHOWCASE">SHOWCASE</option>
+                  <option value="TRAINING">TRAINING</option>
+                  <option value="TOURNAMENT">TOURNAMENT</option>
+                  <option value="WORKSHOP">WORKSHOP</option>
                 </select>
               </div>
               <div className="space-y-2">
