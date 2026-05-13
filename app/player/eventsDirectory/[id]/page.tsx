@@ -457,10 +457,10 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
           first_name: data.firstName,
           last_name: data.lastName,
           email: data.email,
-          phone: data.phone,
+          phone: data.phone ? data.phone.replace(/\s+/g, "") : "",
           date_of_birth: data.dob,
           emergency_contact_name: data.emergencyName,
-          emergency_phone: data.emergencyPhone,
+          emergency_phone: data.emergencyPhone ? data.emergencyPhone.replace(/\s+/g, "") : "",
           relationship: data.relationship,
           medical_conditions: data.medical || "",
           allergies: data.allergies || "",
@@ -587,6 +587,16 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
                        <DarkPhoneInput
                          name="phone"
                          control={control}
+                         rules={{
+                           required: "Phone is required",
+                           validate: (value: string) => {
+                             const number = value.split(" ")[1] || "";
+                             const totalLength = value.replace(/\s+/g, "").length;
+                             if (number.length < 7) return "Too short";
+                             if (totalLength > 15) return "Max 15 digits";
+                             return true;
+                           }
+                         }}
                          placeholder="XXX XXX XXX"
                          className="flex items-center w-full bg-[#0B0E1E] border border-[#1E2550] text-white text-xs rounded-xl overflow-hidden focus-within:border-cyan-400 transition-all shadow-inner"
                          dropdownClassName="bg-[#0B0E1E] text-white"
@@ -640,6 +650,16 @@ const RegistrationFlow = ({ event, onBack, onComplete }: { event: EventDataApi, 
                         <DarkPhoneInput
                           name="emergencyPhone"
                           control={control}
+                          rules={{
+                            required: "Emergency phone is required",
+                            validate: (value: string) => {
+                              const number = value.split(" ")[1] || "";
+                              const totalLength = value.replace(/\s+/g, "").length;
+                              if (number.length < 7) return "Too short";
+                              if (totalLength > 15) return "Max 15 digits";
+                              return true;
+                            }
+                          }}
                           placeholder="XXX XXX XXX"
                           className="flex items-center w-full bg-[#0B0E1E] border border-[#1E2550] text-white text-xs rounded-xl overflow-hidden focus-within:border-cyan-400 transition-all shadow-inner"
                           dropdownClassName="bg-[#0B0E1E] text-white"

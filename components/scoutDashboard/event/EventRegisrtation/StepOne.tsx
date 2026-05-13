@@ -86,6 +86,16 @@ export default function StepOne() {
           <DarkPhoneInput
             name="phone_number"
             control={control as any}
+            rules={{
+              required: "Phone number is required",
+              validate: (value: string) => {
+                const number = value.split(" ")[1] || "";
+                const totalLength = value.replace(/\s+/g, "").length;
+                if (number.length < 7) return "Phone number is too short";
+                if (totalLength > 15) return "Phone number cannot exceed 15 digits";
+                return true;
+              }
+            }}
             placeholder="XXX XXX XXX"
             className={`flex items-center w-full bg-[#0A0F1D] border rounded-xl overflow-hidden transition-all duration-300 ${errors.phone_number ? "border-red-500/50" : "border-white/10 focus-within:border-[#00E5FF]/50"}`}
           />

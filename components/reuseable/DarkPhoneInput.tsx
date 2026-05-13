@@ -160,7 +160,9 @@ const DarkPhoneInput = ({
                 value={number}
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, ""); // Keep only digits
-                  if (val.length <= 15) {
+                  
+                  const maxNumberLength = 15 - code.replace(/\D/g, "").length - 1; // +1 for the '+' sign
+                  if (val.length <= maxNumberLength) {
                     handleNumberChange({
                       ...e,
                       target: { ...e.target, value: val },
@@ -169,7 +171,7 @@ const DarkPhoneInput = ({
                 }}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                maxLength={15}
+                maxLength={15 - code.replace(/\D/g, "").length - 1}
                 placeholder={
                   placeholder || (label ? `Enter ${label.toLowerCase()}` : "")
                 }

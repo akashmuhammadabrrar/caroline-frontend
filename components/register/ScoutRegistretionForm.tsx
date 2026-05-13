@@ -192,7 +192,7 @@ const ScoutRegistretionForm = () => {
       last_name: data.last_name,
       date_of_birth: data.date_of_birth,
       nationality: data.nationality,
-      phone_number: data.phone_number,
+      phone_number: data.phone_number ? data.phone_number.replace(/\s+/g, "") : "",
       license_type: data.license_type,
       license_number: data.license_number,
       agency_name: data.agency_name,
@@ -338,8 +338,9 @@ const ScoutRegistretionForm = () => {
                       required: "Phone number is required",
                       validate: (value: string) => {
                         const number = value.split(" ")[1] || "";
+                        const totalLength = value.replace(/\s+/g, "").length;
                         if (number.length < 7) return "Phone number is too short";
-                        if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                        if (totalLength > 15) return "Phone number cannot exceed 15 digits";
                         return true;
                       }
                     }}

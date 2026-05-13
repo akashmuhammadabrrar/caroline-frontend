@@ -306,7 +306,6 @@ export default function ProfileEditForm({
         "about",
         "location",
         "email",
-        "phone",
         "website",
         "twitter",
         "facebook",
@@ -324,6 +323,10 @@ export default function ProfileEditForm({
           fd.append(k, String(v).trim());
         }
       });
+
+      if (data.phone) {
+        fd.append("phone", data.phone.replace(/\s+/g, ""));
+      }
 
       fd.append("contact_requests", String(data.contact_requests));
       fd.append("show_online_status", String(data.show_online_status));
@@ -782,6 +785,16 @@ export default function ProfileEditForm({
                   <DarkPhoneInput
                     name="phone"
                     control={control as any}
+                    rules={{
+                      validate: (value: string) => {
+                        if (!value) return true;
+                        const number = value.split(" ")[1] || "";
+                        const totalLength = value.replace(/\s+/g, "").length;
+                        if (number.length > 0 && number.length < 7) return "Too short";
+                        if (totalLength > 15) return "Max 15 digits";
+                        return true;
+                      }
+                    }}
                     placeholder="XXX XXX XXX"
                     className="flex items-center w-full bg-[#111640] border border-[#1A2160] text-white text-xs rounded-lg overflow-hidden focus-within:border-[#00D9FF] focus-within:ring-1 focus-within:ring-[#00D9FF]/20 transition-all shadow-inner"
                   />
