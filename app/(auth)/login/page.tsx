@@ -44,7 +44,7 @@ const LoginPage = () => {
     try {
       const response = await login(payload).unwrap();
 
-     dispatch(
+      dispatch(
         setCredentials({
           user: response.user,
           accessToken: response.access,
@@ -72,9 +72,17 @@ const LoginPage = () => {
           router.push("/");
           break;
       }
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Login failed:", error);
-      toast.error("Invalid credentials. Please try again.");
+      
+      // Handle unverified email error
+      if (error?.data?.is_verified === false) {
+        toast.error("Email not verified. Redirecting to verification page...");
+        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+        return;
+      }
+      
+      toast.error(error?.data?.message || "Invalid credentials. Please try again.");
     }
   };
 
@@ -164,15 +172,17 @@ const LoginPage = () => {
                 />
                 <span>Remember me</span>
               </label>
-              {/* <button
-                type="button"
-                className="text-cyan-400 hover:text-cyan-300 font-medium"
-              >
-                Forgot Password?
-              </button> */}
-              <Link href="/register" className="text-cyan-400 hover:text-cyan-300 font-medium">
-                Back To Register
-              </Link>
+              <div className="flex flex-col items-end gap-1">
+                <Link
+                  href="/forgot-password"
+                  className="text-cyan-400 hover:text-cyan-300 font-medium"
+                >
+                  Forgot Password?
+                </Link>
+                <Link href="/register" className="text-gray-500 hover:text-gray-300 transition-colors">
+                  Back To Register
+                </Link>
+              </div>
             </div>
 
             <button

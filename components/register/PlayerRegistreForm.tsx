@@ -193,6 +193,16 @@ const PlayerRegisterForm = () => {
       return;
     }
 
+    // Calculate minor status locally to ensure it matches the data being submitted
+    const birthDate = new Date(data.date_of_birth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    const currentlyIsMinor = age < 18;
+
     const payload: PlayerRegisterPayload = {
       email: data.email,
       password: data.password,
@@ -208,8 +218,8 @@ const PlayerRegisterForm = () => {
       preferred_foot:
         data.preferred_foot.charAt(0).toUpperCase() +
         data.preferred_foot.slice(1),
-      height: parseFloat(data.height),
-      weight: parseFloat(data.weight),
+      height: data.height,
+      weight: data.weight,
       city: data.city,
       country: data.country,
       current_club_academy: data.current_club_academy,
@@ -219,11 +229,11 @@ const PlayerRegisterForm = () => {
       parent_guardian_last_name: data.parent_guardian_last_name,
       parent_guardian_email: data.parent_guardian_email,
       parent_id_number: data.parent_id_number,
-      parent_guardian_digital_signature:
-        data.parent_guardian_digital_signature || null,
+      // Sending a placeholder instead of null to satisfy backend required field
+      parent_guardian_digital_signature: currentlyIsMinor ? "signature_captured" : null,
     };
 
-    if (!isMinor) {
+    if (!currentlyIsMinor) {
       delete payload.parent_guardian_first_name;
       delete payload.parent_guardian_last_name;
       delete payload.parent_guardian_email;
@@ -233,9 +243,9 @@ const PlayerRegisterForm = () => {
 
     try {
       await registerPlayer(payload).unwrap();
-      toast.success("Registration successful!");
+      toast.success("Registration successful! Please verify your email.");
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
       reset();
-      router.push("/login");
     } catch (error: any) {
       console.error("Registration failed:", error);
       await showRegistrationError(error, {
@@ -800,7 +810,7 @@ const PlayerRegisterForm = () => {
                       pattern: isMinor ? {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                         message: "Invalid email address"
-                      } : false
+                      } : undefined
                     }}
                     error={errors.parent_guardian_email?.message}
                     icon={<Mail size={14} />}

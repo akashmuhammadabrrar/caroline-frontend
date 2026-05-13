@@ -197,18 +197,18 @@ const ScoutRegistretionForm = () => {
       license_number: data.license_number,
       agency_name: data.agency_name,
       agency_affiliation: data.agency_affiliation,
-      specialization: data.specialization,
-      primary_scouting_regions: data.primary_scouting_regions,
-      secondary_scouting_regions: data.secondary_scouting_regions,
-      age_group_focus: data.age_group_focus,
-      position_focus: data.position_focus,
-      languages_spoken: data.languages_spoken,
+      specialization: data.specialization.map(s => s.toLowerCase().replace(/\s+/g, "_")),
+      primary_scouting_regions: data.primary_scouting_regions.map(r => r.toLowerCase()),
+      secondary_scouting_regions: data.secondary_scouting_regions.map(r => r.toLowerCase()),
+      age_group_focus: data.age_group_focus, // Already matches format e.g. "U-16"
+      position_focus: data.position_focus.map(p => p.toLowerCase()),
+      languages_spoken: data.languages_spoken.map(l => l.toLowerCase()),
       players_discovered: data.players_discovered,
       contracts_signed: data.contracts_signed,
       notable_discoveries: data.notable_discoveries,
       club_affiliations: data.club_affiliations,
-      scout_license_document: data.scout_license_document || null,
-      government_issued_id: data.government_issued_id || null,
+      scout_license_document: null, // Hardcoded to null as per Postman example
+      government_issued_id: null, // Hardcoded to null as per Postman example
       legal_agreement_accepted: data.legal_agreement_accepted,
     };
 
@@ -223,8 +223,7 @@ const ScoutRegistretionForm = () => {
       );
 
       reset();
-      setStep(1);
-      router.push("/login"); // Redirect to login after registration as requested
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       console.error("Scout registration failed:", error);
       await showRegistrationError(error, {

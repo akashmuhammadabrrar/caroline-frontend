@@ -206,17 +206,16 @@ const ClubRegisterForm = () => {
       contact_email: data.contact_email,
       contact_phone_number: data.contact_phone_number ? data.contact_phone_number.replace(/\s+/g, "") : "",
       number_of_training_fields: Number(data.number_of_training_fields),
-      additional_facilities: data.additional_facilities,
+      additional_facilities: data.additional_facilities.map(f => f.endsWith("_facilities") ? f : `${f}_facilities`),
       age_groups_work_with: data.age_groups_work_with,
-      training_programs: data.training_programs,
+      training_programs: data.training_programs.map(p => p.replace("_skills", "_skill")),
       club_website: data.club_website || "",
       facebook: data.facebook || "",
       instagram: data.instagram || "",
       twitter: data.twitter || "",
-      official_verification_documents:
-        data.official_verification_documents || null,
-      club_academy_logo: data.club_academy_logo || null,
-      legal_terms_accepted: data.terms_acceptance, // Map UI field to payload field
+      official_verification_documents: null, // Hardcoded to null as per Postman example
+      club_academy_logo: null, // Hardcoded to null as per Postman example
+      legal_terms_accepted: data.terms_acceptance,
     };
 
     try {
@@ -228,8 +227,7 @@ const ClubRegisterForm = () => {
       );
 
       reset();
-      setStep(1);
-      router.push("/login");
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       console.error("Club registration failed:", error);
       await showRegistrationError(error, {

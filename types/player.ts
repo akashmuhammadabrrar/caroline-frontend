@@ -9,8 +9,8 @@ export interface PlayerRegisterPayload {
   phone_number: string;
   playing_position: string;
   preferred_foot: string;
-  height: number;
-  weight: number;
+  height: number | string;
+  weight: number | string;
   city: string;
   country: string;
   current_club_academy: string;
