@@ -201,7 +201,7 @@ const PlayerRegisterForm = () => {
       last_name: data.last_name,
       date_of_birth: data.date_of_birth,
       nationality: data.nationality,
-      phone_number: data.phone_number,
+      phone_number: data.phone_number ? data.phone_number.replace(/\s+/g, "") : "",
       playing_position:
         data.playing_position.charAt(0).toUpperCase() +
         data.playing_position.slice(1),
@@ -334,9 +334,11 @@ const PlayerRegisterForm = () => {
                   rules={{
                     required: "Phone number is required",
                     validate: (value: string) => {
-                      const number = value.split(" ")[1] || "";
+                      if (!value) return true;
+                      const number = value.includes(" ") ? value.split(" ")[1] : value.replace(/^\+\d+\s*/, "");
+                      const totalLength = value.replace(/\s+/g, "").length;
                       if (number.length < 7) return "Phone number is too short";
-                      if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                      if (totalLength > 15) return "Phone number cannot exceed 15 digits";
                       return true;
                     }
                   }}

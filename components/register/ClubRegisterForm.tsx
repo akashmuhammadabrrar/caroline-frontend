@@ -195,7 +195,7 @@ const ClubRegisterForm = () => {
       country: data.country,
       city: data.city,
       website: data.website,
-      phone_number: data.phone_number,
+      phone_number: data.phone_number ? data.phone_number.replace(/\s+/g, "") : "",
       full_address: data.full_address,
       postal_code: data.postal_code,
       established_year: Number(data.established_year),
@@ -204,7 +204,7 @@ const ClubRegisterForm = () => {
       contact_full_name: data.contact_full_name,
       contact_role_position: data.contact_role_position,
       contact_email: data.contact_email,
-      contact_phone_number: data.contact_phone_number,
+      contact_phone_number: data.contact_phone_number ? data.contact_phone_number.replace(/\s+/g, "") : "",
       number_of_training_fields: Number(data.number_of_training_fields),
       additional_facilities: data.additional_facilities,
       age_groups_work_with: data.age_groups_work_with,
@@ -325,8 +325,9 @@ const ClubRegisterForm = () => {
                           required: "Phone number is required",
                           validate: (value: string) => {
                             const number = value.split(" ")[1] || "";
+                            const totalLength = value.replace(/\s+/g, "").length;
                             if (number.length < 7) return "Phone number is too short";
-                            if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                            if (totalLength > 15) return "Phone number cannot exceed 15 digits";
                             return true;
                           }
                         }}
@@ -526,8 +527,9 @@ const ClubRegisterForm = () => {
                                 required: "Contact phone number is required",
                                 validate: (value: string) => {
                                   const number = value.split(" ")[1] || "";
+                                  const totalLength = value.replace(/\s+/g, "").length;
                                   if (number.length < 7) return "Phone number is too short";
-                                  if (number.length > 15) return "Phone number cannot exceed 15 digits";
+                                  if (totalLength > 15) return "Phone number cannot exceed 15 digits";
                                   return true;
                                 }
                               }}

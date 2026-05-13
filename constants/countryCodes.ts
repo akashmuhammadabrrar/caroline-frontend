@@ -1,4 +1,6 @@
-export const countryCodes = [
+
+
+ const rawCountryCodes = [
   { code: "+1", label: "USA (+1)", iso: "us" },
   { code: "+7", label: "Russia (+7)", iso: "ru" },
   { code: "+20", label: "Egypt (+20)", iso: "eg" },
@@ -193,5 +195,14 @@ export const countryCodes = [
   { code: "+975", label: "Bhutan (+975)", iso: "bt" },
   { code: "+976", label: "Mongolia (+976)", iso: "mn" },
   { code: "+977", label: "Nepal (+977)", iso: "np" },
-
 ];
+
+export const countryCodes = rawCountryCodes
+  .slice()
+  .sort((a, b) => a.label.localeCompare(b.label))
+  .map((country) => ({
+    label: country.label,
+    value: country.code,
+    code: country.code,
+    iso: country.iso,
+  }));
